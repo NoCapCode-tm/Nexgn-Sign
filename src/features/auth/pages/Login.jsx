@@ -1,5 +1,5 @@
-import { useEffect, useId, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useId, useRef, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -10,7 +10,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { env } from '@/config/env.config'
 import { getPostLoginPath } from '@/utils/postLoginPath'
 import { motion, prefersReducedMotion } from '@/utils/motion'
-import LoadingScreen from '@/components/common/LoadingScreen'
 import styles from './Login.module.css'
 
 gsap.registerPlugin(useGSAP)
@@ -29,10 +28,9 @@ function GoogleIcon() {
 }
 
 export default function Login() {
-  const { login, verifyAccount } = useAuth()
+  const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const { id } = useParams() // Supports /login/:id email verification links from old login
 
   const root = useRef(null)
   const formRef = useRef(null)
@@ -44,15 +42,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  // Optional account activation if user arrives via /login/:id link
-  useEffect(() => {
-    if (!id || !verifyAccount) return
-    verifyAccount(id).catch((err) => {
-      setServerError(err.userMessage || 'Account verification failed.')
-    })
-  }, [id, verifyAccount])
-
-  // Entrance: staggered reveal
+  // Entrance: staggered reveal (waits for the card intro on first load)
   const { contextSafe } = useGSAP(
     () => {
       const mm = gsap.matchMedia()
@@ -130,33 +120,127 @@ export default function Login() {
     setServerError('')
     try {
       const email = values.email.trim()
-      const responseData = await login({
-        email,
-        password: values.password,
-        remember: values.remember,
-      })
+      const data = await login({ email, password: values.password, remember: values.remember })
 
-      // Extract user from old backend format (response.data.message) or direct user object
-      const user = responseData?.message || responseData?.user || responseData
-
-      // Persist nexgn_user_id in localStorage just like Login-old.jsx
-      if (user?._id) {
-        localStorage.setItem('nexgn_user_id', user._id)
-      }
-
-      if (responseData?.requires2FA || user?.requires2FA) {
+      if (data?.requires2FA) {
         navigate('/verify-2fa', { state: { email, from: location.state?.from } })
       } else {
-        navigate(getPostLoginPath(user, location), { replace: true })
+        navigate(getPostLoginPath(location), { replace: true })
       }
     } catch (err) {
-      const errorMsg =
-        err.userMessage ||
-        err.response?.data?.message ||
-        'Login unsuccessful. Please check your credentials.'
-      setServerError(errorMsg)
+      setServerError(err.userMessage || 'Could not log you in. Please try again.')
       shake()
     } finally {
       setSubmitting(false)
     }
   }
+
+  // Placeholder: point this to your backend's Google OAuth start URL
+  const onGoogle = () => {
+    window.location.assign(`${env.API_URL}/auth/google`)
+  }
+
+  return (
+    <div className={styles.page} ref={root}>
+      <Helmet>
+        <title>Log in | Nexgn Sign</title>
+      </Helmet>
+
+      <div className={styles.head} data-reveal>
+        <h1 className={styles.title}>Welcome back !</h1>
+        <p className={styles.subtitle}>Log in to access your dashboard</p>
+      </div>
+
+      <form ref={formRef} className={styles.form} onSubmit={onSubmit} noValidate>
+        {serverError && (
+          <div className={styles.alert} role="alert" data-alert>
+            <CircleAlert aria-hidden="true" />
+            <span>{serverError}</span>
+          </div>
+        )}
+
+        <div className={styles.field} data-reveal>
+          <label htmlFor={ids.email}>E-mail</label>
+          <input
+            id={ids.email}
+            name="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder="Enter your e-mail"
+            value={values.email}
+            onChange={onChange}
+            className={clsx(styles.input, errors.email && styles.invalid)}
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? ids.emailErr : undefined}
+          />
+          {errors.email && (
+            <p id={ids.emailErr} className={styles.error}>{errors.email}</p>
+          )}
+        </div>
+
+        <div className={styles.field} data-reveal>
+          <label htmlFor={ids.password}>Password</label>
+          <div className={styles.control}>
+            <input
+              id={ids.password}
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              value={values.password}
+              onChange={onChange}
+              className={clsx(styles.input, styles.hasToggle, errors.password && styles.invalid)}
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? ids.passwordErr : undefined}
+            />
+            <button
+              type="button"
+              className={styles.toggle}
+              onClick={() => setShowPassword((s) => !s)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-pressed={showPassword}
+            >
+              {showPassword ? <EyeOff /> : <Eye />}
+            </button>
+          </div>
+          {errors.password && (
+            <p id={ids.passwordErr} className={styles.error}>{errors.password}</p>
+          )}
+        </div>
+
+        <div className={styles.row} data-reveal>
+          <label className={styles.check}>
+            <input type="checkbox" name="remember" checked={values.remember} onChange={onChange} />
+            <span>Remember Me</span>
+          </label>
+          <Link to="/forgot-password" className={styles.forgot}>
+            Forget password ?
+          </Link>
+        </div>
+
+        <button type="submit" className={styles.submit} disabled={submitting} data-reveal>
+          {submitting ? (
+            <>
+              <span className={styles.spinner} aria-hidden="true" />
+              <span className={styles.srOnly}>Logging in</span>
+            </>
+          ) : (
+            'Log in'
+          )}
+        </button>
+      </form>
+
+      <div className={styles.divider} data-reveal />
+
+      <button type="button" className={styles.google} onClick={onGoogle} data-reveal>
+        <GoogleIcon />
+        <span>Sign-in with Google</span>
+      </button>
+
+      <p className={styles.switch} data-reveal>
+        Don&apos;t have an account ? <Link to="/signup">Sign-up</Link>
+      </p>
+    </div>
+  )
+}

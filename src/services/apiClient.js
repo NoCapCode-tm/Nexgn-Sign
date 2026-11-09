@@ -3,6 +3,9 @@ import { env } from '@/config/env.config'
 
 export const AUTH_EVENT = 'nexgn:unauthorized'
 
+// Exclude public auth endpoints from triggering session-expired logout events
+const AUTH_URL_RE = /^\/?(auth|admin\/(login|signup|register|verify|forgot|reset|2fa))/i
+
 export const apiClient = axios.create({
   baseURL: env.API_URL,
   withCredentials: true, // httpOnly session cookie
@@ -17,8 +20,8 @@ apiClient.interceptors.response.use(
     const url = error.config?.url ?? ''
 
     // Session expired mid-use: tell AuthContext to clear the user.
-    // /auth/* calls are excluded so login errors don't trigger it.
-    if (status === 401 && !url.startsWith('/auth/')) {
+    // Auth & admin login/signup calls are excluded so login errors don't trigger it.
+    if (status === 401 && !AUTH_URL_RE.test(url)) {
       window.dispatchEvent(new Event(AUTH_EVENT))
     }
 
