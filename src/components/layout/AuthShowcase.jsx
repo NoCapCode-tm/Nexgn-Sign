@@ -7,6 +7,8 @@ import { useGSAP } from '@gsap/react'
 import { motion, prefersReducedMotion } from '@/utils/motion'
 import styles from './AuthShowcase.module.css'
 
+gsap.registerPlugin(useGSAP)
+
 const SLIDES = [
   { Icon: Zap, title: 'Fast & Simple', lines: ['Sign documents', 'in under 2 minutes'] },
   { Icon: ShieldCheck, title: 'Secure by default', lines: ['Encrypted end to end', 'with a full audit trail'] },
@@ -28,7 +30,7 @@ export default function AuthShowcase() {
   const cta = pathname.startsWith('/login')
     ? { to: '/signup', label: 'Sign-up' }
     : pathname.startsWith('/signup')
-      ? { to: '/login', label: 'Log in' }
+      ? { to: '/login', label: 'Sign-in' }
       : null
 
   // Slide-in whenever the slide changes (and once on first load)
@@ -103,18 +105,36 @@ export default function AuthShowcase() {
 
   return (
     <aside className={styles.showcase} ref={root}>
-      <div className={styles.media} data-anim="media" aria-hidden="true" />
+      <div className={styles.media} data-anim="media" aria-hidden="true">
+        <img
+          className={styles.photo}
+          data-anim="kenburns"
+          src="/brand/auth-bg.png"
+          alt=""
+          decoding="async"
+          fetchPriority="high"
+          draggable="false"
+        />
+      </div>
       <div className={styles.overlay} aria-hidden="true" />
 
-      <div className={styles.content}>
-        <div className={styles.top}>
-          {cta && (
-            <Link to={cta.to} className={styles.cta} data-anim="fade">
-              {cta.label}
-            </Link>
-          )}
-        </div>
+      {/* Desktop glass shape: rounded corners + slanted right edge */}
+      <svg className={styles.clipDefs} width="0" height="0" aria-hidden="true" focusable="false">
+        <defs>
+          <clipPath id="nexgn-glass-clip" clipPathUnits="objectBoundingBox">
+            <path d="M0.0458,0 H0.953 Q1,0 0.9976,0.035 L0.9334,0.965 Q0.931,1 0.885,1 H0.0458 Q0,1 0,0.965 V0.035 Q0,0 0.0458,0 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+      <div className={styles.glassBg} data-anim="glass" aria-hidden="true" />
 
+      {cta && (
+        <Link to={cta.to} className={styles.cta} data-anim="fade">
+          {cta.label}
+        </Link>
+      )}
+
+      <div className={styles.glass}>
         <div className={styles.copy}>
           <h2 className={styles.headline}>
             <span className={styles.line}>
@@ -131,7 +151,9 @@ export default function AuthShowcase() {
 
         <div
           className={styles.slider}
+          role="group"
           aria-roledescription="carousel"
+          aria-label="Highlights"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
           onFocus={() => setPaused(true)}

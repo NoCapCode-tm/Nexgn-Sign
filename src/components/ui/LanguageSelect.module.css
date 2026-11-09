@@ -1,13 +1,13 @@
 .wrap {
   position: relative;
-  font-size: 0.9em;
+  font-size: 0.86em;
 }
 .trigger {
   display: inline-flex;
   align-items: center;
-  gap: 0.5em;
-  height: 2.1em;
-  padding: 0 0.7em 0 0.45em;
+  gap: 0.45em;
+  height: 2.05em;
+  padding: 0 0.65em 0 0.4em;
   border: 1px solid var(--auth-border-strong);
   border-radius: 999px;
   background: var(--auth-surface);
@@ -28,8 +28,8 @@
 }
 .flag {
   flex: none;
-  width: 1.5em;
-  height: 1.5em;
+  width: 1.45em;
+  height: 1.45em;
   border-radius: 50%;
 }
 .chev {

@@ -47,15 +47,19 @@ export default function Login() {
     () => {
       const mm = gsap.matchMedia()
       mm.add('(prefers-reduced-motion: no-preference)', () => {
-        gsap.from('[data-reveal]', {
-          y: 24,
-          autoAlpha: 0,
-          duration: 0.9,
-          ease: 'power3.out',
-          stagger: 0.08,
-          delay: motion.first ? 0.6 : 0.05,
-          clearProps: 'transform',
-        })
+        gsap.fromTo(
+          '[data-reveal]',
+          { y: 24, autoAlpha: 0 },
+          {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.9,
+            ease: 'power3.out',
+            stagger: 0.08,
+            delay: motion.first ? 0.6 : 0.05,
+            clearProps: 'transform',
+          },
+        )
       })
       return () => mm.revert()
     },
@@ -63,19 +67,17 @@ export default function Login() {
   )
 
   // Server error banner animates in
-  gsap.fromTo(
-  '[data-reveal]',
-  { y: 24, autoAlpha: 0 },
-  {
-    y: 0,
-    autoAlpha: 1,
-    duration: 0.9,
-    ease: 'power3.out',
-    stagger: 0.08,
-    delay: motion.first ? 0.6 : 0.05,
-    clearProps: 'transform',
-  },
-)
+  useGSAP(
+    () => {
+      if (!serverError || prefersReducedMotion()) return
+      gsap.fromTo(
+        '[data-alert]',
+        { y: -8, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out' },
+      )
+    },
+    { scope: root, dependencies: [serverError] },
+  )
 
   const shake = contextSafe(() => {
     if (prefersReducedMotion() || !formRef.current) return

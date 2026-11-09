@@ -15,22 +15,25 @@ export default function AuthLayout() {
 
   useGSAP(
     () => {
+      const q = gsap.utils.selector(root)
       const mm = gsap.matchMedia()
 
       mm.add(
         {
           animate: '(prefers-reduced-motion: no-preference)',
           pointer: '(hover: hover) and (pointer: fine)',
+          wide: '(min-width: 901px)',
         },
         (ctx) => {
-          const { animate, pointer } = ctx.conditions
+          const { animate, pointer, wide } = ctx.conditions
 
           if (!animate) {
             motion.first = false
             return undefined
           }
 
-          // Every tween has an explicit start AND end state, so nothing can get stuck hidden.
+          // One master timeline. Every tween has an explicit start AND end state,
+          // so nothing can ever get stuck hidden.
           const tl = gsap.timeline({
             defaults: { ease: 'power3.out' },
             onComplete: () => {
@@ -38,30 +41,42 @@ export default function AuthLayout() {
             },
           })
 
-          tl.fromTo('[data-anim="bg"]', { scale: 1.14, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'power2.out' }, 0)
+          tl.fromTo(q('[data-anim="bg"]'), { scale: 1.14, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'power2.out' }, 0)
             .fromTo(
-              '[data-anim="card"]',
+              q('[data-anim="card"]'),
               { y: 56, scale: 0.96, autoAlpha: 0 },
               { y: 0, scale: 1, autoAlpha: 1, duration: 1.2, ease: 'expo.out', clearProps: 'transform' },
               0.15,
             )
-            .fromTo('[data-anim="media"]', { scale: 1.22 }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0.2)
+            .fromTo(q('[data-anim="media"]'), { scale: 1.22 }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0.2)
+            .fromTo(q('[data-anim="line"]'), { yPercent: 115 }, { yPercent: 0, duration: 1, stagger: 0.12, ease: 'expo.out' }, 0.7)
             .fromTo(
-              '[data-anim="line"]',
-              { yPercent: 115 },
-              { yPercent: 0, duration: 1, stagger: 0.12, ease: 'expo.out' },
-              0.7,
+              q('[data-anim="glass"]'),
+              { y: 40, autoAlpha: 0 },
+              { y: 0, autoAlpha: 1, duration: 1, clearProps: 'transform' },
+              0.55,
             )
             .fromTo(
-              '[data-anim="fade"]',
+              q('[data-anim="fade"]'),
               { y: 14, autoAlpha: 0 },
               { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.08, clearProps: 'transform' },
               0.9,
             )
 
+          // Slow "Ken Burns" drift on the panel photo (desktop only)
+          if (wide) {
+            gsap.to(q('[data-anim="kenburns"]'), {
+              scale: 1.07,
+              duration: 26,
+              ease: 'sine.inOut',
+              yoyo: true,
+              repeat: -1,
+              delay: 2.2,
+            })
+          }
+
           // Mouse parallax (desktop pointer only)
           if (pointer) {
-            const q = gsap.utils.selector(root)
             const bg = q('[data-anim="bg"]')[0]
             const media = q('[data-anim="media"]')[0]
 
@@ -85,6 +100,7 @@ export default function AuthLayout() {
               return () => window.removeEventListener('pointermove', onMove)
             }
           }
+
           return undefined
         },
       )
@@ -100,11 +116,6 @@ export default function AuthLayout() {
         <div className={styles.bg} data-anim="bg" />
         <div className={styles.bgShade} />
       </div>
-
-      <p className={styles.mobileTag} aria-hidden="true">
-        Documents signed.
-        <span>Trust delivered.</span>
-      </p>
 
       <main className={styles.card} data-anim="card">
         <AuthShowcase />

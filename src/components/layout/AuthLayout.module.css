@@ -1,14 +1,14 @@
-/* ============ Tokens (used by every auth page) ============ */
+/* ============ Tokens (light only) ============ */
 .root {
   --auth-surface: #ffffff;
   --auth-surface-2: #f5f6f8;
   --auth-text: #0b0b10;
   --auth-muted: #636b79;
   --auth-border: #d3d7de;
-  --auth-border-strong: #9aa2b1;
+  --auth-border-strong: #a3a9b6;
   --auth-brand: #f20f1b;
   --auth-brand-hover: #d70914;
-  --auth-focus: rgba(242, 15, 27, 0.22);
+  --auth-focus: rgba(242, 15, 27, 0.2);
   --auth-danger: #d92d20;
   --auth-danger-bg: rgba(217, 45, 32, 0.08);
 
@@ -18,7 +18,7 @@
   place-items: center;
   min-height: 100vh;
   min-height: 100dvh;
-  padding: 2.2em;
+  padding: 1.2em;
   overflow-x: clip;
   background: #16212c;
   color: var(--auth-text);
@@ -26,19 +26,15 @@
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
 
-  /* One number drives the whole UI: scales 13px (small laptop) -> ~34px (4K) -> 44px (ultrawide) */
-  font-size: clamp(13px, min(1.56vh, 1.1vw), 44px);
+  /* One number scales the whole UI. Exactly 15.84px at the 1440x1024 design,
+     ~18px at 1080p, ~37px at 4K. Height-limited so the card never overflows. */
+  font-size: clamp(13px, min(1.7vh, 1.1vw), 56px);
 }
-
-:global([data-theme='dark']) .root {
-  --auth-surface: #12161f;
-  --auth-surface-2: #1a1f2b;
-  --auth-text: #f2f4f8;
-  --auth-muted: #9aa3b2;
-  --auth-border: #2c3342;
-  --auth-border-strong: #465063;
-  --auth-focus: rgba(242, 15, 27, 0.35);
-  --auth-danger-bg: rgba(217, 45, 32, 0.16);
+.root,
+.root *,
+.root *::before,
+.root *::after {
+  box-sizing: border-box;
 }
 
 /* ============ Background ============ */
@@ -51,119 +47,94 @@
 .bg {
   position: absolute;
   inset: -3%;
-  background: url('/brand/auth-bg.jpg') center / cover no-repeat;
+  background: url('/brand/auth-bg.png') center / cover no-repeat; /* <- photo path */
   will-change: transform;
 }
 .bgShade {
   position: absolute;
   inset: 0;
-  background: radial-gradient(120% 90% at 50% 40%, transparent 40%, rgba(6, 12, 20, 0.35) 100%);
+  background: radial-gradient(120% 90% at 50% 40%, transparent 45%, rgba(6, 12, 20, 0.28) 100%);
 }
 
-.mobileTag {
-  display: none;
-  position: absolute;
-  top: clamp(1.4em, 5dvh, 2.4em);
-  left: 1.5em;
-  right: 1.5em;
-  margin: 0;
-  color: #fff;
-  font-size: 1.45em;
-  font-weight: 700;
-  line-height: 1.15;
-  text-shadow: 0 0.1em 1em rgba(0, 0, 0, 0.35);
-}
-.mobileTag span {
-  display: block;
-  color: #ff4650;
-}
-
-/* ============ Card ============ */
+/* ============ Card: 57em x 50.6em, left panel 48.9% (matches the design) ============ */
 .card {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 0.96fr) minmax(0, 1fr);
   width: min(100%, 57em);
-  min-height: 47em;
+  min-height: 50.6em;
   padding: 0.8em;
-  border-radius: 1.6em;
+  border-radius: 1.3em;
   background: var(--auth-surface);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 3em 7em -2em rgba(5, 10, 18, 0.6);
+    0 3em 7em -2em rgba(5, 10, 18, 0.55);
 }
 
 .main {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 1.1em 1.5em 1.8em 1.9em;
+  padding: 0.4em 2.2em 1.8em 3.35em;
 }
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1em;
+  height: 2.4em;
 }
 .logo {
   display: inline-flex;
+  height: 100%;
 }
 .logo img {
   display: block;
-  height: 1.9em;
+  height: 100%; /* tune against your final logo file */
   width: auto;
 }
 .content {
   flex: 1;
   display: grid;
   align-content: start;
-  padding-top: 2.6em;
+  padding-top: 2.8em;
 }
 
-/* ============ Tablet / small laptop: single column ============ */
+/* ============ Tablet / phone: hero panel on top, form below, one card ============ */
 @media (max-width: 900px) {
   .root {
     font-size: 16px;
     padding: 1.5em;
+    align-items: start;
   }
   .card {
     grid-template-columns: minmax(0, 1fr);
     width: min(100%, 31em);
     min-height: 0;
+    margin-inline: auto;
   }
   .main {
-    padding: 1.2em 1.4em 2em;
+    padding: 1.4em 1.4em 2em;
   }
   .content {
-    padding-top: 1.8em;
+    padding-top: 1.6em;
   }
 }
 
-/* ============ Phone: bottom sheet over the photo ============ */
 @media (max-width: 560px) {
   .root {
-    padding: clamp(5.5em, 17dvh, 9em) 0 0;
-    align-items: end;
-    justify-items: stretch;
+    padding: 0.9em;
   }
   .card {
     width: 100%;
-    padding: 0;
-    border-radius: 1.75em 1.75em 0 0;
-    box-shadow: 0 -1em 3em -1em rgba(0, 0, 0, 0.4);
+    padding: 0.6em;
+    border-radius: 1.4em;
   }
   .main {
-    padding: 1.4em 1.25em calc(1.8em + env(safe-area-inset-bottom));
-  }
-  .mobileTag {
-    display: block;
+    padding: 1.3em 0.9em 1.6em;
   }
 }
-@media (max-width: 560px) and (max-height: 600px) {
-  .mobileTag {
-    display: none;
-  }
-}
+
 @media (max-width: 360px) {
   .root {
     font-size: 15px;
