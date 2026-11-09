@@ -1,0 +1,171 @@
+/* ============ Tokens (used by every auth page) ============ */
+.root {
+  --auth-surface: #ffffff;
+  --auth-surface-2: #f5f6f8;
+  --auth-text: #0b0b10;
+  --auth-muted: #636b79;
+  --auth-border: #d3d7de;
+  --auth-border-strong: #9aa2b1;
+  --auth-brand: #f20f1b;
+  --auth-brand-hover: #d70914;
+  --auth-focus: rgba(242, 15, 27, 0.22);
+  --auth-danger: #d92d20;
+  --auth-danger-bg: rgba(217, 45, 32, 0.08);
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 2.2em;
+  overflow-x: clip;
+  background: #16212c;
+  color: var(--auth-text);
+  font-family: 'DM Sans Variable', 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+
+  /* One number drives the whole UI: scales 13px (small laptop) -> ~34px (4K) -> 44px (ultrawide) */
+  font-size: clamp(13px, min(1.56vh, 1.1vw), 44px);
+}
+
+:global([data-theme='dark']) .root {
+  --auth-surface: #12161f;
+  --auth-surface-2: #1a1f2b;
+  --auth-text: #f2f4f8;
+  --auth-muted: #9aa3b2;
+  --auth-border: #2c3342;
+  --auth-border-strong: #465063;
+  --auth-focus: rgba(242, 15, 27, 0.35);
+  --auth-danger-bg: rgba(217, 45, 32, 0.16);
+}
+
+/* ============ Background ============ */
+.bgWrap {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+.bg {
+  position: absolute;
+  inset: -3%;
+  background: url('/brand/auth-bg.jpg') center / cover no-repeat;
+  will-change: transform;
+}
+.bgShade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 40%, transparent 40%, rgba(6, 12, 20, 0.35) 100%);
+}
+
+.mobileTag {
+  display: none;
+  position: absolute;
+  top: clamp(1.4em, 5dvh, 2.4em);
+  left: 1.5em;
+  right: 1.5em;
+  margin: 0;
+  color: #fff;
+  font-size: 1.45em;
+  font-weight: 700;
+  line-height: 1.15;
+  text-shadow: 0 0.1em 1em rgba(0, 0, 0, 0.35);
+}
+.mobileTag span {
+  display: block;
+  color: #ff4650;
+}
+
+/* ============ Card ============ */
+.card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+  width: min(100%, 57em);
+  min-height: 47em;
+  padding: 0.8em;
+  border-radius: 1.6em;
+  background: var(--auth-surface);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 3em 7em -2em rgba(5, 10, 18, 0.6);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.1em 1.5em 1.8em 1.9em;
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+.logo {
+  display: inline-flex;
+}
+.logo img {
+  display: block;
+  height: 1.9em;
+  width: auto;
+}
+.content {
+  flex: 1;
+  display: grid;
+  align-content: start;
+  padding-top: 2.6em;
+}
+
+/* ============ Tablet / small laptop: single column ============ */
+@media (max-width: 900px) {
+  .root {
+    font-size: 16px;
+    padding: 1.5em;
+  }
+  .card {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(100%, 31em);
+    min-height: 0;
+  }
+  .main {
+    padding: 1.2em 1.4em 2em;
+  }
+  .content {
+    padding-top: 1.8em;
+  }
+}
+
+/* ============ Phone: bottom sheet over the photo ============ */
+@media (max-width: 560px) {
+  .root {
+    padding: clamp(5.5em, 17dvh, 9em) 0 0;
+    align-items: end;
+    justify-items: stretch;
+  }
+  .card {
+    width: 100%;
+    padding: 0;
+    border-radius: 1.75em 1.75em 0 0;
+    box-shadow: 0 -1em 3em -1em rgba(0, 0, 0, 0.4);
+  }
+  .main {
+    padding: 1.4em 1.25em calc(1.8em + env(safe-area-inset-bottom));
+  }
+  .mobileTag {
+    display: block;
+  }
+}
+@media (max-width: 560px) and (max-height: 600px) {
+  .mobileTag {
+    display: none;
+  }
+}
+@media (max-width: 360px) {
+  .root {
+    font-size: 15px;
+  }
+}

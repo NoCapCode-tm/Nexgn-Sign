@@ -1,0 +1,164 @@
+.showcase {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  overflow: hidden;
+  border-radius: 1.15em;
+  color: #fff;
+  /* slanted right edge, as in the design */
+  clip-path: polygon(0 0, 100% 0, 92.4% 100%, 0 100%);
+}
+
+.media {
+  position: absolute;
+  inset: -4%;
+  z-index: -2;
+  background: url('/brand/auth-bg.jpg') 28% 50% / cover no-repeat;
+  will-change: transform;
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 20, 32, 0.18) 0%,
+    rgba(10, 20, 32, 0.28) 45%,
+    rgba(10, 20, 32, 0.62) 100%
+  );
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1.5em 2.4em 1.8em 3.2em;
+}
+
+.top {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 2.4em;
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55em 1.15em;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 0.95em;
+  text-decoration: none;
+  transition: background 0.25s, color 0.25s, transform 0.25s;
+}
+.cta:hover {
+  background: #fff;
+  color: #0b0b10;
+  transform: translateY(-1px);
+}
+
+.copy {
+  margin-top: auto;
+  margin-bottom: auto;
+  padding-block: 2em;
+}
+.headline {
+  margin: 0;
+  font-size: 1.3em;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+}
+.lineInner {
+  display: block;
+}
+.accent {
+  color: #ff2330;
+}
+.lead {
+  max-width: 19em;
+  margin: 1.5em 0 0;
+  font-size: 0.95em;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.slide {
+  min-height: 6.5em;
+}
+.slideHead {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+}
+.slideTitle {
+  margin: 0;
+  font-size: 1em;
+  font-weight: 700;
+}
+.slideIcon {
+  width: 2.1em;
+  height: 2.1em;
+}
+.slideText {
+  margin: 1.2em 0 0;
+  font-size: 0.95em;
+  line-height: 1.45;
+}
+.slideText span {
+  display: block;
+}
+
+.controls {
+  display: flex;
+  gap: 1.2em;
+  margin-top: 2.4em;
+  padding-left: 6.6em;
+}
+.arrow {
+  display: grid;
+  place-items: center;
+  width: 1.7em;
+  height: 1.7em;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.arrow svg {
+  width: 1em;
+  height: 1em;
+}
+.arrow:hover {
+  background: #fff;
+  color: #0b0b10;
+  transform: scale(1.12);
+}
+.arrow:active {
+  transform: scale(0.94);
+}
+.cta:focus-visible,
+.arrow:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta,
+  .arrow {
+    transition: none;
+  }
+}

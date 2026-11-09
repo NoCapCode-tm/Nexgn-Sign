@@ -1,0 +1,100 @@
+.wrap {
+  position: relative;
+  font-size: 0.9em;
+}
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  height: 2.1em;
+  padding: 0 0.7em 0 0.45em;
+  border: 1px solid var(--auth-border-strong);
+  border-radius: 999px;
+  background: var(--auth-surface);
+  color: var(--auth-text);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.trigger:hover {
+  border-color: var(--auth-text);
+}
+.trigger:focus-visible,
+.option:focus-visible {
+  outline: 2px solid var(--auth-brand);
+  outline-offset: 2px;
+}
+.flag {
+  flex: none;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+}
+.chev {
+  width: 1em;
+  height: 1em;
+  transition: transform 0.25s;
+}
+.wrap[data-open='true'] .chev {
+  transform: rotate(180deg);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.5em);
+  right: 0;
+  z-index: 5;
+  display: grid;
+  gap: 0.15em;
+  min-width: 11em;
+  padding: 0.35em;
+  border: 1px solid var(--auth-border);
+  border-radius: 0.8em;
+  background: var(--auth-surface);
+  box-shadow: 0 1.2em 2.5em -0.8em rgba(10, 20, 40, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.4em) scale(0.98);
+  transform-origin: top right;
+  transition: opacity 0.18s, transform 0.18s, visibility 0s 0.18s;
+}
+.wrap[data-open='true'] .menu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.55em 0.6em;
+  border: 0;
+  border-radius: 0.55em;
+  background: transparent;
+  color: var(--auth-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.option:hover,
+.active {
+  background: var(--auth-surface-2);
+}
+.optLabel {
+  flex: 1;
+}
+.tick {
+  width: 1em;
+  height: 1em;
+  color: var(--auth-brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu,
+  .chev {
+    transition: none;
+  }
+}

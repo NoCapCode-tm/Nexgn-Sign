@@ -15,20 +15,20 @@ const baseHtml = readFileSync(indexPath, 'utf8')
 // Public routes only. Paths must match the ones in AppRoutes.jsx.
 const ROUTES = {
   login: {
-    title: 'Log in | Nexgn Sign',
-    desc: 'Log in to Nexgn Sign to send, sign and manage documents.',
+    title: 'Log in | Nexgn',
+    desc: 'Log in to Nexgn to send, sign and manage documents.',
   },
   signup: {
-    title: 'Sign up | Nexgn Sign',
-    desc: 'Create your free Nexgn Sign account.',
+    title: 'Sign up | Nexgn',
+    desc: 'Create your free Nexgn account.',
   },
   'forgot-password': {
-    title: 'Reset password | Nexgn Sign',
-    desc: 'Reset your Nexgn Sign password.',
+    title: 'Reset password | Nexgn',
+    desc: 'Reset your Nexgn password.',
   },
   pricing: {
-    title: 'Pricing | Nexgn Sign',
-    desc: 'Simple plans for e-signatures with Nexgn Sign.',
+    title: 'Pricing | Nexgn',
+    desc: 'Simple plans for e-signatures with Nexgn.',
   },
 }
 

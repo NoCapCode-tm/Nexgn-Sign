@@ -1,9 +1,8 @@
+const rawApiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || 'https://api.nexgn.cloud/'
+
 export const env = {
-  API_URL: import.meta.env.VITE_API_URL ?? '',
-  SITE_URL: 'https://sign.nexgn.cloud',
-  IS_PROD: import.meta.env.PROD,
+  API_URL: rawApiUrl.endsWith('/') ? rawApiUrl : `${rawApiUrl}/`,
+  APP_ENV: import.meta.env.VITE_APP_ENV || 'development',
 }
 
-if (!env.API_URL) {
-  console.warn('VITE_API_URL is not set. API calls will go to the current origin.')
-}
+export const API_URL = env.API_URL

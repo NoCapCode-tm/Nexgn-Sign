@@ -5,6 +5,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import App from '@/App'
 import '@/styles/globals.css'
 import '@/styles/layout.css'
+import '@fontsource-variable/dm-sans'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
