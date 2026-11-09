@@ -1,53 +1,26 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import { createContext, useEffect, useMemo } from 'react'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const ThemeContext = createContext(null)
 
-const STORAGE_KEY = 'nexgn-theme'
-const MEDIA = '(prefers-color-scheme: dark)'
-
-const readPreference = () => {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY)
-    return v === 'light' || v === 'dark' || v === 'system' ? v : 'system'
-  } catch {
-    return 'system'
-  }
-}
-const readSystem = () => (window.matchMedia(MEDIA).matches ? 'dark' : 'light')
+// Light mode only for now. To bring dark mode back, restore the previous
+// version of this file; the [data-theme='dark'] CSS is still in place.
+const noop = () => {}
 
 export function ThemeProvider({ children }) {
-  const [preference, setPreference] = useState(readPreference)
-  const [system, setSystem] = useState(readSystem)
-
   useEffect(() => {
-    const mq = window.matchMedia(MEDIA)
-    const onChange = (e) => setSystem(e.matches ? 'dark' : 'light')
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
-
-  const theme = preference === 'system' ? system : preference
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    document.documentElement.style.colorScheme = theme
-  }, [theme])
-
-  const setTheme = useCallback((next) => {
-    setPreference(next)
+    document.documentElement.dataset.theme = 'light'
+    document.documentElement.style.colorScheme = 'light'
     try {
-      localStorage.setItem(STORAGE_KEY, next)
+      localStorage.removeItem('nexgn-theme') // drop any saved "dark" or "system"
     } catch {
-      /* storage blocked, keep in memory */
+      /* ignore */
     }
   }, [])
 
-  const toggleTheme = useCallback(() => setTheme(theme === 'dark' ? 'light' : 'dark'), [theme, setTheme])
-
   const value = useMemo(
-    () => ({ theme, preference, setTheme, toggleTheme }),
-    [theme, preference, setTheme, toggleTheme],
+    () => ({ theme: 'light', preference: 'light', setTheme: noop, toggleTheme: noop }),
+    [],
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

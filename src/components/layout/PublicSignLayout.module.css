@@ -1,0 +1,4 @@
+.shell { min-height: 100dvh; display: flex; flex-direction: column; background: var(--bg, #fff); color: var(--text, #111827); }
+.header { padding: 1rem 1.5rem; border-bottom: 1px solid rgba(136, 136, 136, 0.25); }
+.header img { height: 1.8rem; width: auto; display: block; }
+.main { flex: 1; min-width: 0; }

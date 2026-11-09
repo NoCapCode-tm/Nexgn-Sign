@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png" />
+    <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+
+    <title>Nexgn</title>
+    <meta name="description" content="Send, sign and manage documents securely with Nexgn." />
+    <link rel="canonical" href="https://sign.nexgn.cloud/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nexgn" />
+    <meta property="og:title" content="Nexgn" />
+    <meta property="og:description" content="Send, sign and manage documents securely with Nexgn." />
+    <meta property="og:url" content="https://sign.nexgn.cloud/" />
+    <meta property="og:image" content="https://sign.nexgn.cloud/brand/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Nexgn" />
+    <meta name="twitter:description" content="Send, sign and manage documents securely with Nexgn." />
+    <meta name="twitter:image" content="https://sign.nexgn.cloud/brand/og-image.png" />
+
+    <script>
+      // Light mode only. Runs before React so the first paint is never dark.
+      document.documentElement.dataset.theme = 'light';
+      document.documentElement.style.colorScheme = 'light';
+    </script>
+
+    <style>
+      html, body { margin: 0; background: #ffffff; }
+      #splash { position: fixed; inset: 0; display: grid; place-items: center; background: #ffffff; }
+      #splash i {
+        width: 36px; height: 36px; border-radius: 50%;
+        border: 3px solid rgba(242, 15, 27, 0.18);
+        border-top-color: #f20f1b;
+        animation: nexgn-spin 0.8s linear infinite;
+      }
+      @keyframes nexgn-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { #splash i { animation-duration: 1.6s; } }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div id="splash" role="status" aria-label="Loading Nexgn"><i></i></div>
+    </div>
+    <noscript>Nexgn needs JavaScript enabled to work.</noscript>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

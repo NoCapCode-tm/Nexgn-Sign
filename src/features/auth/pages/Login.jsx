@@ -63,17 +63,19 @@ export default function Login() {
   )
 
   // Server error banner animates in
-  useGSAP(
-    () => {
-      if (!serverError || prefersReducedMotion()) return
-      gsap.fromTo(
-        '[data-alert]',
-        { y: -8, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out' },
-      )
-    },
-    { scope: root, dependencies: [serverError] },
-  )
+  gsap.fromTo(
+  '[data-reveal]',
+  { y: 24, autoAlpha: 0 },
+  {
+    y: 0,
+    autoAlpha: 1,
+    duration: 0.9,
+    ease: 'power3.out',
+    stagger: 0.08,
+    delay: motion.first ? 0.6 : 0.05,
+    clearProps: 'transform',
+  },
+)
 
   const shake = contextSafe(() => {
     if (prefersReducedMotion() || !formRef.current) return
@@ -137,13 +139,13 @@ export default function Login() {
 
   // Placeholder: point this to your backend's Google OAuth start URL
   const onGoogle = () => {
-    window.location.assign(`${env.API_URL}/auth/google`)
+    window.location.assign(`${env.API_URL}auth/google`)
   }
 
   return (
     <div className={styles.page} ref={root}>
       <Helmet>
-        <title>Log in | Nexgn Sign</title>
+        <title>Log in | Nexgn</title>
       </Helmet>
 
       <div className={styles.head} data-reveal>
@@ -201,7 +203,7 @@ export default function Login() {
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               aria-pressed={showPassword}
             >
-              {showPassword ? <EyeOff /> : <Eye />}
+              {showPassword ? <Eye /> : <EyeOff />}
             </button>
           </div>
           {errors.password && (
