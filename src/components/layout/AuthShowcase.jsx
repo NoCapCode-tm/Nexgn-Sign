@@ -27,16 +27,19 @@ export default function AuthShowcase() {
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
 
-  const cta = pathname.startsWith('/login')
-    ? { to: '/signup', label: 'Sign-up' }
-    : pathname.startsWith('/signup')
-      ? { to: '/login', label: 'Sign-in' }
-      : null
+  const isForgot = pathname.includes('forgot-password')
 
-  // Slide-in whenever the slide changes (and once on first load)
+  const cta = isForgot
+    ? null
+    : pathname.startsWith('/login')
+      ? { to: '/signup', label: 'Sign-up' }
+      : pathname.startsWith('/signup')
+        ? { to: '/login', label: 'Sign-in' }
+        : null
+
   const { contextSafe } = useGSAP(
     () => {
-      if (prefersReducedMotion()) {
+      if (prefersReducedMotion() || isForgot) {
         busy.current = false
         return
       }
@@ -59,11 +62,11 @@ export default function AuthShowcase() {
         },
       )
     },
-    { scope: root, dependencies: [index] },
+    { scope: root, dependencies: [index, isForgot] },
   )
 
   const go = contextSafe((dir) => {
-    if (busy.current) return
+    if (busy.current || isForgot) return
     const next = (indexRef.current + dir + SLIDES.length) % SLIDES.length
     dirRef.current = dir
 
@@ -92,14 +95,13 @@ export default function AuthShowcase() {
     goRef.current = go
   })
 
-  // Autoplay (pauses on hover/focus and when the tab is hidden)
   useEffect(() => {
-    if (paused) return undefined
+    if (paused || isForgot) return undefined
     const id = window.setInterval(() => {
       if (!document.hidden) goRef.current(1)
     }, AUTOPLAY_MS)
     return () => window.clearInterval(id)
-  }, [index, paused])
+  }, [index, paused, isForgot])
 
   const { Icon, title, lines } = SLIDES[index]
 
@@ -118,7 +120,6 @@ export default function AuthShowcase() {
       </div>
       <div className={styles.overlay} aria-hidden="true" />
 
-      {/* Desktop glass shape: rounded corners + slanted right edge */}
       <svg className={styles.clipDefs} width="0" height="0" aria-hidden="true" focusable="false">
         <defs>
           <clipPath id="nexgn-glass-clip" clipPathUnits="objectBoundingBox">
@@ -136,50 +137,71 @@ export default function AuthShowcase() {
 
       <div className={styles.glass}>
         <div className={styles.copy}>
-          <h2 className={styles.headline}>
-            <span className={styles.line}>
-              <span className={styles.lineInner} data-anim="line">Documents signed.</span>
-            </span>
-            <span className={styles.line}>
-              <span className={`${styles.lineInner} ${styles.accent}`} data-anim="line">Trust delivered.</span>
-            </span>
-          </h2>
-          <p className={styles.lead} data-anim="fade">
-            Nexgn brings speed, clarity &amp; trust to every signature. Built for modern teams and important agreements.
-          </p>
+          {isForgot ? (
+            <>
+              <h2 className={styles.headline}>
+                <span className={styles.line}>
+                  <span className={styles.lineInner} data-anim="line" style={{ fontSize: '1.25em', fontWeight: 500 }}>
+                    Let's get you back.
+                  </span>
+                </span>
+              </h2>
+              <p className={styles.lead} data-anim="fade">
+                Forgot your password? No worries,<br />
+                we'll help you regain access to<br />
+                your account.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className={styles.headline}>
+                <span className={styles.line}>
+                  <span className={styles.lineInner} data-anim="line">Documents signed.</span>
+                </span>
+                <span className={styles.line}>
+                  <span className={`${styles.lineInner} ${styles.accent}`} data-anim="line">Trust delivered.</span>
+                </span>
+              </h2>
+              <p className={styles.lead} data-anim="fade">
+                Nexgn brings speed, clarity &amp; trust to every signature. Built for modern teams and important agreements.
+              </p>
+            </>
+          )}
         </div>
 
-        <div
-          className={styles.slider}
-          role="group"
-          aria-roledescription="carousel"
-          aria-label="Highlights"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocus={() => setPaused(true)}
-          onBlur={() => setPaused(false)}
-        >
-          <div className={styles.slide}>
-            <div className={styles.slideHead} data-slide-part>
-              <h3 className={styles.slideTitle}>{title}</h3>
-              <Icon className={styles.slideIcon} strokeWidth={1.1} aria-hidden="true" />
+        {!isForgot && (
+          <div
+            className={styles.slider}
+            role="group"
+            aria-roledescription="carousel"
+            aria-label="Highlights"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            onFocus={() => setPaused(true)}
+            onBlur={() => setPaused(false)}
+          >
+            <div className={styles.slide}>
+              <div className={styles.slideHead} data-slide-part>
+                <h3 className={styles.slideTitle}>{title}</h3>
+                <Icon className={styles.slideIcon} strokeWidth={1.1} aria-hidden="true" />
+              </div>
+              <p className={styles.slideText} data-slide-part>
+                {lines.map((l) => (
+                  <span key={l}>{l}</span>
+                ))}
+              </p>
             </div>
-            <p className={styles.slideText} data-slide-part>
-              {lines.map((l) => (
-                <span key={l}>{l}</span>
-              ))}
-            </p>
-          </div>
 
-          <div className={styles.controls} data-anim="fade">
-            <button type="button" className={styles.arrow} onClick={() => go(-1)} aria-label="Previous slide">
-              <ChevronLeft />
-            </button>
-            <button type="button" className={styles.arrow} onClick={() => go(1)} aria-label="Next slide">
-              <ChevronRight />
-            </button>
+            <div className={styles.controls} data-anim="fade">
+              <button type="button" className={styles.arrow} onClick={() => go(-1)} aria-label="Previous slide">
+                <ChevronLeft />
+              </button>
+              <button type="button" className={styles.arrow} onClick={() => go(1)} aria-label="Next slide">
+                <ChevronRight />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </aside>
   )

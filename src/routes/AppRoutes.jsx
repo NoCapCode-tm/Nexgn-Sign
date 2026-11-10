@@ -15,6 +15,9 @@ const router = createBrowserRouter([
   {
     HydrateFallback: LoadingScreen,
     children: [
+      // 1. DEFAULT ROOT REDIRECT (Forces the app to open Login by default)
+      { path: '/', element: <Navigate to="/login" replace /> },
+
       // External signers (no login, never redirected)
       {
         element: <PublicSignLayout />,
@@ -24,7 +27,7 @@ const router = createBrowserRouter([
         ],
       },
 
-      // Auth pages (logged-in users get redirected away)
+      // Auth pages (logged-in users get redirected away to dashboard by PublicRoute)
       {
         element: <PublicRoute />,
         children: [
@@ -60,7 +63,6 @@ const router = createBrowserRouter([
           {
             element: <AppLayout />,
             children: [
-              { index: true, element: <Navigate to="/dashboard" replace /> },
               { path: 'dashboard', lazy: page(() => import('@/features/dashboard/pages/Dashboard')) },
 
               { path: 'documents', lazy: page(() => import('@/features/documents/pages/DocumentsPage')) },

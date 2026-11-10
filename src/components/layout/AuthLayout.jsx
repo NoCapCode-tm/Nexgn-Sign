@@ -85,10 +85,6 @@ export default function AuthLayout() {
         <div className={styles.bgShade} />
       </div>
 
-      <p className={styles.mobileTag} aria-hidden="true">
-        Documents signed.
-        <span>Trust delivered.</span>
-      </p>
 
       <main className={styles.card} data-anim="card">
         <AuthShowcase />
