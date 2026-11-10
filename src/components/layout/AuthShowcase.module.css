@@ -3,13 +3,11 @@
   isolation: isolate;
   overflow: hidden;
   border-radius: 1em;
-  background: #274a5e; /* shows while the photo loads */
+  background: #274a5e;
   color: #fff;
-  /* slanted right edge, as in the design */
   clip-path: polygon(0 0, 100% 0, 92.3% 100%, 0 100%);
 }
 
-/* ---------- Photo ---------- */
 .media {
   position: absolute;
   inset: -4%;
@@ -21,7 +19,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 30% 50%; /* shift the crop here if the towers sit differently */
+  object-position: 30% 50%;
   user-select: none;
   will-change: transform;
 }
@@ -37,7 +35,6 @@
   );
 }
 
-/* ---------- Desktop glass shape (rounded corners, slanted right edge) ---------- */
 .clipDefs {
   position: absolute;
   width: 0;
@@ -51,14 +48,12 @@
   left: 2.5em;
   width: 19.35em;
   height: 25.2em;
-  /* raise the alpha for darker glass, lower for clearer */
   background: linear-gradient(180deg, rgba(40, 44, 52, 0.62) 0%, rgba(30, 34, 41, 0.55) 100%);
   -webkit-backdrop-filter: blur(14px) saturate(1.1);
   backdrop-filter: blur(14px) saturate(1.1);
   clip-path: url(#nexgn-glass-clip);
 }
 
-/* ---------- Sign-up / Sign-in pill ---------- */
 .cta {
   position: absolute;
   top: 1.45em;
@@ -80,12 +75,10 @@
   color: #0b0b10;
 }
 
-/* On desktop this wrapper is invisible; copy and slider position against the panel */
 .glass {
   display: contents;
 }
 
-/* ---------- Headline + lead ---------- */
 .copy {
   position: absolute;
   top: 39.3%;
@@ -117,7 +110,6 @@
   color: rgba(255, 255, 255, 0.96);
 }
 
-/* ---------- Slide + arrows (anchored to the bottom) ---------- */
 .slider {
   position: absolute;
   left: 3.2em;
@@ -191,7 +183,6 @@
   outline-offset: 3px;
 }
 
-/* ---------- Tablet + phone: photo hero with a frosted glass card ---------- */
 @media (max-width: 900px) {
   .showcase {
     display: block;
@@ -202,7 +193,7 @@
   }
   .cta,
   .glassBg {
-    display: none; /* the form has its own Sign-up / Sign-in link */
+    display: none; 
   }
 
   .glass {
@@ -212,7 +203,6 @@
     padding: 1.45em 1.3em 1.6em;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 1em;
-    /* black glass: raise the two alpha values for darker, lower for clearer */
     background: linear-gradient(180deg, rgba(22, 26, 32, 0.66), rgba(22, 26, 32, 0.5));
     -webkit-backdrop-filter: blur(14px) saturate(1.15);
     backdrop-filter: blur(14px) saturate(1.15);
@@ -244,7 +234,6 @@
     margin-top: 1.1em;
   }
 
-  /* arrows sit just under the glass card, centred */
   .controls {
     position: absolute;
     top: calc(100% + 1.2em);

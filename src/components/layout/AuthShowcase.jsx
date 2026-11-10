@@ -28,8 +28,10 @@ export default function AuthShowcase() {
   const [paused, setPaused] = useState(false)
 
   const isForgot = pathname.includes('forgot-password')
+  const isReset = pathname.includes('reset-password')
+  const isRecovery = isForgot || isReset
 
-  const cta = isForgot
+  const cta = isRecovery
     ? null
     : pathname.startsWith('/login')
       ? { to: '/signup', label: 'Sign-up' }
@@ -39,7 +41,7 @@ export default function AuthShowcase() {
 
   const { contextSafe } = useGSAP(
     () => {
-      if (prefersReducedMotion() || isForgot) {
+      if (prefersReducedMotion() || isRecovery) {
         busy.current = false
         return
       }
@@ -47,26 +49,14 @@ export default function AuthShowcase() {
       gsap.fromTo(
         '[data-slide-part]',
         { y: 18 * dir, autoAlpha: 0, filter: 'blur(6px)' },
-        {
-          y: 0,
-          autoAlpha: 1,
-          filter: 'blur(0px)',
-          duration: 0.7,
-          stagger: 0.08,
-          ease: 'power3.out',
-          delay: motion.first ? 1.3 : 0,
-          clearProps: 'filter',
-          onComplete: () => {
-            busy.current = false
-          },
-        },
+        { y: 0, autoAlpha: 1, filter: 'blur(0px)', duration: 0.7, stagger: 0.08, ease: 'power3.out', delay: motion.first ? 1.3 : 0, clearProps: 'filter', onComplete: () => { busy.current = false } },
       )
     },
-    { scope: root, dependencies: [index, isForgot] },
+    { scope: root, dependencies: [index, isRecovery] },
   )
 
   const go = contextSafe((dir) => {
-    if (busy.current || isForgot) return
+    if (busy.current || isRecovery) return
     const next = (indexRef.current + dir + SLIDES.length) % SLIDES.length
     dirRef.current = dir
 
@@ -78,45 +68,27 @@ export default function AuthShowcase() {
 
     busy.current = true
     gsap.to('[data-slide-part]', {
-      y: -14 * dir,
-      autoAlpha: 0,
-      filter: 'blur(6px)',
-      duration: 0.35,
-      stagger: 0.04,
-      ease: 'power2.in',
-      onComplete: () => {
-        indexRef.current = next
-        setIndex(next)
-      },
+      y: -14 * dir, autoAlpha: 0, filter: 'blur(6px)', duration: 0.35, stagger: 0.04, ease: 'power2.in',
+      onComplete: () => { indexRef.current = next; setIndex(next) },
     })
   })
 
-  useEffect(() => {
-    goRef.current = go
-  })
+  useEffect(() => { goRef.current = go })
 
   useEffect(() => {
-    if (paused || isForgot) return undefined
+    if (paused || isRecovery) return undefined
     const id = window.setInterval(() => {
       if (!document.hidden) goRef.current(1)
     }, AUTOPLAY_MS)
     return () => window.clearInterval(id)
-  }, [index, paused, isForgot])
+  }, [index, paused, isRecovery])
 
   const { Icon, title, lines } = SLIDES[index]
 
   return (
     <aside className={styles.showcase} ref={root}>
       <div className={styles.media} data-anim="media" aria-hidden="true">
-        <img
-          className={styles.photo}
-          data-anim="kenburns"
-          src="/brand/auth-bg.png"
-          alt=""
-          decoding="async"
-          fetchPriority="high"
-          draggable="false"
-        />
+        <img className={styles.photo} data-anim="kenburns" src="/brand/auth-bg.png" alt="" decoding="async" fetchPriority="high" draggable="false" />
       </div>
       <div className={styles.overlay} aria-hidden="true" />
 
@@ -137,19 +109,19 @@ export default function AuthShowcase() {
 
       <div className={styles.glass}>
         <div className={styles.copy}>
-          {isForgot ? (
+          {isRecovery ? (
             <>
               <h2 className={styles.headline}>
                 <span className={styles.line}>
                   <span className={styles.lineInner} data-anim="line" style={{ fontSize: '1.25em', fontWeight: 500 }}>
-                    Let's get you back.
+                    {isReset ? 'Secure your account.' : "Let's get you back."}
                   </span>
                 </span>
               </h2>
               <p className={styles.lead} data-anim="fade">
-                Forgot your password? No worries,<br />
-                we'll help you regain access to<br />
-                your account.
+                {isReset 
+                  ? 'Create a strong new password to protect your workspace and documents.'
+                  : 'Forgot your password? No worries, we\'ll help you regain access to your account.'}
               </p>
             </>
           ) : (
@@ -169,36 +141,20 @@ export default function AuthShowcase() {
           )}
         </div>
 
-        {!isForgot && (
-          <div
-            className={styles.slider}
-            role="group"
-            aria-roledescription="carousel"
-            aria-label="Highlights"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-            onFocus={() => setPaused(true)}
-            onBlur={() => setPaused(false)}
-          >
+        {!isRecovery && (
+          <div className={styles.slider} role="group" aria-roledescription="carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
             <div className={styles.slide}>
               <div className={styles.slideHead} data-slide-part>
                 <h3 className={styles.slideTitle}>{title}</h3>
                 <Icon className={styles.slideIcon} strokeWidth={1.1} aria-hidden="true" />
               </div>
               <p className={styles.slideText} data-slide-part>
-                {lines.map((l) => (
-                  <span key={l}>{l}</span>
-                ))}
+                {lines.map((l) => (<span key={l}>{l}</span>))}
               </p>
             </div>
-
             <div className={styles.controls} data-anim="fade">
-              <button type="button" className={styles.arrow} onClick={() => go(-1)} aria-label="Previous slide">
-                <ChevronLeft />
-              </button>
-              <button type="button" className={styles.arrow} onClick={() => go(1)} aria-label="Next slide">
-                <ChevronRight />
-              </button>
+              <button type="button" className={styles.arrow} onClick={() => go(-1)} aria-label="Previous slide"><ChevronLeft /></button>
+              <button type="button" className={styles.arrow} onClick={() => go(1)} aria-label="Next slide"><ChevronRight /></button>
             </div>
           </div>
         )}

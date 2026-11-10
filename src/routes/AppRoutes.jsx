@@ -38,6 +38,8 @@ const router = createBrowserRouter([
               { path: 'signup', lazy: page(() => import('@/features/auth/pages/SignUp')) },
               { path: 'forgot-password', lazy: page(() => import('@/features/auth/pages/ForgotPassword')) },
               { path: 'reset-password', lazy: page(() => import('@/features/auth/pages/SetNewPassword')) },
+              // Change this line in AppRoutes.jsx:
+              { path: 'reset-password/:id', lazy: page(() => import('@/features/auth/pages/SetNewPassword')) },
               { path: 'verify-2fa', lazy: page(() => import('@/features/auth/pages/Verify2FA')) },
             ],
           },
