@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { ArrowLeft, CheckCircle2, CircleAlert, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, CircleAlert, Eye, EyeOff } from 'lucide-react'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import clsx from 'clsx'
@@ -18,41 +18,41 @@ gsap.registerPlugin(useGSAP)
 export default function SetNewPassword() {
   const root = useRef(null)
   const formRef = useRef(null)
-  const { id } = useParams() // Grabs the token from /reset-password/:id
-  
+  const navigate = useNavigate()
+  const { id: paramId } = useParams() // Grabs :id from /reset-password/:id
+  const [searchParams] = useSearchParams()
+  const id = paramId || searchParams.get('id') || searchParams.get('token')
+
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
-  
+
   const [error, setError] = useState('')
   const [serverError, setServerError] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [success, setSuccess] = useState(false)
 
   const { contextSafe } = useGSAP(() => {
     if (prefersReducedMotion()) return
     gsap.fromTo(
       '[data-reveal]',
       { y: 24, autoAlpha: 0 },
-      { y: 0, autoAlpha: 1, duration: 0.9, ease: 'power3.out', stagger: 0.08, delay: motion.first ? 0.6 : 0.05, clearProps: 'transform' }
+      {
+        y: 0,
+        autoAlpha: 1,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0.08,
+        delay: motion.first ? 0.6 : 0.05,
+        clearProps: 'transform',
+      },
     )
   }, { scope: root })
-
-  useGSAP(() => {
-    if (success && !prefersReducedMotion()) {
-      gsap.fromTo(
-        '[data-success]',
-        { scale: 0.9, autoAlpha: 0, y: 15 },
-        { scale: 1, autoAlpha: 1, y: 0, stagger: 0.1, duration: 0.6, ease: 'back.out(1.5)' }
-      )
-    }
-  }, { scope: root, dependencies: [success] })
 
   const shake = contextSafe(() => {
     if (prefersReducedMotion() || !formRef.current) return
     gsap.to(formRef.current, {
-      keyframes: [ { x: -10 }, { x: 10 }, { x: -6 }, { x: 6 }, { x: 0 } ],
+      keyframes: [{ x: -10 }, { x: 10 }, { x: -6 }, { x: 6 }, { x: 0 }],
       duration: 0.4,
       ease: 'power1.inOut',
     })
@@ -79,35 +79,16 @@ export default function SetNewPassword() {
     setSubmitting(true)
 
     try {
-      // Calls apiClient.post('/admin/resetpassword', { id, password })
+      // Calls POST /admin/resetpassword with { id, password }
       await authService.resetPassword({ id, password })
-      setSuccess(true)
+      // Navigate to compact "All done!" page
+      navigate('/reset-password/done', { replace: true, state: { reset: true } })
     } catch (err) {
       setServerError(err.userMessage || 'Something went wrong. Please try again.')
       shake()
     } finally {
       setSubmitting(false)
     }
-  }
-
-  if (success) {
-    return (
-      <div className={styles.page} ref={root}>
-        <div className={styles.successWrap}>
-          <div className={styles.successIcon} data-success>
-            <CheckCircle2 size={40} strokeWidth={2} />
-          </div>
-          <h1 className={styles.title} data-success>Password updated</h1>
-          <p className={styles.subtitle} data-success style={{ marginTop: '0.8em', lineHeight: '1.5' }}>
-            Your new password has been securely saved.<br />
-            You can now log in to your account.
-          </p>
-          <Link to="/login" className={styles.submit} style={{ width: '100%', textDecoration: 'none', marginTop: '2.5em' }} data-success>
-            Back to login
-          </Link>
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -128,7 +109,7 @@ export default function SetNewPassword() {
             <span>{serverError}</span>
           </div>
         )}
-        
+
         {error && (
           <div className={styles.alert} role="alert">
             <CircleAlert size={18} aria-hidden="true" />
@@ -148,6 +129,7 @@ export default function SetNewPassword() {
               onChange={(e) => {
                 setPassword(e.target.value)
                 if (error) setError('')
+                if (serverError) setServerError('')
               }}
               className={clsx(styles.input, error && styles.invalid)}
             />
@@ -170,6 +152,7 @@ export default function SetNewPassword() {
               onChange={(e) => {
                 setConfirmPassword(e.target.value)
                 if (error) setError('')
+                if (serverError) setServerError('')
               }}
               className={clsx(styles.input, error && styles.invalid)}
             />

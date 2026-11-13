@@ -7,11 +7,12 @@ import { ArrowLeft, ChevronDown, CircleAlert, Eye, EyeOff } from 'lucide-react'
 import clsx from 'clsx'
 
 import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter'
+import LoadingScreen from '@/components/common/LoadingScreen'
 import { authService } from '@/services/auth.service'
 import { env } from '@/config/env.config'
 import { isPasswordStrongEnough } from '@/utils/passwordStrength'
 import { motion, prefersReducedMotion } from '@/utils/motion'
-import base from './Login.module.css' // shared form look: a tweak there applies to both pages
+import base from './Login.module.css'
 import styles from './SignUp.module.css'
 
 gsap.registerPlugin(useGSAP)
@@ -81,7 +82,7 @@ export default function SignUp() {
   const navigate = useNavigate()
   const root = useRef(null)
   const formRef = useRef(null)
-  const dirRef = useRef(0) // 0 = first load, 1 = forward, -1 = back
+  const dirRef = useRef(0)
   const busy = useRef(false)
   const uid = useId()
   const id = (n) => `${uid}-${n}`
@@ -101,7 +102,6 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  // Entrance for every step: first load rises up, later steps slide in from the travel direction
   const { contextSafe } = useGSAP(
     () => {
       busy.current = false
@@ -122,7 +122,6 @@ export default function SignUp() {
     { scope: root, dependencies: [step] },
   )
 
-  // Success screen: ring draws, tick draws, then a small pulse
   useGSAP(
     () => {
       if (step !== 3 || prefersReducedMotion()) return
@@ -134,7 +133,6 @@ export default function SignUp() {
     { scope: root, dependencies: [step] },
   )
 
-  // Server error banner
   useGSAP(
     () => {
       if (!serverError || prefersReducedMotion()) return
@@ -157,7 +155,6 @@ export default function SignUp() {
     })
   })
 
-  // Animate the current step out, then switch
   const goTo = contextSafe((next) => {
     if (busy.current) return
     dirRef.current = next > step ? 1 : -1
@@ -226,6 +223,7 @@ export default function SignUp() {
 
     setSubmitting(true)
     try {
+      // Calls POST /admin/signup with exact legacy payload keys
       await authService.signup({
         name: values.name.trim(),
         email: values.email.trim(),
@@ -237,7 +235,6 @@ export default function SignUp() {
       goTo(3)
     } catch (err) {
       if (err.response?.status === 409) {
-        // Assumption: your API answers 409 for an existing account. Adjust if it uses another status.
         setErrors({ email: 'An account with this e-mail already exists.' })
         goTo(1)
       } else {
@@ -249,7 +246,11 @@ export default function SignUp() {
     }
   }
 
-  // Placeholder: point this to your backend's Google OAuth start URL
+  const handleFinish = () => {
+    localStorage.setItem('theme', 'light')
+    navigate('/login')
+  }
+
   const onGoogle = () => {
     window.location.assign(`${env.API_URL}auth/google`)
   }
@@ -466,11 +467,19 @@ export default function SignUp() {
             Give it a click to activate your dashboard. See you on the inside.
           </p>
 
-          <button type="button" className={styles.outline} onClick={() => navigate('/login')} data-reveal>
+          <button type="button" className={styles.outline} onClick={handleFinish} data-reveal>
             <span>Back to</span>
             <span className={styles.red}>Login</span>
           </button>
         </div>
+      )}
+
+      {submitting && (
+        <LoadingScreen
+          state="connecting"
+          size={64}
+          message="Crafting your Nexgn workspace"
+        />
       )}
     </div>
   )

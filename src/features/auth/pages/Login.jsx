@@ -1,5 +1,5 @@
-import { useId, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useId, useRef, useState } from 'react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -7,9 +7,11 @@ import { CircleAlert, Eye, EyeOff } from 'lucide-react'
 import clsx from 'clsx'
 
 import { useAuth } from '@/hooks/useAuth'
+import { authService } from '@/services/auth.service'
 import { env } from '@/config/env.config'
 import { getPostLoginPath } from '@/utils/postLoginPath'
 import { motion, prefersReducedMotion } from '@/utils/motion'
+import LoadingScreen from '@/components/common/LoadingScreen'
 import styles from './Login.module.css'
 
 gsap.registerPlugin(useGSAP)
@@ -31,6 +33,7 @@ export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const { id } = useParams() // Supports /login/:id account activation links
 
   const root = useRef(null)
   const formRef = useRef(null)
@@ -41,6 +44,18 @@ export default function Login() {
   const [serverError, setServerError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+
+  // Account verification on mount if :id is present in URL (from Login-old.jsx)
+  useEffect(() => {
+    if (!id) return
+    ;(async () => {
+      try {
+        await authService.verifyAccount(id)
+      } catch (err) {
+        setServerError(err.userMessage || 'Account verification failed.')
+      }
+    })()
+  }, [id])
 
   // Entrance: staggered reveal (waits for the card intro on first load)
   const { contextSafe } = useGSAP(
@@ -124,22 +139,33 @@ export default function Login() {
     setServerError('')
     try {
       const email = values.email.trim()
-      const data = await login({ email, password: values.password, remember: values.remember })
+      // Use AuthContext login if available, otherwise call authService.login directly
+      const data = login
+        ? await login({ email, password: values.password, remember: values.remember })
+        : await authService.login({ email, password: values.password, remember: values.remember })
 
-      if (data?.requires2FA) {
-        navigate('/verify-2fa', { state: { email, from: location.state?.from } })
+      const user = data?.message ?? data?.user ?? data
+
+      if (user?._id) {
+        localStorage.setItem('nexgn_user_id', user._id)
+      }
+
+      if (data?.requires2FA || user?.twoFactorEnabled) {
+        const targetId = user?._id || data?.id || ''
+        navigate(targetId ? `/verify-2fa/${targetId}` : '/verify-2fa', {
+          state: { email, id: targetId, from: location.state?.from },
+        })
       } else {
-        navigate(getPostLoginPath(location), { replace: true })
+        navigate(getPostLoginPath(user || location), { replace: true })
       }
     } catch (err) {
-      setServerError(err.userMessage || 'Could not log you in. Please try again.')
+      setServerError(err.userMessage || 'Login unsuccessful')
       shake()
     } finally {
       setSubmitting(false)
     }
   }
 
-  // Placeholder: point this to your backend's Google OAuth start URL
   const onGoogle = () => {
     window.location.assign(`${env.API_URL}auth/google`)
   }
@@ -245,6 +271,14 @@ export default function Login() {
       <p className={styles.switch} data-reveal>
         Don&apos;t have an account ? <Link to="/signup">Sign-up</Link>
       </p>
+
+      {submitting && (
+        <LoadingScreen
+          state="connecting"
+          size={64}
+          message="Unlocking your digital desk"
+        />
+      )}
     </div>
   )
 }
