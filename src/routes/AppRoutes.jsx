@@ -35,11 +35,14 @@ const router = createBrowserRouter([
             element: <AuthLayout />,
             children: [
               { path: 'login', lazy: page(() => import('@/features/auth/pages/Login')) },
+              { path: 'login/:id', lazy: page(() => import('@/features/auth/pages/Login')) },
               { path: 'signup', lazy: page(() => import('@/features/auth/pages/SignUp')) },
               { path: 'forgot-password', lazy: page(() => import('@/features/auth/pages/ForgotPassword')) },
               { path: 'reset-password', lazy: page(() => import('@/features/auth/pages/SetNewPassword')) },
               { path: 'reset-password/:id', lazy: page(() => import('@/features/auth/pages/SetNewPassword')) },
+              { path: 'reset-password/done', handle: { variant: 'compact' }, lazy: page(() => import('@/features/auth/pages/ResetPasswordDone')) },
               { path: 'verify-2fa', lazy: page(() => import('@/features/auth/pages/Verify2FA')) },
+              { path: 'verify-2fa/:id', lazy: page(() => import('@/features/auth/pages/Verify2FA')) },
             ],
           },
         ],
@@ -50,7 +53,9 @@ const router = createBrowserRouter([
         element: <AuthLayout />,
         children: [
           { path: 'invite/accept', lazy: page(() => import('@/features/auth/pages/InviteAccept')) },
+          { path: 'invite/accept/:email', lazy: page(() => import('@/features/auth/pages/InviteAccept')) },
           { path: 'invite/deny', lazy: page(() => import('@/features/auth/pages/InviteDeny')) },
+          { path: 'invite/deny/:email', lazy: page(() => import('@/features/auth/pages/InviteDeny')) },
         ],
       },
 
