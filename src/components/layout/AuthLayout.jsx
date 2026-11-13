@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useMatches } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 
@@ -13,40 +13,74 @@ gsap.registerPlugin(useGSAP)
 export default function AuthLayout() {
   const root = useRef(null)
 
+  // A route can opt into the small card with: handle: { variant: 'compact' }
+  const matches = useMatches()
+  const variant = [...matches].reverse().find((m) => m.handle?.variant)?.handle.variant ?? 'default'
+  const compact = variant === 'compact'
+
   useGSAP(
     () => {
+      const q = gsap.utils.selector(root)
       const mm = gsap.matchMedia()
 
       mm.add(
         {
           animate: '(prefers-reduced-motion: no-preference)',
           pointer: '(hover: hover) and (pointer: fine)',
+          wide: '(min-width: 901px)',
         },
         (ctx) => {
-          const { animate, pointer } = ctx.conditions
+          const { animate, pointer, wide } = ctx.conditions
 
           if (!animate) {
             motion.first = false
-            return
+            return undefined
           }
 
-          // ---- Intro timeline ----
+          // One master timeline. Every tween has an explicit start AND end state,
+          // and missing targets (e.g. the compact variant has no headline) are skipped.
           const tl = gsap.timeline({
             defaults: { ease: 'power3.out' },
             onComplete: () => {
               motion.first = false
             },
           })
+          const add = (selector, from, to, at) => {
+            const targets = q(selector)
+            if (targets.length) tl.fromTo(targets, from, to, at)
+          }
 
-          tl.from('[data-anim="bg"]', { scale: 1.14, autoAlpha: 0, duration: 1.8, ease: 'power2.out' }, 0)
-            .from('[data-anim="card"]', { y: 56, autoAlpha: 0, scale: 0.96, duration: 1.2, ease: 'expo.out' }, 0.15)
-            .from('[data-anim="media"]', { scale: 1.22, duration: 2.2, ease: 'expo.out' }, 0.2)
-            .from('[data-anim="line"]', { yPercent: 115, duration: 1, stagger: 0.12, ease: 'expo.out' }, 0.7)
-            .from('[data-anim="fade"]', { y: 14, autoAlpha: 0, duration: 0.8, stagger: 0.08 }, 0.9)
+          add('[data-anim="bg"]', { scale: 1.14, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'power2.out' }, 0)
+          add(
+            '[data-anim="card"]',
+            { y: 56, scale: 0.96, autoAlpha: 0 },
+            { y: 0, scale: 1, autoAlpha: 1, duration: 1.2, ease: 'expo.out', clearProps: 'transform' },
+            0.15,
+          )
+          add('[data-anim="media"]', { scale: 1.22 }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0.2)
+          add('[data-anim="line"]', { yPercent: 115 }, { yPercent: 0, duration: 1, stagger: 0.12, ease: 'expo.out' }, 0.7)
+          add('[data-anim="glass"]', { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1, clearProps: 'transform' }, 0.55)
+          add(
+            '[data-anim="fade"]',
+            { y: 14, autoAlpha: 0 },
+            { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.08, clearProps: 'transform' },
+            0.9,
+          )
 
-          // ---- Mouse parallax (desktop only) ----
+          // Slow "Ken Burns" drift on the panel photo (desktop only)
+          if (wide) {
+            gsap.to(q('[data-anim="kenburns"]'), {
+              scale: 1.07,
+              duration: 26,
+              ease: 'sine.inOut',
+              yoyo: true,
+              repeat: -1,
+              delay: 2.2,
+            })
+          }
+
+          // Mouse parallax (desktop pointer only)
           if (pointer) {
-            const q = gsap.utils.selector(root)
             const bg = q('[data-anim="bg"]')[0]
             const media = q('[data-anim="media"]')[0]
 
@@ -70,6 +104,8 @@ export default function AuthLayout() {
               return () => window.removeEventListener('pointermove', onMove)
             }
           }
+
+          return undefined
         },
       )
 
@@ -85,19 +121,20 @@ export default function AuthLayout() {
         <div className={styles.bgShade} />
       </div>
 
-
-      <main className={styles.card} data-anim="card">
-        <AuthShowcase />
+      <main className={styles.card} data-anim="card" data-variant={variant}>
+        <AuthShowcase variant={variant} />
 
         <section className={styles.main}>
-          <header className={styles.topbar}>
-            <Link to="/login" className={styles.logo} data-anim="fade" aria-label="Nexgn Sign">
-              <img src="/brand/logo.svg" alt="Nexgn" />
-            </Link>
-            <div data-anim="fade">
-              <LanguageSelect />
-            </div>
-          </header>
+          {!compact && (
+            <header className={styles.topbar}>
+              <Link to="/login" className={styles.logo} data-anim="fade" aria-label="Nexgn">
+                <img src="/brand/logo.svg" alt="Nexgn" />
+              </Link>
+              <div data-anim="fade">
+                <LanguageSelect />
+              </div>
+            </header>
+          )}
 
           <div className={styles.content}>
             <Outlet />

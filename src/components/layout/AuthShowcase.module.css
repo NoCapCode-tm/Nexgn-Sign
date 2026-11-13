@@ -3,11 +3,18 @@
   isolation: isolate;
   overflow: hidden;
   border-radius: 1em;
-  background: #274a5e;
+  background: #274a5e; /* shows while the photo loads */
   color: #fff;
+  /* slanted right edge, as in the design */
   clip-path: polygon(0 0, 100% 0, 92.3% 100%, 0 100%);
 }
 
+/* wrapper that adds no box of its own */
+.panel {
+  display: contents;
+}
+
+/* ---------- Photo ---------- */
 .media {
   position: absolute;
   inset: -4%;
@@ -19,7 +26,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 30% 50%;
+  object-position: 30% 50%; /* shift the crop here if the towers sit differently */
   user-select: none;
   will-change: transform;
 }
@@ -34,7 +41,11 @@
     rgba(8, 22, 38, 0.5) 100%
   );
 }
+.showcase[data-variant='compact'] .overlay {
+  background: linear-gradient(180deg, rgba(8, 22, 38, 0.18) 0%, rgba(8, 22, 38, 0.3) 100%);
+}
 
+/* ---------- Desktop glass shape (rounded corners, slanted right edge) ---------- */
 .clipDefs {
   position: absolute;
   width: 0;
@@ -48,12 +59,14 @@
   left: 2.5em;
   width: 19.35em;
   height: 25.2em;
+  /* raise the alpha for darker glass, lower for clearer */
   background: linear-gradient(180deg, rgba(40, 44, 52, 0.62) 0%, rgba(30, 34, 41, 0.55) 100%);
   -webkit-backdrop-filter: blur(14px) saturate(1.1);
   backdrop-filter: blur(14px) saturate(1.1);
   clip-path: url(#nexgn-glass-clip);
 }
 
+/* ---------- Sign-up / Sign-in pill ---------- */
 .cta {
   position: absolute;
   top: 1.45em;
@@ -75,10 +88,12 @@
   color: #0b0b10;
 }
 
+/* On desktop this wrapper is invisible; copy and slider position against the panel */
 .glass {
   display: contents;
 }
 
+/* ---------- Headline + lead ---------- */
 .copy {
   position: absolute;
   top: 39.3%;
@@ -110,6 +125,7 @@
   color: rgba(255, 255, 255, 0.96);
 }
 
+/* ---------- Slide + arrows (anchored to the bottom) ---------- */
 .slider {
   position: absolute;
   left: 3.2em;
@@ -183,6 +199,33 @@
   outline-offset: 3px;
 }
 
+/* ---------- Compact variant: centred message (matches the "All done!" design) ---------- */
+.recover {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  /* top padding drops the block ~0.8em below centre, right padding centres it in the slanted shape */
+  padding: 1.6em 0.9em 0 0;
+  text-align: center;
+}
+.recoverTitle {
+  margin: 0;
+  font-size: 1.5em;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.recoverText {
+  max-width: 16.4em;
+  margin: 0.8em 0 0;
+  font-size: 1em;
+  line-height: 1.33;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+/* ---------- Tablet + phone: photo hero ---------- */
 @media (max-width: 900px) {
   .showcase {
     display: block;
@@ -193,7 +236,7 @@
   }
   .cta,
   .glassBg {
-    display: none; 
+    display: none; /* the form has its own Sign-up / Sign-in link */
   }
 
   .glass {
@@ -203,6 +246,7 @@
     padding: 1.45em 1.3em 1.6em;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 1em;
+    /* black glass: raise the two alpha values for darker, lower for clearer */
     background: linear-gradient(180deg, rgba(22, 26, 32, 0.66), rgba(22, 26, 32, 0.5));
     -webkit-backdrop-filter: blur(14px) saturate(1.15);
     backdrop-filter: blur(14px) saturate(1.15);
@@ -234,6 +278,7 @@
     margin-top: 1.1em;
   }
 
+  /* arrows sit just under the glass card, centred */
   .controls {
     position: absolute;
     top: calc(100% + 1.2em);
@@ -243,11 +288,24 @@
     margin: 0;
     padding: 0;
   }
+
+  /* compact: a shorter hero holding only the centred message */
+  .showcase[data-variant='compact'] {
+    min-height: 17em;
+    padding: 0;
+  }
+  .recover {
+    padding: 0 1.8em 0 1.2em;
+  }
 }
 
 @media (max-width: 560px) {
   .showcase {
     padding: 3.6em 2em 4.8em 1.6em;
+  }
+  .showcase[data-variant='compact'] {
+    min-height: 15em;
+    padding: 0;
   }
 }
 
