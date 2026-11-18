@@ -9,7 +9,7 @@ import styles from './NotFound.module.css'
 export default function NotFound() {
   const rootRef = useRef(null)
 
-  // Initialize GSAP animations
+  // GSAP animations
   useNotFoundAnimations(rootRef)
 
   return (
