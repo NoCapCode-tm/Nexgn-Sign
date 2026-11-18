@@ -1,0 +1,537 @@
+.card {
+  container: recent / inline-size;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--app-line);
+  border-radius: 1.65em;
+  background: var(--app-surface);
+  box-shadow: 0 0.1em 0.3em rgba(16, 24, 40, 0.03), 0 1.4em 2.4em -1.8em rgba(16, 24, 40, 0.18);
+}
+
+/* ---------- Header + filter ---------- */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  padding: 0.95em 1.2em 0.95em 1.4em;
+}
+.title {
+  margin: 0;
+  font-size: 1.45em;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.tabs {
+  position: relative;
+  display: flex;
+  padding: 0.3em;
+  border-radius: 1em;
+  background: #f3f4f7;
+}
+.thumb {
+  position: absolute;
+  top: 0.3em;
+  bottom: 0.3em;
+  left: 0;
+  width: 0;
+  border-radius: 0.75em;
+  background: var(--app-ink);
+  box-shadow: 0 0.5em 1em -0.6em rgba(16, 24, 40, 0.6);
+}
+.tab {
+  position: relative;
+  z-index: 1;
+  height: 2.1em;
+  padding: 0 1.3em;
+  border: 0;
+  border-radius: 0.75em;
+  background: transparent;
+  color: #6b7280;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.3s;
+}
+.tab:hover {
+  color: var(--app-ink);
+}
+.tabOn,
+.tabOn:hover {
+  color: #fff;
+}
+.tab:focus-visible,
+.more:focus-visible,
+.qBtn:focus-visible,
+.item:focus-visible {
+  outline: 2px solid var(--app-ink);
+  outline-offset: 2px;
+}
+
+/* ---------- Grid shared by header, rows, skeleton ---------- */
+.thead,
+.row,
+.skel {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 2.4fr) minmax(0, 1.2fr) minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1fr)
+    3.4em;
+  align-items: center;
+  column-gap: 1em;
+  padding-inline: 1.4em;
+}
+.thead {
+  height: 2.15em;
+  border-block: 1px solid var(--app-line);
+  background: #f8f9fb;
+  color: #6b7280;
+}
+.thead > span {
+  overflow: hidden;
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ---------- Rows ---------- */
+.row,
+.skel {
+  min-height: 3.85em;
+  border-bottom: 1px solid var(--app-line);
+}
+.row {
+  --row-hover: #fafbfc;
+  position: relative;
+  transition: background 0.2s;
+}
+.row:last-child,
+.skel:last-child {
+  border-bottom: 0;
+}
+.row:hover,
+.row:focus-within {
+  background: var(--row-hover);
+}
+.cell {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+.cNote {
+  color: #8b8f98;
+}
+.cDoc {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  min-width: 0;
+}
+.fileIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.05em;
+  height: 2.05em;
+  border-radius: 0.6em;
+  background: #f4f5f8;
+  color: #7a7f8a;
+}
+.fileIcon svg {
+  width: 1.1em;
+  height: 1.1em;
+}
+.docName {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 1.07em;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sub {
+  display: none;
+  margin: 0;
+  color: #8b8f98;
+  font-size: 0.9em;
+}
+
+/* ---------- Status + owner ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  height: 1.95em;
+  padding: 0 0.85em;
+  border-radius: 99px;
+  font-size: 0.92em;
+  font-weight: 500;
+}
+.pill i {
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 50%;
+  background: currentColor;
+}
+.pill[data-s='pending'] {
+  background: #fff3e4;
+  color: #b45309;
+}
+.pill[data-s='signed'] {
+  background: #e7f7ec;
+  color: #15803d;
+}
+.pill[data-s='expired'] {
+  background: #fde8e8;
+  color: #b91c1c;
+}
+
+.team {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+.stack {
+  display: inline-flex;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 2.4em;
+  height: 2.4em;
+  margin-left: -0.6em;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--c);
+  color: #374151;
+  font-size: 0.75em;
+  font-style: normal;
+  font-weight: 600;
+}
+.avatar:first-child {
+  margin-left: 0;
+}
+.extra {
+  color: #4b5563;
+  font-size: 0.9em;
+}
+
+/* ---------- Actions ---------- */
+.cActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.more {
+  display: grid;
+  place-items: center;
+  width: 2.2em;
+  height: 2.2em;
+  padding: 0;
+  border: 0;
+  border-radius: 0.7em;
+  background: transparent;
+  color: #111827;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s;
+}
+.more svg {
+  width: 1.3em;
+  height: 1.3em;
+}
+.more:hover,
+.more[aria-expanded='true'] {
+  background: #eef0f4;
+}
+
+/* Hover strip over the Owner/Status columns */
+.quick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 4.4em;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0 0.2em 0 2.8em;
+  background: linear-gradient(90deg, rgba(250, 251, 252, 0), var(--row-hover) 2.6em);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.row:hover .quick,
+.row:focus-within .quick {
+  opacity: 1;
+  pointer-events: auto;
+}
+.qBtn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.2em;
+  height: 2.2em;
+  padding: 0;
+  border: 0;
+  border-radius: 0.65em;
+  background: transparent;
+  color: #111827;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateX(0.6em);
+  transition: background 0.2s, opacity 0.25s, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.qBtn svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+.row:hover .qBtn,
+.row:focus-within .qBtn {
+  opacity: 1;
+  transform: none;
+}
+.row:hover .qBtn:nth-child(1) { transition-delay: 0.02s; }
+.row:hover .qBtn:nth-child(2) { transition-delay: 0.05s; }
+.row:hover .qBtn:nth-child(3) { transition-delay: 0.08s; }
+.row:hover .qBtn:nth-child(4) { transition-delay: 0.11s; }
+.qBtn:hover:not(:disabled) {
+  background: #e9ebf0;
+}
+.qBtn:disabled {
+  color: #b4b8c2;
+  cursor: not-allowed;
+}
+.row:hover .qBtn:disabled {
+  opacity: 0.6;
+}
+
+/* Tooltip */
+.qBtn::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 0.35em);
+  left: 50%;
+  z-index: 3;
+  padding: 0.2em 0.65em;
+  border-radius: 0.4em;
+  background: #d8d9de;
+  color: #1f2330;
+  font-size: 0.78em;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -2px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+.qBtn:hover::after,
+.qBtn:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition-delay: 0.25s;
+}
+.row:last-child .qBtn::after {
+  top: auto;
+  bottom: calc(100% + 0.35em);
+}
+
+/* Mouse users get the dimming + strip. Touch uses the ⋯ menu only. */
+@media (hover: hover) {
+  .row:hover .cOwner,
+  .row:hover .cStatus {
+    opacity: 0.25;
+  }
+}
+@media (hover: none) {
+  .quick {
+    display: none;
+  }
+}
+
+/* ---------- Skeleton + empty ---------- */
+.bar {
+  display: block;
+  height: 0.9em;
+  border-radius: 0.3em;
+  background: linear-gradient(90deg, #eef0f4 25%, #f7f8fa 50%, #eef0f4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.4em;
+  padding: 3.5em 1em;
+  color: var(--app-muted);
+  text-align: center;
+}
+.empty svg {
+  width: 2.4em;
+  height: 2.4em;
+  opacity: 0.5;
+}
+.empty strong {
+  color: var(--app-text);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Menu (portal) ---------- */
+.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 80;
+  min-width: 14.5em;
+  padding: 0.4em;
+  border: 1px solid var(--app-line);
+  border-radius: 1em;
+  background: #fff;
+  box-shadow: 0 1.8em 3.2em -1.2em rgba(16, 24, 40, 0.35), 0 0.2em 0.6em rgba(16, 24, 40, 0.08);
+  opacity: 0;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  width: 100%;
+  height: 2.5em;
+  padding: 0 0.8em;
+  border: 0;
+  border-radius: 0.65em;
+  background: transparent;
+  color: #1f2430;
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.item svg {
+  flex: none;
+  width: 1.2em;
+  height: 1.2em;
+  color: #6b7280;
+}
+.item:hover,
+.item:focus-visible {
+  background: #f2f4f7;
+}
+.danger {
+  color: #c62828;
+}
+.danger svg {
+  color: currentColor;
+}
+.danger:hover,
+.danger:focus-visible {
+  background: #fdecec;
+}
+.sep {
+  display: block;
+  height: 1px;
+  margin: 0.35em 0.5em;
+  background: var(--app-line);
+}
+
+/* ---------- Narrower card: drop Note + Owner ---------- */
+@container recent (max-width: 52em) {
+  .cNote,
+  .cOwner {
+    display: none;
+  }
+  .thead,
+  .row,
+  .skel {
+    grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1.1fr) 3.4em;
+  }
+}
+
+/* ---------- Phone-width card: rows become stacked cards ---------- */
+@container recent (max-width: 38em) {
+  .head {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1em 1em 0.9em;
+  }
+  .tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tab {
+    flex: 1;
+    padding: 0 1em;
+  }
+  .thead {
+    display: none;
+  }
+  .row,
+  .skel {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'doc more'
+      'sub status';
+    row-gap: 0.4em;
+    padding: 0.8em 1em;
+  }
+  .cDoc {
+    grid-area: doc;
+  }
+  .cActions {
+    grid-area: more;
+  }
+  .sub {
+    display: block;
+    grid-area: sub;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cStatus {
+    grid-area: status;
+  }
+  .cSigner,
+  .cDate {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .cell,
+  .quick,
+  .qBtn,
+  .qBtn::after,
+  .tab,
+  .item {
+    transition: none;
+  }
+  .bar {
+    animation: none;
+  }
+}

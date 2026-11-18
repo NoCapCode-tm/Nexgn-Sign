@@ -1,0 +1,427 @@
+.sidebar {
+  position: sticky;
+  top: 0.9em;
+  align-self: start;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 1.8em);
+  padding: 1.25em 0.7em 0.7em;
+  border-radius: 1.45em;
+  background: var(--app-surface);
+  box-shadow:
+    0 0 0 1px rgba(16, 24, 40, 0.03),
+    0 0.2em 0.5em rgba(16, 24, 40, 0.04),
+    0 1.4em 2.6em -1.6em rgba(16, 24, 40, 0.22);
+}
+
+/* ---------- Header ---------- */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 2.4em;
+  margin-bottom: 1.9em;
+  padding: 0 0.55em 0 0.75em;
+}
+.logo {
+  display: block;
+  height: 2.1em;
+  overflow: hidden;
+}
+.logo img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: none;
+}
+.toggle,
+.close {
+  display: grid;
+  place-items: center;
+  width: 2.1em;
+  height: 2.1em;
+  padding: 0;
+  border: 0;
+  border-radius: 0.55em;
+  background: transparent;
+  color: var(--app-ink);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s;
+}
+.toggle svg,
+.close svg {
+  width: 1.4em;
+  height: 1.4em;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.toggle:hover,
+.close:hover {
+  background: #f1f2f6;
+}
+.close {
+  display: none;
+}
+
+/* ---------- Navigation ---------- */
+.nav {
+  position: relative;
+  display: grid;
+  gap: 0.45em;
+  align-content: start;
+}
+.indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.7em;
+  border-radius: 0.85em;
+  background: var(--app-ink);
+  box-shadow: 0 0.7em 1.3em -0.8em rgba(16, 24, 40, 0.6);
+  opacity: 0;
+  pointer-events: none;
+}
+.link {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.85em;
+  height: 2.7em;
+  padding: 0 0.85em;
+  border-radius: 0.85em;
+  color: #3b4150;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.3s, background 0.2s;
+}
+.link:hover:not([aria-current='page']) {
+  background: #f3f4f7;
+  color: var(--app-ink);
+}
+.link[aria-current='page'] {
+  color: #fff;
+}
+.link:focus-visible,
+.upgrade:focus-visible,
+.user:focus-visible,
+.menuItem:focus-visible,
+.toggle:focus-visible,
+.close:focus-visible,
+.logo:focus-visible {
+  outline: 2px solid var(--app-ink);
+  outline-offset: 2px;
+}
+.icon {
+  flex: none;
+  width: 1.4em;
+  height: 1.4em;
+  stroke-width: 1.7;
+}
+.label {
+  font-size: 1.07em;
+  transition: opacity 0.25s;
+}
+.grow {
+  flex: 1;
+  min-height: 1em;
+}
+
+/* ---------- Plan card ---------- */
+.plan {
+  margin-bottom: 0.7em;
+  padding: 0.95em 0.95em 1em;
+  border-radius: 1.25em;
+  background: #eceff7;
+}
+.planSkel {
+  height: 8.2em;
+  background: linear-gradient(90deg, #eceff7 25%, #f5f6fb 50%, #eceff7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+.planTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5em;
+}
+.planName {
+  font-size: 1.05em;
+  font-weight: 700;
+}
+.planCount {
+  color: var(--app-muted);
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+}
+.bar {
+  height: 0.5em;
+  margin-top: 0.85em;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #fff;
+}
+.bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--app-ink);
+  transform-origin: left center;
+}
+.planNote {
+  margin: 0.7em 0 0.85em;
+  color: var(--app-muted);
+  font-size: 0.88em;
+}
+.upgrade {
+  display: inline-flex;
+  align-items: center;
+  height: 2.2em;
+  padding: 0 1.05em;
+  border-radius: 0.8em;
+  background: var(--app-ink);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.25s;
+}
+.upgrade:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.7em 1.2em -0.7em rgba(16, 24, 40, 0.7);
+}
+
+/* ---------- Settings / Help ---------- */
+.secondary {
+  display: grid;
+  gap: 0.2em;
+  margin-bottom: 0.5em;
+}
+.link2On {
+  background: #f1f2f6;
+  color: var(--app-ink);
+  font-weight: 600;
+}
+
+/* ---------- User ---------- */
+.userWrap {
+  position: relative;
+}
+.user {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  width: 100%;
+  padding: 0.6em 0.8em 0.6em 0.6em;
+  border: 1px solid var(--app-line);
+  border-radius: 1.25em;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.2s, box-shadow 0.25s;
+}
+.user:hover {
+  border-color: #d9dce3;
+  box-shadow: 0 0.6em 1.2em -0.9em rgba(16, 24, 40, 0.35);
+}
+.avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.2em;
+  height: 2.2em;
+  border-radius: 0.7em;
+  background: var(--app-ink);
+  color: #fff;
+  font-size: 0.95em;
+  font-weight: 600;
+}
+.who {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.2;
+}
+.name {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mail {
+  overflow: hidden;
+  color: var(--app-muted);
+  font-size: 0.85em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chev {
+  flex: none;
+  width: 1.2em;
+  height: 1.2em;
+  color: #4b5563;
+  transition: transform 0.3s;
+}
+.userWrap[data-open='true'] .chev {
+  transform: rotate(180deg);
+}
+
+.menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 0.5em);
+  z-index: 5;
+  min-width: 11em;
+  padding: 0.35em;
+  border: 1px solid var(--app-line);
+  border-radius: 1em;
+  background: #fff;
+  box-shadow: 0 1.4em 2.6em -1em rgba(16, 24, 40, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.4em) scale(0.98);
+  transform-origin: bottom center;
+  transition: opacity 0.18s, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s 0.22s;
+}
+.userWrap[data-open='true'] .menu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  width: 100%;
+  height: 2.5em;
+  padding: 0 0.75em;
+  border: 0;
+  border-radius: 0.65em;
+  background: transparent;
+  color: #1f2430;
+  font: inherit;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+.menuItem svg {
+  width: 1.15em;
+  height: 1.15em;
+  color: #6b7280;
+}
+.menuItem:hover {
+  background: #f2f4f7;
+}
+.menuDanger {
+  color: #c62828;
+}
+.menuDanger svg {
+  color: currentColor;
+}
+.menuDanger:hover {
+  background: #fdecec;
+}
+.menuSep {
+  display: block;
+  height: 1px;
+  margin: 0.3em 0.5em;
+  background: var(--app-line);
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- Desktop: collapsed icon rail ---------- */
+@media (min-width: 1024px) {
+  .sidebar[data-collapsed='true'] {
+    padding-inline: 0.6em;
+  }
+  .sidebar[data-collapsed='true'] .head {
+    flex-direction: column;
+    height: auto;
+    gap: 0.9em;
+    padding: 0;
+  }
+  .sidebar[data-collapsed='true'] .logo {
+    width: 2.1em;
+  }
+  .sidebar[data-collapsed='true'] .toggle svg {
+    transform: scaleX(-1);
+  }
+  .sidebar[data-collapsed='true'] .link {
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
+  .sidebar[data-collapsed='true'] .label {
+    width: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+  .sidebar[data-collapsed='true'] .plan,
+  .sidebar[data-collapsed='true'] .who,
+  .sidebar[data-collapsed='true'] .chev {
+    display: none;
+  }
+  .sidebar[data-collapsed='true'] .user {
+    justify-content: center;
+    padding: 0.5em;
+  }
+  .sidebar[data-collapsed='true'] .menu {
+    right: auto;
+    min-width: 11.5em;
+  }
+}
+
+/* ---------- Tablet + phone: off-canvas drawer ---------- */
+@media (max-width: 1023px) {
+  .sidebar {
+    position: fixed;
+    top: 0.9em;
+    left: 0.9em;
+    bottom: 0.9em;
+    z-index: 60;
+    width: min(18.5em, calc(100vw - 1.8em));
+    height: auto;
+    overflow-y: auto;
+    visibility: hidden;
+    transform: translateX(calc(-100% - 1.2em));
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s 0.5s;
+  }
+  .sidebar[data-open='true'] {
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+  .toggle {
+    display: none;
+  }
+  .close {
+    display: grid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .menu,
+  .link,
+  .chev,
+  .toggle svg {
+    transition: none;
+  }
+  .planSkel {
+    animation: none;
+  }
+}
