@@ -11,7 +11,7 @@ import { authService } from '@/services/auth.service'
 import { env } from '@/config/env.config'
 import { getPostLoginPath } from '@/utils/postLoginPath'
 import { motion, prefersReducedMotion } from '@/utils/motion'
-import LoadingScreen from '@/components/common/LoadingScreen'
+import LoadingOverlay from '@/components/common/LoadingOverlay'
 import styles from './Login.module.css'
 
 gsap.registerPlugin(useGSAP)
@@ -273,11 +273,7 @@ export default function Login() {
       </p>
 
       {submitting && (
-        <LoadingScreen
-          state="connecting"
-          size={64}
-          message="Unlocking your digital desk"
-        />
+        <LoadingOverlay message="Authenticating enterprise credentials..." />
       )}
     </div>
   )

@@ -7,7 +7,7 @@ import { ArrowLeft, ChevronDown, CircleAlert, Eye, EyeOff } from 'lucide-react'
 import clsx from 'clsx'
 
 import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter'
-import LoadingScreen from '@/components/common/LoadingScreen'
+import LoadingOverlay from '@/components/common/LoadingOverlay'
 import { authService } from '@/services/auth.service'
 import { env } from '@/config/env.config'
 import { isPasswordStrongEnough } from '@/utils/passwordStrength'
@@ -475,12 +475,9 @@ export default function SignUp() {
       )}
 
       {submitting && (
-        <LoadingScreen
-          state="connecting"
-          size={64}
-          message="Crafting your Nexgn workspace"
-        />
+        <LoadingOverlay message="Provisioning secure tenant workspace..." />
       )}
+
     </div>
   )
 }

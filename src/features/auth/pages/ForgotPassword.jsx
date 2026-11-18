@@ -8,7 +8,7 @@ import clsx from 'clsx'
 
 import { authService } from '@/services/auth.service'
 import { motion, prefersReducedMotion } from '@/utils/motion'
-import LoadingScreen from '@/components/common/LoadingScreen'
+import LoadingOverlay from '@/components/common/LoadingOverlay'
 import styles from './ForgotPassword.module.css'
 
 gsap.registerPlugin(useGSAP)
@@ -163,14 +163,10 @@ export default function ForgotPassword() {
         </div>
       </form>
 
-      {/* Shows the full-screen dark loading overlay from your old code */}
       {submitting && (
-        <LoadingScreen 
-          state="connecting" 
-          size={64} 
-          message="Sending a digital lifeline" 
-        />
+        <LoadingOverlay message="Dispatched cryptographic recovery protocol..." />
       )}
+      
     </div>
   )
 }

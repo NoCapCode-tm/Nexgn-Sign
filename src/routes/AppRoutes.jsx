@@ -2,7 +2,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 
 import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
-import LoadingScreen from '@/components/common/LoadingScreen'
+import LoadingOverlay from '@/components/common/LoadingOverlay'
 import NotFound from '@/components/common/NotFound'
 import AppLayout from '@/components/layout/AppLayout'
 import AuthLayout from '@/components/layout/AuthLayout'
@@ -13,7 +13,7 @@ const page = (loader) => async () => ({ Component: (await loader()).default })
 
 const router = createBrowserRouter([
   {
-    HydrateFallback: LoadingScreen,
+    HydrateFallback: LoadingOverlay,
     children: [
       // 1. DEFAULT ROOT REDIRECT (Forces the app to open Login by default)
       { path: '/', element: <Navigate to="/login" replace /> },
@@ -39,10 +39,22 @@ const router = createBrowserRouter([
               { path: 'signup', lazy: page(() => import('@/features/auth/pages/SignUp')) },
               { path: 'forgot-password', lazy: page(() => import('@/features/auth/pages/ForgotPassword')) },
               { path: 'reset-password', lazy: page(() => import('@/features/auth/pages/SetNewPassword')) },
+              {
+                path: 'reset-password/done',
+                handle: { variant: 'compact' },
+                lazy: page(() => import('@/features/auth/pages/ResetPasswordDone')),
+              },
               { path: 'reset-password/:id', lazy: page(() => import('@/features/auth/pages/SetNewPassword')) },
-              { path: 'reset-password/done', handle: { variant: 'compact' }, lazy: page(() => import('@/features/auth/pages/ResetPasswordDone')) },
-              { path: 'verify-2fa', lazy: page(() => import('@/features/auth/pages/Verify2FA')) },
-              { path: 'verify-2fa/:id', lazy: page(() => import('@/features/auth/pages/Verify2FA')) },
+              {
+                path: 'verify-2fa',
+                handle: { variant: 'compact' },
+                lazy: page(() => import('@/features/auth/pages/Verify2FA')),
+              },
+              {
+                path: 'verify-2fa/:id',
+                handle: { variant: 'compact' },
+                lazy: page(() => import('@/features/auth/pages/Verify2FA')),
+              },
             ],
           },
         ],

@@ -10,7 +10,7 @@ import { authService } from '@/services/auth.service'
 import { isPasswordStrongEnough } from '@/utils/passwordStrength'
 import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter'
 import { motion, prefersReducedMotion } from '@/utils/motion'
-import LoadingScreen from '@/components/common/LoadingScreen'
+import LoadingOverlay from '@/components/common/LoadingOverlay'
 import styles from './SetNewPassword.module.css'
 
 gsap.registerPlugin(useGSAP)
@@ -174,8 +174,9 @@ export default function SetNewPassword() {
       </form>
 
       {submitting && (
-        <LoadingScreen state="connecting" size={64} message="Forging your new keys" />
+        <LoadingOverlay message="Updating master cryptographic keys..." />
       )}
+      
     </div>
   )
 }

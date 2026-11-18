@@ -9,7 +9,7 @@ import clsx from 'clsx'
 import { authService } from '@/services/auth.service'
 import { getPostLoginPath } from '@/utils/postLoginPath'
 import { motion, prefersReducedMotion } from '@/utils/motion'
-import LoadingScreen from '@/components/common/LoadingScreen'
+import LoadingOverlay from '@/components/common/LoadingOverlay'
 import styles from './Verify2FA.module.css'
 
 gsap.registerPlugin(useGSAP)
@@ -281,12 +281,9 @@ export default function Verify2FA() {
       </form>
 
       {submitting && (
-        <LoadingScreen
-          state="connecting"
-          size={64}
-          message="Double-checking the locks"
-        />
+        <LoadingOverlay message="Verifying multi-factor security token..." />
       )}
+      
     </div>
   )
 }
