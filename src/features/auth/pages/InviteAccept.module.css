@@ -1,0 +1,58 @@
+.page {
+  width: 100%;
+  max-width: 22.1em;
+  margin-inline: auto;
+}
+
+.head {
+  margin-bottom: 1.8em;
+  text-align: center;
+}
+.title {
+  margin: 0 0 0.35em;
+  font-size: 1.55em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.subtitle {
+  margin: 0;
+  color: var(--auth-muted);
+  font-size: 0.85em;
+  line-height: 1.45;
+}
+.subtitle strong {
+  color: var(--auth-text);
+  font-weight: 600;
+}
+
+.readOnlyInput {
+  background: var(--auth-surface-2) !important;
+  color: var(--auth-muted) !important;
+  cursor: not-allowed;
+}
+
+.terms {
+  margin: 1em 0 0;
+  color: var(--auth-muted);
+  font-size: 0.78em;
+  line-height: 1.4;
+  text-align: center;
+}
+.terms a {
+  color: var(--auth-text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.terms a:hover {
+  color: var(--auth-brand);
+}
+
+.errorCard {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+.errorIcon {
+  color: var(--auth-danger);
+  margin-bottom: 1em;
+}

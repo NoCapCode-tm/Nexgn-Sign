@@ -62,13 +62,36 @@ export const authService = {
     return data
   },
 
-  // From Invite-old.jsx: POST /admin/setpassword with { email, password }
+  // --- New Invitation Flow Endpoints ---
+
+  // Fetch invitation metadata & validate expiration status
+  getInvitation: async (token) => {
+    const { data } = await apiClient.get(`/admin/invite/${encodeURIComponent(token)}`)
+    return data?.message ?? data?.invite ?? data
+  },
+
+  // Accept invitation by setting password
+  acceptInvitation: async ({ token, email, password }) => {
+    if (token) {
+      const { data } = await apiClient.post(`/admin/invite/${encodeURIComponent(token)}/accept`, { password })
+      return data
+    }
+    const { data } = await apiClient.post('/admin/setpassword', { email, password })
+    return data
+  },
+
+  // Decline invitation and expire the request
+  declineInvitation: async (tokenOrEmail) => {
+    const { data } = await apiClient.post(`/admin/invite/${encodeURIComponent(tokenOrEmail)}/decline`)
+    return data
+  },
+
+  // Legacy aliases (from Invite-old.jsx & Invite-Deny-old.jsx)
   acceptInvite: async ({ email, password }) => {
     const { data } = await apiClient.post('/admin/setpassword', { email, password })
     return data
   },
 
-  // From Invite-Deny-old.jsx: GET /admin/decline/:email
   declineInvite: async (email) => {
     const { data } = await apiClient.get(`/admin/decline/${encodeURIComponent(email)}`)
     return data

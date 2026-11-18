@@ -64,10 +64,31 @@ const router = createBrowserRouter([
       {
         element: <AuthLayout />,
         children: [
-          { path: 'invite/accept', lazy: page(() => import('@/features/auth/pages/InviteAccept')) },
-          { path: 'invite/accept/:email', lazy: page(() => import('@/features/auth/pages/InviteAccept')) },
-          { path: 'invite/deny', lazy: page(() => import('@/features/auth/pages/InviteDeny')) },
-          { path: 'invite/deny/:email', lazy: page(() => import('@/features/auth/pages/InviteDeny')) },
+          {
+            path: 'invite/accept',
+            handle: { variant: 'compact' },
+            lazy: page(() => import('@/features/auth/pages/InviteAccept')),
+          },
+          {
+            path: 'invite/accept/:token',
+            handle: { variant: 'compact' },
+            lazy: page(() => import('@/features/auth/pages/InviteAccept')),
+          },
+          {
+            path: 'invite/deny',
+            handle: { variant: 'compact' },
+            lazy: page(() => import('@/features/auth/pages/InviteDeny')),
+          },
+          {
+            path: 'invite/deny/:token',
+            handle: { variant: 'compact' },
+            lazy: page(() => import('@/features/auth/pages/InviteDeny')),
+          },
+          {
+            path: 'invite/:token',
+            handle: { variant: 'compact' },
+            lazy: page(() => import('@/features/auth/pages/InviteLanding')),
+          },
         ],
       },
 

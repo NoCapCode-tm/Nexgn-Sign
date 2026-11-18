@@ -5,7 +5,7 @@ export const AUTH_EVENT = 'nexgn:unauthorized'
 
 // Exclude public auth, invite, logout, and external signer endpoints from triggering session-expired loops
 const AUTH_URL_RE =
-  /(?:^|\/)(auth|sign|admin\/(login|logout|signup|register|verify|forgot-password|resetpassword|reset-password|twofaverifylogin|2fa|setpassword|decline))(\/|\?|$)/i
+  /(?:^|\/)(auth|sign|admin\/(login|logout|signup|register|verify|forgot-password|resetpassword|reset-password|twofaverifylogin|2fa|setpassword|decline|invite))(\/|\?|$)/i
 
 export const apiClient = axios.create({
   baseURL: env.API_URL,

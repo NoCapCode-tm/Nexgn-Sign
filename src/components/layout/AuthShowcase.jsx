@@ -17,9 +17,32 @@ const SLIDES = [
 
 const AUTOPLAY_MS = 6500
 
-/* ---------------- Compact variant: centred message only ---------------- */
+/* ---------------- Compact variant: centred message (Recovery, 2FA & Invites) ---------------- */
 function RecoverPanel() {
   const root = useRef(null)
+  const { pathname } = useLocation()
+
+  const is2FA = pathname.includes('verify-2fa')
+  const isInviteAccept = pathname.includes('/invite/accept')
+  const isInviteDeny = pathname.includes('/invite/deny')
+  const isInviteLanding = pathname.startsWith('/invite/') && !isInviteAccept && !isInviteDeny
+
+  let title = 'Let\u2019s get you back.'
+  let text = 'Forgot your password? No worries, we\u2019ll help you regain access to your account.'
+
+  if (is2FA) {
+    title = 'Secure your account.'
+    text = 'Verify your identity to continue.'
+  } else if (isInviteAccept) {
+    title = 'Let\u2019s get you started.'
+    text = 'Set up your account to join your invited workspace and get started with Nexgn.'
+  } else if (isInviteDeny) {
+    title = 'Decision respected.'
+    text = 'You\u2019ve declined the invitation. You can return to Nexgn anytime if you change your mind.'
+  } else if (isInviteLanding) {
+    title = 'Let\u2019s get you back.'
+    text = 'Your invitation is waiting. Accept it to join your workspace and get started with Nexgn.'
+  }
 
   useGSAP(
     () => {
@@ -38,16 +61,16 @@ function RecoverPanel() {
         },
       )
     },
-    { scope: root },
+    { scope: root, dependencies: [pathname] },
   )
 
   return (
     <div className={styles.recover} ref={root}>
       <h2 className={styles.recoverTitle} data-recover>
-        Let&rsquo;s get you back.
+        {title}
       </h2>
       <p className={styles.recoverText} data-recover>
-        Forgot your password? No worries, we&rsquo;ll help you regain access to your account.
+        {text}
       </p>
     </div>
   )
@@ -70,8 +93,6 @@ function SlidesPanel() {
       ? { to: '/login', label: 'Sign-in' }
       : null
 
-  // When this panel appears after the compact variant (e.g. "Back to login"),
-  // replay the entrance. On first page load the layout's own intro handles it.
   useGSAP(
     () => {
       if (motion.first || prefersReducedMotion()) return
@@ -89,7 +110,6 @@ function SlidesPanel() {
     { scope: root },
   )
 
-  // Slide-in whenever the slide changes (and once on mount)
   const { contextSafe } = useGSAP(
     () => {
       if (prefersReducedMotion()) {
@@ -148,7 +168,6 @@ function SlidesPanel() {
     goRef.current = go
   })
 
-  // Autoplay (pauses on hover/focus and when the tab is hidden)
   useEffect(() => {
     if (paused) return undefined
     const id = window.setInterval(() => {
