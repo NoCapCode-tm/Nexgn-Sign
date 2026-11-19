@@ -1,0 +1,32 @@
+User-agent: *
+Allow: /
+Allow: /pricing
+Allow: /login
+Allow: /signup
+Disallow: /dashboard
+Disallow: /documents
+Disallow: /templates
+Disallow: /contacts
+Disallow: /settings
+Disallow: /sign/
+Disallow: /invite/
+Disallow: /verify-2fa
+Disallow: /reset-password
+
+User-agent: GPTBot
+Allow: /
+Allow: /pricing
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /pricing
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /pricing
+
+User-agent: Google-Extended
+Allow: /
+Allow: /pricing
+
+Sitemap: https://sign.nexgn.cloud/sitemap.xml

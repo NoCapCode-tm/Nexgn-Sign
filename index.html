@@ -1,13 +1,170 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>nexgn-sign</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#FF0915" />
+
+    <!-- Favicons & Web App Manifest -->
+    <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="/favicon/manifest.json" />
+    <meta name="msapplication-TileColor" content="#FF0915" />
+
+    <!-- Primary SEO Meta -->
+    <title>Nexgn — Digital Signatures, Document Workflows &amp; Agreement Platform</title>
+    <meta
+      name="description"
+      content="Nexgn is a secure cloud e-signature and document workflow platform that lets teams prepare, send, sign, and track agreements with complete audit trails."
+    />
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    />
+    <link rel="canonical" href="https://sign.nexgn.cloud/" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nexgn" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Nexgn — Digital Signatures &amp; Agreement Platform" />
+    <meta
+      property="og:description"
+      content="Prepare, send, sign, and manage agreements securely with Nexgn's end-to-end digital signature and document workflow platform."
+    />
+    <meta property="og:url" content="https://sign.nexgn.cloud/" />
+    <meta property="og:image" content="https://sign.nexgn.cloud/brand/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Nexgn Digital Signature and Agreement Platform" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Nexgn — Digital Signatures &amp; Agreement Platform" />
+    <meta
+      name="twitter:description"
+      content="Prepare, send, sign, and manage agreements securely with Nexgn's end-to-end digital signature and document workflow platform."
+    />
+    <meta name="twitter:image" content="https://sign.nexgn.cloud/brand/og-image.png" />
+
+    <!-- Structured Data (SEO + AEO + GEO Entity Graph) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://sign.nexgn.cloud/#organization",
+            "name": "Nexgn",
+            "url": "https://sign.nexgn.cloud/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://sign.nexgn.cloud/brand/logo.svg"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://sign.nexgn.cloud/#website",
+            "url": "https://sign.nexgn.cloud/",
+            "name": "Nexgn",
+            "description": "Digital signatures, reusable templates, and secure document workflow automation.",
+            "publisher": {
+              "@id": "https://sign.nexgn.cloud/#organization"
+            }
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://sign.nexgn.cloud/#software",
+            "name": "Nexgn",
+            "applicationCategory": "BusinessApplication",
+            "applicationSubCategory": "Electronic Signature & Document Management Software",
+            "operatingSystem": "Web",
+            "url": "https://sign.nexgn.cloud/",
+            "description": "Nexgn is a cloud e-signature and agreement management platform built for modern teams to prepare, send, sign, and audit documents in minutes.",
+            "publisher": {
+              "@id": "https://sign.nexgn.cloud/#organization"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock",
+              "url": "https://sign.nexgn.cloud/pricing"
+            },
+            "featureList": [
+              "Legally binding electronic signatures",
+              "Self-signing and multi-party signature requests",
+              "Reusable agreement templates",
+              "Tamper-evident audit trails and status tracking",
+              "Role-based team access and two-factor authentication (2FA)"
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://sign.nexgn.cloud/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is Nexgn?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Nexgn is a secure cloud digital signature and document workflow platform that enables individuals and teams to prepare, send, sign, and track agreements with complete audit trails."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do external signers need a Nexgn account to sign a document?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. External recipients can open their secure signing link, review the document, and complete their signature directly in the browser without creating an account."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does Nexgn secure signed agreements?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Nexgn protects documents with encrypted sessions, two-factor authentication (2FA) for workspace members, and a full timestamped audit trail for every signature event."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+
+    <script>
+      // Light mode only. Runs before React so the first paint is never dark.
+      document.documentElement.dataset.theme = 'light';
+      document.documentElement.style.colorScheme = 'light';
+    </script>
+
+    <style>
+      html, body { margin: 0; background: #ffffff; }
+      #splash { position: fixed; inset: 0; display: grid; place-items: center; background: #ffffff; }
+      #splash i {
+        width: 36px; height: 36px; border-radius: 50%;
+        border: 3px solid rgba(242, 15, 27, 0.18);
+        border-top-color: #f20f1b;
+        animation: nexgn-spin 0.8s linear infinite;
+      }
+      @keyframes nexgn-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { #splash i { animation-duration: 1.6s; } }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="splash" role="status" aria-label="Loading Nexgn"><i></i></div>
+    </div>
+    <noscript>
+      <main>
+        <h1>Nexgn — Digital Signatures &amp; Agreement Platform</h1>
+        <p>Nexgn helps teams prepare, send, sign, and manage documents securely with full audit trails. Enable JavaScript to launch the web application.</p>
+      </main>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

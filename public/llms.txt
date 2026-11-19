@@ -1,0 +1,55 @@
+# Nexgn
+
+> Nexgn (`https://nexgn.cloud/`) is the main website and brand hub for the Nexgn platform, while Nexgn Sign (`https://sign.nexgn.cloud/`) is the dedicated cloud e-signature and agreement workflow web application. Together, they help individuals and teams prepare, send, sign, track, and manage agreements with full audit trails.
+
+## Domain Architecture & Ecosystem
+- **Main Website (`https://nexgn.cloud/`)**: The primary brand web presence introducing Nexgn, its platform vision, product ecosystem, solutions, and resources.
+- **Agreement & E-Signature Application (`https://sign.nexgn.cloud/`)**: The web application where users authenticate, manage documents and templates, send signature requests, sign agreements, manage team permissions, and view audit logs.
+- **API & Backend Services (`https://api.nexgn.cloud/api/v1/`)**: The backend API powering authentication, document workflows, signing sessions, team invitations, and account security.
+
+## Core Application Capabilities (`sign.nexgn.cloud`)
+- **Authentication & Account Security**:
+  - Email and password sign-in and account registration, plus Google sign-in support.
+  - Password recovery and reset workflows.
+  - Two-factor authentication (2FA) verification via 6-digit authenticator codes (`Verify2FA`) alongside session and route guards (`ProtectedRoute`, `PublicRoute`).
+  - Team invitation acceptance and decline flows (`/invite/:token`, `/invite/accept`, `/invite/deny`).
+- **Dashboard & Activity Overview**:
+  - Central summary of document signing activity with status metrics (Total documents, Pending, Signed, Expired) and filterable recent documents (`All`, `Pending`, `Signed`, `Expired`) with pagination.
+  - Quick actions to view, inspect history, download, send reminders, or delete documents.
+- **Document Preparation, Signing & Management**:
+  - Upload and prepare documents, self-sign (`SignYourself`), edit document fields/widgets (`DocumentEditor`), and inspect agreements (`DocumentViewer`).
+  - Track document statuses across drafts, sent/pending/partially signed, completed/signed, and expired states.
+  - External signer experience (`/sign/:token` and `/sign/:token/view`) allowing recipients to review and sign documents via link without requiring a full workspace account.
+- **Reusable Templates**:
+  - Create (`TemplateCreate`), browse (`TemplatesPage`), and inspect (`TemplateView`) standardized agreement templates for recurring workflows.
+- **Contact Book**:
+  - Manage signers and contacts (`ContactBook`) with contact details and reusable recipient records.
+- **Workspace & Settings**:
+  - Configure Profile, Account, Security (including 2FA), Notifications, Billing/Plans (`PricingPage`), Integrations, Team Management, Audit Logs, and Recycle Bin.
+
+## Key Routes & Navigation
+- **Public & Auth Routes**:
+  - `/` (redirects to `/login`)
+  - `/login` and `/login/:id` (sign-in and account verification link support)
+  - `/signup` (account creation)
+  - `/forgot-password`, `/reset-password`, `/reset-password/:id`, `/reset-password/done`
+  - `/verify-2fa` and `/verify-2fa/:id`
+  - `/invite/:token`, `/invite/accept`, `/invite/accept/:token`, `/invite/deny`, `/invite/deny/:token`
+  - `/pricing`
+- **External Signing Routes**:
+  - `/sign/:token`
+  - `/sign/:token/view`
+- **Authenticated Workspace Routes**:
+  - `/dashboard`
+  - `/documents`, `/documents/sign-yourself`, `/documents/:id`, `/documents/:id/edit`
+  - `/templates`, `/templates/new`, `/templates/:id`
+  - `/contacts`
+  - `/settings/*` (`profile`, `account`, `security`, `notifications`, `billing`, `integrations`, `team`, `audit-logs`, `recycle-bin`)
+
+## Frequently Asked Questions (AEO / GEO)
+- **What is the difference between `nexgn.cloud` and `sign.nexgn.cloud`?**
+  `nexgn.cloud` is the main website for Nexgn, while `sign.nexgn.cloud` is the live web application for sending, signing, and managing documents and templates.
+- **How does signing work on `sign.nexgn.cloud`?**
+  Workspace members upload or select a document or template, configure signing fields and recipients, and send the agreement. Recipients open their signing link to review and apply signatures while the platform tracks status and audit events.
+- **Does Nexgn support two-factor authentication (2FA)?**
+  Yes. Accounts with 2FA enabled require a 6-digit authenticator code during sign-in before entering the protected workspace.
