@@ -25,10 +25,12 @@ function RecoverPanel() {
   const is2FA = pathname.includes('verify-2fa')
   const isInviteAccept = pathname.includes('/invite/accept')
   const isInviteDeny = pathname.includes('/invite/deny')
-  const isInviteLanding = pathname.startsWith('/invite/') && !isInviteAccept && !isInviteDeny
+  const isInviteLanding =
+    (pathname === '/invite' || pathname.startsWith('/invite/')) && !isInviteAccept && !isInviteDeny
+  const isForgotPassword = pathname.includes('/forgot-password')
 
   let title = 'Let\u2019s get you back.'
-  let text = 'Forgot your password? No worries, we\u2019ll help you regain access to your account.'
+  let text = 'Reset your password to regain access to your account.'
 
   if (is2FA) {
     title = 'Secure your account.'
@@ -42,6 +44,9 @@ function RecoverPanel() {
   } else if (isInviteLanding) {
     title = 'Let\u2019s get you back.'
     text = 'Your invitation is waiting. Accept it to join your workspace and get started with Nexgn.'
+  } else if (isForgotPassword) {
+    title = 'Let\u2019s get you back.'
+    text = 'Forgot your password? No worries, we\u2019ll help you regain access to your account.'
   }
 
   useGSAP(

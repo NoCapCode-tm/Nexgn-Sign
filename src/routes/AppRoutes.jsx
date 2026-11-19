@@ -10,6 +10,7 @@ import PublicSignLayout from '@/components/layout/PublicSignLayout'
 
 // Turns () => import('./Page') into a React Router lazy route
 const page = (loader) => async () => ({ Component: (await loader()).default })
+const compact = { variant: 'compact' }
 
 const router = createBrowserRouter([
   {
@@ -37,24 +38,12 @@ const router = createBrowserRouter([
               { path: 'login', lazy: page(() => import('@/features/auth/pages/Login')) },
               { path: 'login/:id', lazy: page(() => import('@/features/auth/pages/Login')) },
               { path: 'signup', lazy: page(() => import('@/features/auth/pages/SignUp')) },
-              { path: 'forgot-password', lazy: page(() => import('@/features/auth/pages/ForgotPassword')) },
+              { path: 'forgot-password', handle: compact, lazy: page(() => import('@/features/auth/pages/ForgotPassword')) },
               { path: 'reset-password', lazy: page(() => import('@/features/auth/pages/SetNewPassword')) },
-              {
-                path: 'reset-password/done',
-                handle: { variant: 'compact' },
-                lazy: page(() => import('@/features/auth/pages/ResetPasswordDone')),
-              },
+              { path: 'reset-password/done', handle: compact, lazy: page(() => import('@/features/auth/pages/ResetPasswordDone')) },
               { path: 'reset-password/:id', lazy: page(() => import('@/features/auth/pages/SetNewPassword')) },
-              {
-                path: 'verify-2fa',
-                handle: { variant: 'compact' },
-                lazy: page(() => import('@/features/auth/pages/Verify2FA')),
-              },
-              {
-                path: 'verify-2fa/:id',
-                handle: { variant: 'compact' },
-                lazy: page(() => import('@/features/auth/pages/Verify2FA')),
-              },
+              { path: 'verify-2fa', handle: compact, lazy: page(() => import('@/features/auth/pages/Verify2FA')) },
+              { path: 'verify-2fa/:id', handle: compact, lazy: page(() => import('@/features/auth/pages/Verify2FA')) },
             ],
           },
         ],
@@ -64,31 +53,12 @@ const router = createBrowserRouter([
       {
         element: <AuthLayout />,
         children: [
-          {
-            path: 'invite/accept',
-            handle: { variant: 'compact' },
-            lazy: page(() => import('@/features/auth/pages/InviteAccept')),
-          },
-          {
-            path: 'invite/accept/:token',
-            handle: { variant: 'compact' },
-            lazy: page(() => import('@/features/auth/pages/InviteAccept')),
-          },
-          {
-            path: 'invite/deny',
-            handle: { variant: 'compact' },
-            lazy: page(() => import('@/features/auth/pages/InviteDeny')),
-          },
-          {
-            path: 'invite/deny/:token',
-            handle: { variant: 'compact' },
-            lazy: page(() => import('@/features/auth/pages/InviteDeny')),
-          },
-          {
-            path: 'invite/:token',
-            handle: { variant: 'compact' },
-            lazy: page(() => import('@/features/auth/pages/InviteLanding')),
-          },
+          { path: 'invite', handle: compact, lazy: page(() => import('@/features/auth/pages/InviteLanding')) },
+          { path: 'invite/accept', handle: compact, lazy: page(() => import('@/features/auth/pages/InviteAccept')) },
+          { path: 'invite/accept/:token', handle: compact, lazy: page(() => import('@/features/auth/pages/InviteAccept')) },
+          { path: 'invite/deny', handle: compact, lazy: page(() => import('@/features/auth/pages/InviteDeny')) },
+          { path: 'invite/deny/:token', handle: compact, lazy: page(() => import('@/features/auth/pages/InviteDeny')) },
+          { path: 'invite/:token', handle: compact, lazy: page(() => import('@/features/auth/pages/InviteLanding')) },
         ],
       },
 
