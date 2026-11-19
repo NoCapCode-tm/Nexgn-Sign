@@ -1,32 +1,40 @@
-import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
-  base: '/', // custom domain (sign.nexgn.cloud), so always root
   plugins: [react()],
+  base: '/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  css: {
-    modules: {
-      // lets you write styles.myClass even if the CSS has .my-class
-      localsConvention: 'camelCaseOnly',
-      generateScopedName: '[name]__[local]___[hash:base64:5]',
-    },
-  },
   build: {
     sourcemap: false,
-    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ['react', 'react-dom', 'react-router-dom'],
+        manualChunks(id) {
+          const normalized = id.replace(/\\/g, '/')
+          if (!normalized.includes('node_modules')) return
+          if (
+            normalized.includes('/react/') ||
+            normalized.includes('/react-dom/') ||
+            normalized.includes('/react-router')
+          ) {
+            return 'react-vendor'
+          }
+          if (normalized.includes('/gsap/') || normalized.includes('/@gsap/')) {
+            return 'gsap'
+          }
+          if (normalized.includes('/lucide-react/')) {
+            return 'icons'
+          }
         },
       },
     },
+  },
+  esbuild: {
+    drop: ['console', 'debugger'],
   },
 })
