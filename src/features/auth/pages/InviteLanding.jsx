@@ -119,8 +119,8 @@ export default function InviteLanding() {
 
         <p className={styles.terms} data-reveal>
           By accepting, you agree to Nexgn&apos;s{' '}
-          <a href="/terms" target="_blank" rel="noreferrer">Terms of Service</a> and{' '}
-          <a href="/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>.
+          <a href="https://nexgn.cloud/en/legal/terms" target="_blank" rel="noreferrer">Terms of Service</a> and{' '}
+          <a href="https://nexgn.cloud/en/legal/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</a>.
         </p>
       </div>
 
