@@ -1,4 +1,4 @@
-/* ============ Tokens (light only) ============ */
+/*===== Tokens (light only) ============ */
 .root {
   --auth-surface: #ffffff;
   --auth-surface-2: #f5f6f8;
@@ -79,7 +79,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 0.4em 2.2em 1.8em 3.35em;
+  padding: 0.4em 2.2em 1.4em 3.35em;
 }
 .topbar {
   display: flex;
@@ -104,6 +104,33 @@
   padding-top: 2.8em;
 }
 
+/* ============ Footer links (Terms, Privacy, Support) ============ */
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.35em;
+  margin-top: auto;
+  padding-top: 1.4em;
+}
+.footerLink {
+  font-size: 0.78em;
+  line-height: 1.4;
+  color: var(--auth-muted);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  text-decoration-color: rgba(99, 107, 121, 0.45);
+  transition:
+    color 0.18s ease,
+    text-decoration-color 0.18s ease;
+}
+.footerLink:hover,
+.footerLink:focus-visible {
+  color: var(--auth-text);
+  text-decoration-color: var(--auth-text);
+}
+
 /* ============ Compact card: 56em x 37.9em, two equal halves, content centred ============ */
 .card[data-variant='compact'] {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -111,11 +138,11 @@
   min-height: 37.9em;
 }
 .card[data-variant='compact'] .main {
-  justify-content: center;
-  padding: 1.6em 2em;
+  justify-content: space-between;
+  padding: 1.6em 2em 1.4em;
 }
 .card[data-variant='compact'] .content {
-  flex: none;
+  flex: 1;
   align-content: center;
   padding-top: 0;
 }
@@ -135,14 +162,17 @@
     margin-inline: auto;
   }
   .main {
-    padding: 1.4em 1.4em 2em;
+    padding: 1.4em 1.4em 1.6em;
   }
   .content {
     padding-top: 1.6em;
   }
   .card[data-variant='compact'] .main {
     justify-content: flex-start;
-    padding: 2em 1.4em 2.4em;
+    padding: 2em 1.4em 1.8em;
+  }
+  .footer {
+    padding-top: 1.8em;
   }
 }
 
@@ -157,10 +187,13 @@
     border-radius: 1.4em;
   }
   .main {
-    padding: 1.3em 0.9em 1.6em;
+    padding: 1.3em 0.9em 1.4em;
   }
   .card[data-variant='compact'] .main {
-    padding: 1.7em 0.9em 2em;
+    padding: 1.7em 0.9em 1.6em;
+  }
+  .footer {
+    gap: 1em;
   }
 }
 
@@ -171,7 +204,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card {
+  .card,
+  .footerLink {
     transition: none;
   }
 }

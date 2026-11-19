@@ -139,6 +139,33 @@ export default function AuthLayout() {
           <div className={styles.content}>
             <Outlet />
           </div>
+
+          <footer className={styles.footer} data-anim="fade" aria-label="Legal and support links">
+            <a
+              href="https://nexgn.cloud/en/legal/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.footerLink}
+            >
+              Terms of service
+            </a>
+            <a
+              href="https://nexgn.cloud/en/legal/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.footerLink}
+            >
+              Privacy policy
+            </a>
+            <a
+              href="https://nexgn.cloud/en/contact"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.footerLink}
+            >
+              Contact support
+            </a>
+          </footer>
         </section>
       </main>
     </div>
