@@ -20,8 +20,9 @@
   font-family: 'DM Sans Variable', 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
-  /* 1440 wide = the design (14px). Scales linearly to 4K (about 37px). Never below 13px. */
-  font-size: clamp(13px, calc(100vw / 102.86), 56px);
+  /* 14px = the design. Stays 14px from small laptops up to 1920 wide, then scales:
+     2560 wide = 18.7px, 3840 (4K) = 28px, capped at 56px. */
+  font-size: min(56px, max(14px, calc(100vw / 137.14)));
   transition: grid-template-columns 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .shell,
@@ -85,6 +86,14 @@
   .backdrop[data-open='true'] {
     opacity: 1;
     pointer-events: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .shell,
+  .shell[data-collapsed='true'] {
+    font-size: 14px;
+    padding: 0.7em;
   }
 }
 

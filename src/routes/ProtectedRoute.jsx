@@ -8,6 +8,7 @@ export default function ProtectedRoute() {
   const location = useLocation()
 
   if (loading) return <LoadingOverlay message="Verifying your session..." />
+  
   if (!user) return <Navigate to="/login" replace state={{ from: location }} />
 
   // 2FA users must verify their code in this browser before entering the app

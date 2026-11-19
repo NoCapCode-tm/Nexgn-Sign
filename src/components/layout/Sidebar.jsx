@@ -5,6 +5,8 @@ import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import clsx from 'clsx'
 
+import logoFull from '@/assets/Sidebar/logo.svg'
+import logoCompact from '@/assets/Sidebar/compact-logo.svg'
 import { PRIMARY_NAV, SECONDARY_NAV } from '@/config/navigation.config'
 import { useAuth } from '@/hooks/useAuth'
 import { getDisplayName, getInitials } from '@/utils/formatters'
@@ -180,9 +182,9 @@ export default function Sidebar({ plan, collapsed, onToggleCollapse, open, onClo
   return (
     <aside className={styles.sidebar} ref={root} data-collapsed={collapsed} data-open={open} aria-label="Main navigation">
       <div className={styles.head}>
-        {/* Expanded: logo + round toggle */}
+        {/* Expanded: full logo + round toggle */}
         <Link to="/dashboard" className={styles.logo} aria-label="Nexgn dashboard" onClick={onClose}>
-          <img src="/brand/logo.svg" alt="Nexgn" />
+          <img src={logoFull} alt="Nexgn" />
         </Link>
         <button
           type="button"
@@ -194,10 +196,10 @@ export default function Sidebar({ plan, collapsed, onToggleCollapse, open, onClo
           <ChevronLeft aria-hidden="true" />
         </button>
 
-        {/* Collapsed rail: logo mark, turns into an expand arrow on hover */}
+        {/* Collapsed rail: compact logo, turns into an expand arrow on hover */}
         <button type="button" className={styles.markBtn} onClick={onToggleCollapse} aria-label="Expand sidebar" data-tip="Expand">
           <span className={styles.mark} data-mark aria-hidden="true">
-            <img src="/brand/logo.svg" alt="" />
+            <img src={logoCompact} alt="" />
           </span>
           <ChevronRight className={styles.markArrow} aria-hidden="true" />
         </button>

@@ -25,16 +25,16 @@
   margin: 1.65em 0 2.07em;
   padding: 0 0.8em;
 }
+
+/* Full logo: the width comes from the design (about 87px at 14px) */
 .logo {
   display: block;
-  height: 1.6em;
-  overflow: hidden;
+  width: 6.4em;
 }
 .logo img {
   display: block;
-  height: 100%;
-  width: auto;
-  max-width: none;
+  width: 100%;
+  height: auto;
 }
 
 .toggle {
@@ -64,15 +64,15 @@
   transform: translateX(-0.12em);
 }
 
-/* Rail logo mark: shows only the icon part of the logo; hidden until the rail is active */
+/* Rail logo (compact-logo.svg): hidden until the rail is active; becomes an expand arrow on hover */
 .markBtn {
   position: relative;
   display: none;
-  width: 2.8em;
-  height: 2.4em;
+  width: 3.5em;
+  height: 3.5em;
   padding: 0;
   border: 0;
-  border-radius: 0.8em;
+  border-radius: 1em;
   background: transparent;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -80,15 +80,14 @@
 .mark {
   position: absolute;
   inset: 0;
-  display: block;
-  overflow: hidden;
+  display: grid;
+  place-items: center;
   transition: opacity 0.25s, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .mark img {
   display: block;
-  height: 100%;
-  width: auto;
-  max-width: none;
+  width: 2.3em;
+  height: auto;
 }
 .markArrow {
   position: absolute;
@@ -428,6 +427,8 @@
 @media (min-width: 1024px) {
   .sidebar[data-collapsed='true'] .head {
     justify-content: center;
+    height: 3.5em;
+    margin: 1.4em 0 1.6em;
     padding: 0;
   }
   .sidebar[data-collapsed='true'] .logo,
@@ -529,6 +530,40 @@
   }
   .close {
     display: grid;
+  }
+}
+
+/* ---------- Short screens (laptops): compress, then drop the plan card ---------- */
+@media (min-width: 1024px) and (max-height: 820px) {
+  .head {
+    margin: 1.2em 0 1.3em;
+  }
+  .nav,
+  .secondary {
+    gap: 0.3em;
+  }
+  .link {
+    height: 3.05em;
+  }
+  .plan {
+    margin-bottom: 0.7em;
+    padding: 0.9em;
+  }
+  .user {
+    height: 4.2em;
+  }
+  .secondary {
+    margin-bottom: 0.7em;
+  }
+}
+@media (min-width: 1024px) and (max-height: 700px) {
+  .planNote {
+    display: none;
+  }
+}
+@media (min-width: 1024px) and (max-height: 620px) {
+  .plan {
+    display: none;
   }
 }
 

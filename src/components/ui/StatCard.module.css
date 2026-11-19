@@ -1,10 +1,3 @@
-.defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
 /* Each tone sets the colours the hover state floods with */
 .total {
   --accent: #fee6ad;
@@ -53,13 +46,13 @@
   scale: 0.985;
 }
 
-/* Top-right tab (sits under the notched body) */
+/* Top-right tab (sits under the notched body). Sized in em so it stays the same at any card width. */
 .tab {
   position: absolute;
   top: 0;
   right: 0;
-  width: 38%;
-  height: 34%;
+  width: 7.05em;
+  height: 4.2em;
   overflow: hidden;
   border-radius: 0 1.2em 0 0;
   background: #fffaf6;
@@ -105,6 +98,8 @@
 .card[data-active='true'] .shadow {
   filter: drop-shadow(0 0.15em 0.2em rgba(70, 48, 24, 0.12)) drop-shadow(0 1.3em 1.6em rgba(70, 48, 24, 0.24));
 }
+
+/* The notched outline is set from StatCard.jsx (useNotch). The inset below is only the first-paint fallback. */
 .body {
   position: absolute;
   inset: 0;
@@ -114,7 +109,7 @@
   padding: 2em 0 0 0.86em;
   overflow: hidden;
   background: #fbf5f0;
-  clip-path: url(#nexgn-kpi-body);
+  clip-path: inset(0 round 1.2em);
 }
 .fillBody {
   position: absolute;

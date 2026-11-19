@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import { gsap } from 'gsap'
@@ -12,25 +12,51 @@ gsap.registerPlugin(useGSAP)
 
 const trendText = (n) => `${n < 0 ? '-' : '+'}${String(Math.abs(Math.round(n))).padStart(2, '0')}%`
 
-/** Render once per page: it defines the card's notched shape. */
+/** Kept so existing imports keep working. The notched shape is now drawn per card (see useNotch). */
 export function StatCardDefs() {
-  return (
-    <svg className={styles.defs} width="0" height="0" aria-hidden="true" focusable="false">
-      <defs>
-        <clipPath id="nexgn-kpi-body" clipPathUnits="objectBoundingBox">
-          <path d="M0.0646,0 H0.625 C0.68,0 0.685,0.29 0.75,0.29 H0.9354 Q1,0.29 1,0.387 V0.903 Q1,1 0.9354,1 H0.0646 Q0,1 0,0.903 V0.097 Q0,0 0.0646,0 Z" />
-        </clipPath>
-      </defs>
-    </svg>
-  )
+  return null
+}
+
+// Draws the notched outline in real pixels (sized from the card's em), so the corners stay round at any width
+function useNotch(cardRef, bodyRef) {
+  useLayoutEffect(() => {
+    const card = cardRef.current
+    const body = bodyRef.current
+    if (!card || !body) return undefined
+
+    const draw = () => {
+      const W = card.offsetWidth
+      const H = card.offsetHeight
+      if (!W || !H) return
+      const u = parseFloat(getComputedStyle(card).fontSize) || 14
+      const r = 1.2 * u // corner radius
+      const nx = Math.max(r * 2, W - 7 * u) // where the top edge turns into the notch
+      const ny = 3.6 * u // notch depth
+      const f = (n) => n.toFixed(2)
+      body.style.clipPath =
+        `path('M${f(r)} 0 H${f(nx)} ` +
+        `C${f(nx + 1.02 * u)} 0 ${f(nx + 1.11 * u)} ${f(ny)} ${f(nx + 2.32 * u)} ${f(ny)} ` +
+        `H${f(W - r)} Q${f(W)} ${f(ny)} ${f(W)} ${f(ny + r)} ` +
+        `V${f(H - r)} Q${f(W)} ${f(H)} ${f(W - r)} ${f(H)} ` +
+        `H${f(r)} Q0 ${f(H)} 0 ${f(H - r)} V${f(r)} Q0 0 ${f(r)} 0 Z')`
+    }
+
+    draw()
+    const ro = new ResizeObserver(draw)
+    ro.observe(card)
+    return () => ro.disconnect()
+  }, [cardRef, bodyRef])
 }
 
 export default function StatCard({ label, value, trend, to, tone = 'total', Icon, loading = false }) {
   const root = useRef(null)
+  const bodyRef = useRef(null)
   const numRef = useRef(null)
   const shown = useRef(0)
   const timeline = useRef(null)
   const [active, setActive] = useState(false)
+
+  useNotch(root, bodyRef)
 
   // Hover choreography: tab floods first, then the body, while every element reacts
   useGSAP(
@@ -122,7 +148,7 @@ export default function StatCard({ label, value, trend, to, tone = 'total', Icon
       </span>
 
       <span className={styles.shadow}>
-        <span className={styles.body}>
+        <span className={styles.body} ref={bodyRef}>
           <span className={styles.fillBody} data-fill-body aria-hidden="true" />
           <span className={styles.icon} data-icon>
             <Icon className={styles.glyph} data-icon-glyph aria-hidden="true" />
