@@ -66,13 +66,7 @@ export default function AppLayout() {
         onClose={closeNav}
       />
 
-      {navOpen && (
-        <div
-          className={styles.backdrop}
-          onClick={closeNav}
-          aria-hidden="true"
-        />
-      )}
+      <div className={styles.backdrop} data-open={navOpen} onClick={closeNav} aria-hidden="true" />
 
       <main className={styles.main}>
         <Outlet context={{ openNav, closeNav }} />

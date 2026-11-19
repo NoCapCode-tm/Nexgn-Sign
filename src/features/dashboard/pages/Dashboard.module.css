@@ -1,142 +1,168 @@
 .page {
+  container: page / inline-size;
   display: flex;
   flex-direction: column;
-  gap: 1.6em;
+  gap: 1.65em;
   min-width: 0;
 }
 
-/* ---------- 4-Column KPI Grid ---------- */
-.statsGrid {
+/* Design: cards 260 x 173 with 21px gaps = 18.6em x 12.4em, 1.5em */
+.stats {
+  --kpi-h: 12.4em;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1.25em;
+  gap: 1.5em;
+}
+@container page (max-width: 62em) {
+  .stats {
+    --kpi-h: 11em;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1em;
+  }
+}
+@container page (max-width: 30em) {
+  .stats {
+    --kpi-h: 10.4em;
+    gap: 0.85em;
+  }
 }
 
-.recentWrap {
+/* ---------- Errors / restricted ---------- */
+.alert {
   display: flex;
-  flex-direction: column;
-  gap: 0.9em;
-  min-width: 0;
-}
-
-/* ---------- Empty / Restricted State ---------- */
-.emptyState {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 3.5em 1.5em;
-  border-radius: 1.45em;
-  background: var(--app-surface, #ffffff);
+  gap: 0.7em;
+  padding: 0.8em 1em;
+  border: 1px solid color-mix(in srgb, #d92d20 30%, transparent);
+  border-radius: 0.9em;
+  background: rgba(217, 45, 32, 0.07);
+  color: #b42318;
+}
+.alert > svg {
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+}
+.alert span {
+  flex: 1;
+}
+.alert button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  height: 2.1em;
+  padding: 0 0.9em;
+  border: 1px solid currentColor;
+  border-radius: 0.6em;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.alert button svg {
+  width: 1em;
+  height: 1em;
+}
+
+.restricted {
+  display: grid;
+  justify-items: center;
+  gap: 0.4em;
+  padding: 4em 1.5em;
+  border-radius: 1.6em;
+  background: var(--app-surface);
   text-align: center;
 }
-
-.emptyIcon {
+.restricted h3 {
+  margin: 0;
+  font-size: 1.1em;
+}
+.restricted p {
+  margin: 0;
+  color: var(--app-muted);
+}
+.restrictedIcon {
   display: grid;
   place-items: center;
   width: 3.2em;
   height: 3.2em;
-  margin-bottom: 0.9em;
+  margin-bottom: 0.5em;
   border-radius: 0.9em;
   background: #f2f4f7;
-  color: var(--app-ink, #101828);
+  color: var(--app-ink);
+}
+.restrictedIcon svg {
+  width: 1.4em;
+  height: 1.4em;
 }
 
-.emptyState h3 {
-  margin: 0 0 0.3em;
-  font-size: 1.05em;
-  font-weight: 700;
-}
-
-.emptyState p {
-  margin: 0;
-  color: var(--app-muted, #667085);
-  font-size: 0.9em;
-}
-
-/* ---------- Pagination Footer ---------- */
+/* ---------- Pagination (rendered inside the Recent documents card) ---------- */
 .pagination {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1em;
-  padding: 0.85em 1.4em;
-  border: 1px solid var(--app-line, #eaecf0);
-  border-radius: 1.15em;
-  background: var(--app-surface, #ffffff);
+  gap: 0.8em 1em;
+  padding: 0.9em 1.75em;
+  border-top: 1px solid var(--app-line);
+  color: var(--app-muted);
+  font-size: 0.95em;
+  font-weight: 500;
 }
-
-.paginationLeft,
-.paginationRight {
+.pageSize {
   display: flex;
   align-items: center;
-  gap: 0.9em;
+  gap: 0.8em;
 }
-
-.paginationLabel,
-.paginationInfo {
-  color: var(--app-muted, #667085);
-  font-size: 0.88em;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-
-.paginationSelect {
+.pageSize select {
   height: 2.2em;
-  padding: 0 0.65em;
-  border: 1px solid var(--app-line, #e5e7eb);
+  padding: 0 0.6em;
+  border: 1px solid var(--app-line);
   border-radius: 0.5em;
-  background: #ffffff;
-  color: var(--app-ink, #111827);
+  background: #fff;
+  color: var(--app-ink);
   font: inherit;
-  font-size: 0.88em;
   font-weight: 600;
   cursor: pointer;
 }
-
-.paginationControls {
+.pageNav {
   display: flex;
-  gap: 0.4em;
+  align-items: center;
+  gap: 0.5em;
 }
-
+.pageInfo {
+  margin-right: 0.6em;
+  font-variant-numeric: tabular-nums;
+}
 .pageBtn {
   display: grid;
   place-items: center;
   width: 2.2em;
   height: 2.2em;
   padding: 0;
-  border: 1px solid var(--app-line, #e5e7eb);
+  border: 1px solid var(--app-line);
   border-radius: 0.5em;
-  background: #ffffff;
-  color: var(--app-ink, #374151);
+  background: #fff;
+  color: var(--app-ink);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
 }
-
+.pageBtn svg {
+  width: 1.2em;
+  height: 1.2em;
+}
 .pageBtn:hover:not(:disabled) {
   background: #f9fafb;
   border-color: #d0d5dd;
 }
-
 .pageBtn:disabled {
   background: #f9fafb;
-  color: #9ca3af;
+  color: #b4b8c2;
   cursor: not-allowed;
 }
-
-@media (max-width: 1100px) {
-  .statsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 560px) {
-  .statsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.85em;
-  }
-  .pagination {
-    padding: 0.75em 1em;
-  }
+.pageSize select:focus-visible,
+.pageBtn:focus-visible {
+  outline: 2px solid var(--app-ink);
+  outline-offset: 2px;
 }

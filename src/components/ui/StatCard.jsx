@@ -18,7 +18,7 @@ export function StatCardDefs() {
     <svg className={styles.defs} width="0" height="0" aria-hidden="true" focusable="false">
       <defs>
         <clipPath id="nexgn-kpi-body" clipPathUnits="objectBoundingBox">
-          <path d="M0.061,0 H0.61 C0.67,0 0.675,0.29 0.74,0.29 H0.939 Q1,0.29 1,0.382 V0.908 Q1,1 0.939,1 H0.061 Q0,1 0,0.908 V0.092 Q0,0 0.061,0 Z" />
+          <path d="M0.0646,0 H0.625 C0.68,0 0.685,0.29 0.75,0.29 H0.9354 Q1,0.29 1,0.387 V0.903 Q1,1 0.9354,1 H0.0646 Q0,1 0,0.903 V0.097 Q0,0 0.0646,0 Z" />
         </clipPath>
       </defs>
     </svg>

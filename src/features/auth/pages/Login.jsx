@@ -6,10 +6,11 @@ import { useGSAP } from '@gsap/react'
 import { CircleAlert, Eye, EyeOff } from 'lucide-react'
 import clsx from 'clsx'
 
-import { useAuth } from '@/hooks/useAuth'
 import { authService } from '@/services/auth.service'
+import { useAuth } from '@/hooks/useAuth'
 import { env } from '@/config/env.config'
 import { getPostLoginPath } from '@/utils/postLoginPath'
+import { clear2FAVerified, has2FA } from '@/utils/twoFactor'
 import { motion, prefersReducedMotion } from '@/utils/motion'
 import LoadingOverlay from '@/components/common/LoadingOverlay'
 import styles from './Login.module.css'
@@ -30,10 +31,10 @@ function GoogleIcon() {
 }
 
 export default function Login() {
-  const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const { id } = useParams() // Supports /login/:id account activation links
+  const { id } = useParams() // /login/:id is the account verification link
+  const { refreshUser } = useAuth()
 
   const root = useRef(null)
   const formRef = useRef(null)
@@ -45,7 +46,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  // Account verification on mount if :id is present in URL (from Login-old.jsx)
+  // Account verification link: /login/:id
   useEffect(() => {
     if (!id) return
     ;(async () => {
@@ -81,15 +82,11 @@ export default function Login() {
     { scope: root },
   )
 
-  // Server error banner animates in
+  // Server error banner
   useGSAP(
     () => {
       if (!serverError || prefersReducedMotion()) return
-      gsap.fromTo(
-        '[data-alert]',
-        { y: -8, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out' },
-      )
+      gsap.fromTo('[data-alert]', { y: -8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out' })
     },
     { scope: root, dependencies: [serverError] },
   )
@@ -123,6 +120,16 @@ export default function Login() {
     return next
   }
 
+  // Back to the page they tried to open, otherwise wherever getPostLoginPath says
+  const resolveTarget = (me) => {
+    const target = getPostLoginPath(me)
+    const from = location.state?.from
+    if (target === '/dashboard' && from?.pathname && !['/login', '/signup'].includes(from.pathname)) {
+      return `${from.pathname}${from.search ?? ''}${from.hash ?? ''}`
+    }
+    return target
+  }
+
   const onSubmit = async (e) => {
     e.preventDefault()
     if (submitting) return
@@ -138,25 +145,32 @@ export default function Login() {
     setSubmitting(true)
     setServerError('')
     try {
-      const email = values.email.trim()
-      // Use AuthContext login if available, otherwise call authService.login directly
-      const data = login
-        ? await login({ email, password: values.password, remember: values.remember })
-        : await authService.login({ email, password: values.password, remember: values.remember })
+      const data = await authService.login({
+        email: values.email.trim(),
+        password: values.password,
+        remember: values.remember,
+      })
 
-      const user = data?.message ?? data?.user ?? data
+      const user =
+        (typeof data?.message === 'object' && data.message !== null ? data.message : null) ||
+        data?.user ||
+        (typeof data === 'object' && data !== null ? data : null)
 
-      if (user?._id) {
-        localStorage.setItem('nexgn_user_id', user._id)
-      }
+      const targetId = user?._id || user?.id || data?.id || data?.userId || ''
+      if (targetId) localStorage.setItem('nexgn_user_id', targetId)
 
-      if (data?.requires2FA || user?.twoFactorEnabled) {
-        const targetId = user?._id || data?.id || ''
+      // Every password login starts unverified
+      clear2FAVerified()
+
+      if (data?.requires2FA === true || has2FA(data) || has2FA(user)) {
         navigate(targetId ? `/verify-2fa/${targetId}` : '/verify-2fa', {
-          state: { email, id: targetId, from: location.state?.from },
+          replace: true,
+          state: { email: values.email.trim(), id: targetId, from: location.state?.from },
         })
       } else {
-        navigate(getPostLoginPath(user || location), { replace: true })
+        // Tell the app a user is now logged in, otherwise ProtectedRoute bounces back to /login
+        const me = await refreshUser()
+        navigate(resolveTarget(me), { replace: true })
       }
     } catch (err) {
       setServerError(err.userMessage || 'Login unsuccessful')
@@ -205,7 +219,9 @@ export default function Login() {
             aria-describedby={errors.email ? ids.emailErr : undefined}
           />
           {errors.email && (
-            <p id={ids.emailErr} className={styles.error}>{errors.email}</p>
+            <p id={ids.emailErr} className={styles.error}>
+              {errors.email}
+            </p>
           )}
         </div>
 
@@ -235,7 +251,9 @@ export default function Login() {
             </button>
           </div>
           {errors.password && (
-            <p id={ids.passwordErr} className={styles.error}>{errors.password}</p>
+            <p id={ids.passwordErr} className={styles.error}>
+              {errors.password}
+            </p>
           )}
         </div>
 
@@ -272,9 +290,7 @@ export default function Login() {
         Don&apos;t have an account ? <Link to="/signup">Sign-up</Link>
       </p>
 
-      {submitting && (
-        <LoadingOverlay message="Authenticating enterprise credentials..." />
-      )}
+      {submitting && <LoadingOverlay message="Authenticating enterprise credentials..." />}
     </div>
   )
 }

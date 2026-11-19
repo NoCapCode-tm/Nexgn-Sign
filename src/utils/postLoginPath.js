@@ -1,8 +1,16 @@
-// Where to send the user after login: the page they were trying to open, or the dashboard.
-export function getPostLoginPath(location) {
-  const from = location?.state?.from
-  if (from?.pathname && !['/login', '/signup'].includes(from.pathname)) {
-    return `${from.pathname}${from.search ?? ''}${from.hash ?? ''}`
+import { has2FA, is2FAVerified } from './twoFactor'
+
+export function getPostLoginPath(user, { twoFactorVerified } = {}) {
+  const userId = user?._id || user?.id || localStorage.getItem('nexgn_user_id')
+  const verified = twoFactorVerified ?? is2FAVerified(user)
+
+  if (has2FA(user) && !verified && userId) {
+    return `/verify-2fa/${userId}`
   }
+
+  if (user?.hasSeenBilling === false) {
+    return '/pricing'
+  }
+
   return '/dashboard'
 }

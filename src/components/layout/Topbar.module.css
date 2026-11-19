@@ -1,14 +1,15 @@
 .bar {
+  --ctl: 3.14em;
   container: topbar / inline-size;
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas: 'head actions';
   align-items: start;
-  gap: 1em;
-  padding-bottom: 1em;
+  column-gap: 1em;
+  padding-bottom: 0.45em;
 }
-.burger {
+.iconBtn.burger {
   display: none;
   grid-area: burger;
 }
@@ -20,20 +21,20 @@
   grid-area: actions;
   display: flex;
   align-items: flex-start;
-  gap: 0.45em;
+  gap: 0.63em;
 }
 
 .title {
   margin: 0;
-  font-size: 1.65em;
+  font-size: 2.15em;
   font-weight: 700;
-  line-height: 1.5;
+  line-height: 1.46; /* centres on the 3.14em controls */
   letter-spacing: -0.025em;
 }
 .subtitle {
-  margin: 0.15em 0 0;
+  margin: 0.05em 0 0;
   color: var(--app-muted);
-  font-size: 0.97em;
+  font-size: 1.1em;
 }
 
 /* ---------- Shared button look ---------- */
@@ -42,11 +43,11 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: 2.5em;
-  height: 2.5em;
+  width: var(--ctl);
+  height: var(--ctl);
   padding: 0;
   border: 0;
-  border-radius: 0.8em;
+  border-radius: 0.9em;
   background: #fff;
   color: #111827;
   cursor: pointer;
@@ -61,8 +62,8 @@
 }
 .iconBtn svg,
 .bell svg {
-  width: 1.25em;
-  height: 1.25em;
+  width: 1.3em;
+  height: 1.3em;
 }
 .iconBtn:focus-visible,
 .bell:focus-visible,
@@ -81,10 +82,10 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 2.5em;
-  height: 2.5em;
+  width: var(--ctl);
+  height: var(--ctl);
   overflow: hidden;
-  border-radius: 0.8em;
+  border-radius: 0.9em;
   background: #fff;
   box-shadow: 0 0.1em 0.3em rgba(16, 24, 40, 0.05), 0 0.9em 1.5em -1.1em rgba(16, 24, 40, 0.28);
 }
@@ -93,8 +94,8 @@
   display: grid;
   flex: none;
   place-items: center;
-  width: 2.5em;
-  height: 2.5em;
+  width: var(--ctl);
+  height: var(--ctl);
   padding: 0;
   border: 0;
   background: transparent;
@@ -104,11 +105,11 @@
 }
 .searchBtn svg,
 .searchClose svg {
-  width: 1.25em;
-  height: 1.25em;
+  width: 1.3em;
+  height: 1.3em;
 }
 .searchClose {
-  width: 2.1em;
+  width: 2.4em;
   color: var(--app-muted);
 }
 .searchInput {
@@ -137,18 +138,20 @@
 /* ---------- Language ---------- */
 .lang {
   position: relative;
+  height: var(--ctl);
 }
 .langBtn {
   display: flex;
   align-items: center;
-  gap: 0.45em;
-  height: 2.5em;
-  padding: 0 0.8em 0 1em;
+  gap: 0.5em;
+  height: 100%;
+  padding: 0 0.95em 0 1.15em;
   border: 0;
-  border-radius: 0.8em;
+  border-radius: 0.9em;
   background: #fff;
   color: #111827;
   font: inherit;
+  font-size: 1.1em;
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 0.1em 0.3em rgba(16, 24, 40, 0.05), 0 0.9em 1.5em -1.1em rgba(16, 24, 40, 0.28);
@@ -168,10 +171,10 @@
   right: 0;
   z-index: 20;
   display: grid;
-  min-width: 9em;
-  padding: 0.35em;
+  min-width: 9.5em;
+  padding: 0.4em;
   border: 1px solid var(--app-line);
-  border-radius: 0.9em;
+  border-radius: 1em;
   background: #fff;
   box-shadow: 0 1.4em 2.4em -1em rgba(16, 24, 40, 0.35);
   opacity: 0;
@@ -187,10 +190,10 @@
   transition-delay: 0s;
 }
 .langOpt {
-  height: 2.4em;
-  padding: 0 0.8em;
+  height: 2.5em;
+  padding: 0 0.9em;
   border: 0;
-  border-radius: 0.6em;
+  border-radius: 0.65em;
   background: transparent;
   color: #1f2430;
   font: inherit;
@@ -210,18 +213,19 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding: 0.25em;
-  border-radius: 0.9em;
+  height: var(--ctl);
+  padding: 0.3em;
+  border-radius: 1em;
   background: #fff;
   box-shadow: 0 0.1em 0.3em rgba(16, 24, 40, 0.05), 0 0.9em 1.5em -1.1em rgba(16, 24, 40, 0.28);
 }
 .themeThumb {
   position: absolute;
-  top: 0.25em;
-  bottom: 0.25em;
-  left: 0.25em;
-  width: calc(50% - 0.25em);
-  border-radius: 0.65em;
+  top: 0.3em;
+  bottom: 0.3em;
+  left: 0.3em;
+  width: calc(50% - 0.3em);
+  border-radius: 0.72em;
   background: #eef0f4;
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -233,8 +237,7 @@
   z-index: 1;
   display: grid;
   place-items: center;
-  width: 2em;
-  height: 2em;
+  width: 2.5em;
   padding: 0;
   border: 0;
   background: transparent;
@@ -246,17 +249,17 @@
   color: #111827;
 }
 .themeBtn svg {
-  width: 1.15em;
-  height: 1.15em;
+  width: 1.25em;
+  height: 1.25em;
 }
 
 /* ---------- Bell ---------- */
 .dot {
   position: absolute;
-  top: 0.6em;
-  right: 0.65em;
-  width: 0.5em;
-  height: 0.5em;
+  top: 0.8em;
+  right: 0.85em;
+  width: 0.55em;
+  height: 0.55em;
   border-radius: 50%;
   background: var(--app-brand);
   box-shadow: 0 0 0 2px #fff;
@@ -268,7 +271,7 @@
   }
   70%,
   100% {
-    box-shadow: 0 0 0 2px #fff, 0 0 0 0.6em rgba(242, 15, 27, 0);
+    box-shadow: 0 0 0 2px #fff, 0 0 0 0.7em rgba(242, 15, 27, 0);
   }
 }
 
@@ -277,16 +280,15 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.7em;
-  height: 2.38em;
-  padding: 0 1.15em;
+  gap: 0.75em;
+  height: var(--ctl);
+  padding: 0 1.6em;
   overflow: hidden;
   border: 0;
-  border-radius: 0.76em;
+  border-radius: 0.9em;
   background: var(--app-brand);
   color: #fff;
   font: inherit;
-  font-size: 1.05em;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
@@ -294,9 +296,12 @@
   -webkit-tap-highlight-color: transparent;
   transition: background 0.2s, transform 0.2s, box-shadow 0.25s;
 }
+.upload span {
+  font-size: 1.16em;
+}
 .upload svg {
-  width: 1.25em;
-  height: 1.25em;
+  width: 1.4em;
+  height: 1.4em;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .upload:hover {
@@ -326,43 +331,52 @@
 /* ---------- Tablet: hamburger appears ---------- */
 @media (max-width: 1023px) {
   .bar {
+    --ctl: 2.9em;
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas: 'burger head actions';
+    padding-bottom: 0.2em;
   }
-  .burger {
+  .iconBtn.burger {
     display: grid;
+  }
+  .title {
+    font-size: 1.7em;
+    line-height: 1.7;
   }
 }
 
 /* ---------- Phone: row 1 = burger + actions, row 2 = heading ---------- */
 @media (max-width: 760px) {
   .bar {
+    --ctl: 2.7em;
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
       'burger actions'
       'head head';
-    row-gap: 1em;
+    row-gap: 0.9em;
   }
   .actions {
     justify-self: end;
+    gap: 0.5em;
   }
   .lang,
   .theme {
     display: none;
   }
   .upload {
-    width: 2.5em;
-    height: 2.5em;
+    width: var(--ctl);
     justify-content: center;
     padding: 0;
-    font-size: 1em;
   }
   .upload span {
     display: none;
   }
   .title {
-    font-size: 1.45em;
+    font-size: 1.6em;
     line-height: 1.25;
+  }
+  .subtitle {
+    font-size: 1em;
   }
   .search[data-open='true'] {
     position: absolute;

@@ -15,10 +15,10 @@ const router = createBrowserRouter([
   {
     HydrateFallback: LoadingOverlay,
     children: [
-      // 1. DEFAULT ROOT REDIRECT (Forces the app to open Login by default)
+      // 1. DEFAULT ROOT REDIRECT
       { path: '/', element: <Navigate to="/login" replace /> },
 
-      // External signers (no login, never redirected)
+      // External signers (no login required)
       {
         element: <PublicSignLayout />,
         children: [
@@ -27,7 +27,7 @@ const router = createBrowserRouter([
         ],
       },
 
-      // Auth pages (logged-in users get redirected away to dashboard by PublicRoute)
+      // Auth pages (logged-in users get redirected away by PublicRoute)
       {
         element: <PublicRoute />,
         children: [
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
         ],
       },
 
-      // Invites (open to anyone, logged in or not)
+      // Invites (open to anyone, placed inside AuthLayout with compact variant)
       {
         element: <AuthLayout />,
         children: [
@@ -95,7 +95,7 @@ const router = createBrowserRouter([
       // Public pricing page
       { path: 'pricing', lazy: page(() => import('@/features/pricing/pages/PricingPage')) },
 
-      // Logged-in app
+      // Logged-in app (Protected)
       {
         element: <ProtectedRoute />,
         children: [

@@ -2,6 +2,16 @@ import { apiClient } from './apiClient'
 
 const PENDING_STATUSES = ['pending', 'sent', 'partially_signed']
 
+const personLabel = (p) => (typeof p === 'string' ? p : p?.name || p?.fullName || p?.email || '')
+
+function pickSigners(raw) {
+  const list = raw.signers ?? raw.recipients ?? raw.signatories ?? (raw.signer ? [raw.signer] : [])
+  const names = (Array.isArray(list) ? list : [list]).map(personLabel).filter(Boolean)
+  if (!names.length && raw.signerName) names.push(raw.signerName)
+  if (!names.length && raw.signerEmail) names.push(raw.signerEmail)
+  return names
+}
+
 export function normalizeDocument(raw = {}) {
   const rawStatus = String(raw.status ?? raw.overallStatus ?? 'pending').toLowerCase()
 
@@ -14,12 +24,7 @@ export function normalizeDocument(raw = {}) {
     status = 'pending'
   }
 
-  const signer =
-    raw.signer?.name ??
-    raw.signerName ??
-    raw.signers?.[0]?.name ??
-    raw.signers?.[0]?.email ??
-    raw.signer
+  const signerNames = pickSigners(raw)
 
   return {
     ...raw,
@@ -28,7 +33,9 @@ export function normalizeDocument(raw = {}) {
     title: raw.title ?? raw.name ?? raw.documentName ?? 'Untitled document',
     name: raw.name ?? raw.title ?? raw.documentName ?? 'Untitled document',
     note: raw.note ?? raw.message ?? '',
-    signer: typeof signer === 'string' && signer.trim() ? signer : '—',
+    signer: signerNames.length
+      ? signerNames[0] + (signerNames.length > 1 ? ` +${signerNames.length - 1}` : '')
+      : '—',
     signedAt: raw.signedAt ?? raw.updatedAt ?? raw.createdAt ?? null,
     owner: Array.isArray(raw.owners)
       ? raw.owners.map((o) => o?.name ?? String(o))

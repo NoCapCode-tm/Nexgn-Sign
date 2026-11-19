@@ -4,10 +4,12 @@ import { Helmet } from 'react-helmet-async'
 import {
   ChevronLeft,
   ChevronRight,
+  CircleAlert,
   Clock,
   FileCheck2,
   FileText,
   FileX2,
+  RefreshCw,
   ShieldAlert,
 } from 'lucide-react'
 import { gsap } from 'gsap'
@@ -17,223 +19,182 @@ import Topbar from '@/components/layout/Topbar'
 import StatCard, { StatCardDefs } from '@/components/ui/StatCard'
 import Toast from '@/components/ui/Toast'
 import RecentDocuments from '@/features/dashboard/components/RecentDocuments'
-import { authService } from '@/services/auth.service'
+import { useAuth } from '@/hooks/useAuth'
 import { documentsService, normalizeDocument } from '@/services/documents.service'
+import { getDisplayName } from '@/utils/formatters'
 import { prefersReducedMotion } from '@/utils/motion'
+import { trendPercent } from '@/utils/trends'
 import styles from './Dashboard.module.css'
 
 gsap.registerPlugin(useGSAP)
 
+const PAGE_SIZES = [5, 10, 20]
+const KPIS = [
+  { key: 'total', label: 'Total documents', Icon: FileText, to: '/documents' },
+  { key: 'pending', label: 'Pending', Icon: Clock, to: '/documents?status=pending' },
+  { key: 'signed', label: 'Signed', Icon: FileCheck2, to: '/documents?status=signed' },
+  { key: 'expired', label: 'Expired', Icon: FileX2, to: '/documents?status=expired' },
+]
+
+const isExpiredRequest = (r) =>
+  r?.overallStatus === 'Expired' || String(r?.status ?? '').toLowerCase() === 'expired'
+
 export default function Dashboard() {
   const root = useRef(null)
   const navigate = useNavigate()
+  const { user } = useAuth()
 
-  const [user, setUser] = useState(null)
-  const [rawDocs, setRawDocs] = useState([])
-  const [expiredCount, setExpiredCount] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState(null)
+  const [loadError, setLoadError] = useState(null)
+  const [reloadKey, setReloadKey] = useState(0)
   const [toast, setToast] = useState(null)
-
-  // Filter & Pagination States
   const [filter, setFilter] = useState('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(5)
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(5)
 
-  const showToast = useCallback((text, tone = 'ok') => {
-    setToast({ id: Date.now(), text, tone })
-  }, [])
+  const isAdmin = user?.role === 'Admin'
+  const canView = isAdmin || !!user?.permissions?.includes('Dashboard-View')
+  const canAnalytics = isAdmin || !!user?.permissions?.includes('Dashboard-Analytics')
+  const firstName = getDisplayName(user).split(' ')[0]
 
-  // Fetch /admin/me, /document/getdocument, and /sign/getrequests
+  // Same calls as the old dashboard: document/getdocument + sign/getrequests
   useEffect(() => {
-    let mounted = true
+    if (!canView) return undefined
+    let active = true
 
-    const loadDashboard = async () => {
-      try {
-        setLoading(true)
+    Promise.all([documentsService.getAllDocuments(), documentsService.getSignRequests()])
+      .then(([rawDocs, requests]) => {
+        if (!active) return
+        if (import.meta.env.DEV) console.debug('[dashboard] first document from the API:', rawDocs[0])
 
-        const currentUser = await authService.me()
-        if (!mounted) return
-        setUser(currentUser)
+        const docs = rawDocs.map(normalizeDocument)
+        const pending = docs.filter((d) => d.status === 'pending')
+        const signed = docs.filter((d) => d.status === 'signed')
+        const expired = requests.filter(isExpiredRequest)
 
-        const canView =
-          currentUser?.role === 'Admin' ||
-          currentUser?.permissions?.includes('Dashboard-View')
+        setData({
+          docs,
+          expiredCount: expired.length,
+          // Real trends: last 30 days vs the 30 days before. null = nothing to compare, badge is hidden.
+          trends: {
+            total: trendPercent(docs, (d) => d.createdAt),
+            pending: trendPercent(pending, (d) => d.createdAt),
+            signed: trendPercent(signed, (d) => d.signedAt ?? d.updatedAt ?? d.createdAt),
+            expired: trendPercent(expired, (r) => r.createdAt),
+          },
+        })
+      })
+      .catch((err) => active && setLoadError(err))
 
-        if (!canView) {
-          showToast('You are not permitted to view the dashboard', 'error')
-          setLoading(false)
-          return
-        }
-
-        const [docsList, signRequests] = await Promise.all([
-          documentsService.getAllDocuments(),
-          documentsService.getSignRequests(),
-        ])
-
-        if (!mounted) return
-
-        setRawDocs(docsList)
-        setExpiredCount(
-          signRequests.filter(
-            (req) => req.overallStatus === 'Expired' || req.status === 'expired',
-          ).length,
-        )
-      } catch (err) {
-        if (!mounted) return
-        showToast(err.userMessage || 'Failed to load dashboard', 'error')
-      } finally {
-        if (mounted) setLoading(false)
-      }
-    }
-
-    loadDashboard()
     return () => {
-      mounted = false
+      active = false
     }
-  }, [showToast])
+  }, [canView, reloadKey])
 
-  // Entrance GSAP animation
+  const loading = canView && !data && !loadError
+  const docs = useMemo(() => data?.docs ?? [], [data])
+
+  const stats = useMemo(
+    () => ({
+      total: docs.length,
+      pending: docs.filter((d) => d.status === 'pending').length,
+      signed: docs.filter((d) => d.status === 'signed').length,
+      expired: data?.expiredCount ?? 0,
+    }),
+    [docs, data],
+  )
+
+  const filtered = useMemo(() => (filter === 'all' ? docs : docs.filter((d) => d.status === filter)), [docs, filter])
+
+  const total = filtered.length
+  const totalPages = Math.max(1, Math.ceil(total / perPage))
+  const current = Math.min(page, totalPages)
+  const start = (current - 1) * perPage
+  const rows = filtered.slice(start, start + perPage)
+
   useGSAP(
     () => {
       if (prefersReducedMotion()) return
       gsap.fromTo(
         '[data-enter]',
-        { y: 20, autoAlpha: 0 },
-        {
-          y: 0,
-          autoAlpha: 1,
-          duration: 0.75,
-          stagger: 0.08,
-          ease: 'power3.out',
-          clearProps: 'transform',
-        },
+        { y: 26, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.9, stagger: 0.08, delay: 0.15, ease: 'power3.out', clearProps: 'transform,opacity,visibility' },
       )
     },
     { scope: root },
   )
 
-  // KPI counts matching Dashboard-old.jsx
-  const { completed, total, pending } = useMemo(() => {
-    const completedCount = rawDocs.filter(
-      (d) => d.status === 'completed' || d.status === 'signed',
-    ).length
-    const totalCount = rawDocs.length
-    const pendingCount = rawDocs.filter(
-      (d) =>
-        d.status === 'sent' ||
-        d.status === 'partially_signed' ||
-        d.status === 'pending',
-    ).length
+  const showToast = useCallback((text, tone = 'ok') => setToast({ id: Date.now(), text, tone }), [])
+  const clearToast = useCallback(() => setToast(null), [])
 
-    return { completed: completedCount, total: totalCount, pending: pendingCount }
-  }, [rawDocs])
-
-  const kpiCards = useMemo(
-    () => [
-      {
-        label: 'Total documents',
-        value: total,
-        trend: 12,
-        tone: 'total',
-        to: '/documents',
-        Icon: FileText,
-      },
-      {
-        label: 'Pending',
-        value: pending,
-        trend: 8,
-        tone: 'pending',
-        to: '/documents?status=pending',
-        Icon: Clock,
-      },
-      {
-        label: 'Signed',
-        value: completed,
-        trend: 18,
-        tone: 'signed',
-        to: '/documents?status=signed',
-        Icon: FileCheck2,
-      },
-      {
-        label: 'Expired',
-        value: expiredCount,
-        trend: -3,
-        tone: 'expired',
-        to: '/documents?status=expired',
-        Icon: FileX2,
-      },
-    ],
-    [total, pending, completed, expiredCount],
-  )
-
-  // Normalize documents for RecentDocuments.jsx
-  const normalizedDocs = useMemo(() => rawDocs.map(normalizeDocument), [rawDocs])
-
-  // Filter normalized docs by active tab ('all' | 'pending' | 'signed' | 'expired')
-  const filteredDocs = useMemo(() => {
-    if (filter === 'all') return normalizedDocs
-    return normalizedDocs.filter((d) => d.status === filter)
-  }, [normalizedDocs, filter])
-
-  // Pagination slice
-  const totalItems = filteredDocs.length
-  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage))
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentDocs = filteredDocs.slice(indexOfFirstItem, indexOfLastItem)
-
-  const handleFilterChange = useCallback((nextFilter) => {
-    setFilter(nextFilter)
-    setCurrentPage(1)
-  }, [])
-
-  // Handle QuickActions & RowMenu actions from RecentDocuments.jsx
   const handleAction = useCallback(
     async (action, doc) => {
+      const id = doc._id ?? doc.id
       try {
-        if (action === 'view') {
-          navigate(`/documents/${doc.id}`)
-          return true
+        switch (action) {
+          case 'view':
+            navigate(`/documents/${id}`)
+            break
+          case 'history':
+            navigate(`/documents/${id}?tab=history`)
+            break
+          case 'download':
+            await documentsService.download(doc)
+            showToast('Download started')
+            break
+          case 'remind':
+            await documentsService.remind(id)
+            showToast(`Reminder sent for "${doc.name}"`)
+            break
+          case 'delete':
+            await documentsService.remove(id)
+            setData((d) => (d ? { ...d, docs: d.docs.filter((x) => x.id !== doc.id) } : d))
+            showToast(`"${doc.name}" moved to Recycle bin`)
+            break
+          default:
+            break
         }
-        if (action === 'history') {
-          navigate(`/documents/${doc.id}?tab=history`)
-          return true
-        }
-        if (action === 'download') {
-          await documentsService.download(doc)
-          showToast('Download started')
-          return true
-        }
-        if (action === 'remind') {
-          await documentsService.remind(doc.id)
-          showToast(`Reminder sent for "${doc.name}"`)
-          return true
-        }
-        if (action === 'delete') {
-          await documentsService.remove(doc.id)
-          setRawDocs((prev) =>
-            prev.filter((d) => String(d._id ?? d.id ?? d.title) !== String(doc.id)),
-          )
-          showToast(`"${doc.name}" moved to Recycle bin`)
-          return true
-        }
+        return true
       } catch (err) {
         showToast(err.userMessage || 'Action failed. Please try again.', 'error')
         return false
       }
-      return true
     },
     [navigate, showToast],
   )
 
-  const canViewDashboard =
-    !user ||
-    user?.role === 'Admin' ||
-    user?.permissions?.includes('Dashboard-View')
+  const footer = !loading && total > 0 && (
+    <footer className={styles.pagination}>
+      <label className={styles.pageSize}>
+        <span>Rows per page:</span>
+        <select
+          value={perPage}
+          onChange={(e) => {
+            setPerPage(Number(e.target.value))
+            setPage(1)
+          }}
+        >
+          {PAGE_SIZES.map((n) => (
+            <option key={n} value={n}>
+              {n}
+            </option>
+          ))}
+        </select>
+      </label>
 
-  const canViewAnalytics =
-    user?.role === 'Admin' ||
-    user?.permissions?.includes('Dashboard-Analytics')
+      <div className={styles.pageNav}>
+        <span className={styles.pageInfo}>
+          {start + 1} – {Math.min(start + perPage, total)} of {total}
+        </span>
+        <button type="button" className={styles.pageBtn} disabled={current === 1} onClick={() => setPage(current - 1)} aria-label="Previous page">
+          <ChevronLeft aria-hidden="true" />
+        </button>
+        <button type="button" className={styles.pageBtn} disabled={current === totalPages} onClick={() => setPage(current + 1)} aria-label="Next page">
+          <ChevronRight aria-hidden="true" />
+        </button>
+      </div>
+    </footer>
+  )
 
   return (
     <div className={styles.page} ref={root}>
@@ -244,91 +205,73 @@ export default function Dashboard() {
       <StatCardDefs />
 
       <Topbar
-        title="Dashboard"
-        subtitle="Overview of your document signing activity"
+        title={`Hello again, ${firstName}`}
+        subtitle="Here's how your agreements are moving this week."
         onUpload={() => navigate('/documents/sign-yourself')}
       />
 
-      {!loading && !canViewDashboard ? (
-        <section className={styles.emptyState} data-enter>
-          <div className={styles.emptyIcon}>
-            <ShieldAlert size={24} />
-          </div>
-          <h3>Access Restricted</h3>
+      {!canView ? (
+        <section className={styles.restricted} data-enter>
+          <span className={styles.restrictedIcon}>
+            <ShieldAlert aria-hidden="true" />
+          </span>
+          <h3>Access restricted</h3>
           <p>You are not permitted to view the dashboard.</p>
         </section>
       ) : (
         <>
-          {(loading || canViewAnalytics) && (
-            <section className={styles.statsGrid} aria-label="Document statistics" data-enter>
-              {kpiCards.map((card) => (
-                <StatCard key={card.label} {...card} loading={loading} />
+          {loadError && (
+            <div className={styles.alert} role="alert">
+              <CircleAlert aria-hidden="true" />
+              <span>{loadError.userMessage || 'Failed to load dashboard'}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoadError(null)
+                  setReloadKey((k) => k + 1)
+                }}
+              >
+                <RefreshCw aria-hidden="true" /> Retry
+              </button>
+            </div>
+          )}
+
+          {canAnalytics && (
+            <section className={styles.stats} aria-label="Document statistics">
+              {KPIS.map(({ key, label, Icon, to }) => (
+                <div key={key} data-enter>
+                  <StatCard
+                    label={label}
+                    Icon={Icon}
+                    to={to}
+                    tone={key}
+                    value={loading ? undefined : stats[key]}
+                    trend={data?.trends[key]}
+                    loading={loading}
+                  />
+                </div>
               ))}
             </section>
           )}
 
-          <div className={styles.recentWrap} data-tour="dashboard" data-enter>
+          <div data-enter data-tour="dashboard">
             <RecentDocuments
-              docs={currentDocs}
+              docs={rows}
               loading={loading}
               filter={filter}
-              onFilterChange={handleFilterChange}
+              onFilterChange={(key) => {
+                setFilter(key)
+                setPage(1)
+              }}
               onAction={handleAction}
+              skeletonRows={perPage}
+              footer={footer}
             />
-
-            {!loading && totalItems > 0 && (
-              <footer className={styles.pagination}>
-                <div className={styles.paginationLeft}>
-                  <label htmlFor="dashboard-rows-select" className={styles.paginationLabel}>
-                    Rows per page:
-                  </label>
-                  <select
-                    id="dashboard-rows-select"
-                    className={styles.paginationSelect}
-                    value={itemsPerPage}
-                    onChange={(e) => {
-                      setItemsPerPage(Number(e.target.value))
-                      setCurrentPage(1)
-                    }}
-                  >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                  </select>
-                </div>
-
-                <div className={styles.paginationRight}>
-                  <span className={styles.paginationInfo}>
-                    {indexOfFirstItem + 1} – {Math.min(indexOfLastItem, totalItems)} of {totalItems}
-                  </span>
-                  <div className={styles.paginationControls}>
-                    <button
-                      type="button"
-                      className={styles.pageBtn}
-                      disabled={currentPage === 1}
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      aria-label="Previous page"
-                    >
-                      <ChevronLeft size={18} />
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.pageBtn}
-                      disabled={currentPage === totalPages}
-                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                      aria-label="Next page"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-                  </div>
-                </div>
-              </footer>
-            )}
           </div>
         </>
       )}
 
-      <Toast toast={toast} onDone={() => setToast(null)} />
+      <Toast toast={toast} onDone={clearToast} />
     </div>
   )
 }

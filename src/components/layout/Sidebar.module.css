@@ -1,32 +1,33 @@
 .sidebar {
   position: sticky;
-  top: 0.9em;
+  top: 1.15em;
   align-self: start;
   z-index: 30;
   display: flex;
   flex-direction: column;
-  height: calc(100dvh - 1.8em);
-  padding: 1.25em 0.7em 0.7em;
-  border-radius: 1.45em;
+  height: calc(100dvh - 2.3em);
+  padding: 0 0.85em 0.85em;
+  border-radius: 1.8em;
   background: var(--app-surface);
   box-shadow:
     0 0 0 1px rgba(16, 24, 40, 0.03),
     0 0.2em 0.5em rgba(16, 24, 40, 0.04),
-    0 1.4em 2.6em -1.6em rgba(16, 24, 40, 0.22);
+    0 1.6em 3em -1.8em rgba(16, 24, 40, 0.24);
 }
 
 /* ---------- Header ---------- */
 .head {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 2.4em;
-  margin-bottom: 1.9em;
-  padding: 0 0.55em 0 0.75em;
+  margin: 1.65em 0 2.07em;
+  padding: 0 0.8em;
 }
 .logo {
   display: block;
-  height: 2.1em;
+  height: 1.6em;
   overflow: hidden;
 }
 .logo img {
@@ -35,51 +36,118 @@
   width: auto;
   max-width: none;
 }
-.toggle,
-.close {
+
+.toggle {
   display: grid;
   place-items: center;
   width: 2.1em;
   height: 2.1em;
   padding: 0;
-  border: 0;
-  border-radius: 0.55em;
-  background: transparent;
+  border: 1px solid #e3e6ec;
+  border-radius: 50%;
+  background: #fff;
   color: var(--app-ink);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.2s;
+  transition: background 0.2s, border-color 0.2s;
 }
-.toggle svg,
+.toggle svg {
+  width: 1.15em;
+  height: 1.15em;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.toggle:hover {
+  background: #f4f5f8;
+  border-color: #d3d7df;
+}
+.toggle:hover svg {
+  transform: translateX(-0.12em);
+}
+
+/* Rail logo mark: shows only the icon part of the logo; hidden until the rail is active */
+.markBtn {
+  position: relative;
+  display: none;
+  width: 2.8em;
+  height: 2.4em;
+  padding: 0;
+  border: 0;
+  border-radius: 0.8em;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.mark {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  transition: opacity 0.25s, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mark img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: none;
+}
+.markArrow {
+  position: absolute;
+  inset: 0;
+  width: 1.4em;
+  height: 1.4em;
+  margin: auto;
+  color: var(--app-ink);
+  opacity: 0;
+  transform: translateX(-0.3em);
+  transition: opacity 0.25s, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.markBtn:hover .mark,
+.markBtn:focus-visible .mark {
+  opacity: 0;
+  transform: scale(0.85);
+}
+.markBtn:hover .markArrow,
+.markBtn:focus-visible .markArrow {
+  opacity: 1;
+  transform: none;
+}
+
+.close {
+  display: none;
+  place-items: center;
+  width: 2.1em;
+  height: 2.1em;
+  padding: 0;
+  border: 0;
+  border-radius: 0.6em;
+  background: transparent;
+  color: var(--app-ink);
+  cursor: pointer;
+}
 .close svg {
   width: 1.4em;
   height: 1.4em;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.toggle:hover,
 .close:hover {
   background: #f1f2f6;
-}
-.close {
-  display: none;
 }
 
 /* ---------- Navigation ---------- */
 .nav {
   position: relative;
   display: grid;
-  gap: 0.45em;
+  gap: 0.53em;
   align-content: start;
 }
 .indicator {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 2.7em;
-  border-radius: 0.85em;
+  width: 100%;
+  height: 3.47em;
+  border-radius: 1em;
   background: var(--app-ink);
-  box-shadow: 0 0.7em 1.3em -0.8em rgba(16, 24, 40, 0.6);
+  box-shadow: 0 0.8em 1.4em -0.9em rgba(16, 24, 40, 0.6);
   opacity: 0;
   pointer-events: none;
 }
@@ -88,23 +156,40 @@
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: 0.85em;
-  height: 2.7em;
-  padding: 0 0.85em;
-  border-radius: 0.85em;
+  gap: 1.07em;
+  height: 3.47em;
+  padding: 0 1.05em;
+  border-radius: 1em;
   color: #3b4150;
+  font-size: 1em;
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
-  transition: color 0.3s, background 0.2s;
+  transition: color 0.3s, background 0.2s, gap 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .link:hover:not([aria-current='page']) {
   background: #f3f4f7;
   color: var(--app-ink);
 }
-.link[aria-current='page'] {
+.nav .link[aria-current='page'] {
   color: #fff;
+}
+.icon {
+  flex: none;
+  width: 1.35em;
+  height: 1.35em;
+  stroke-width: 1.7;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.link:hover .icon {
+  transform: translateX(0.12em) scale(1.06);
+}
+.label {
+  max-width: 12em;
+  overflow: hidden;
+  font-size: 1.12em;
+  transition: opacity 0.25s, max-width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .link:focus-visible,
 .upgrade:focus-visible,
@@ -112,19 +197,10 @@
 .menuItem:focus-visible,
 .toggle:focus-visible,
 .close:focus-visible,
-.logo:focus-visible {
+.logo:focus-visible,
+.markBtn:focus-visible {
   outline: 2px solid var(--app-ink);
   outline-offset: 2px;
-}
-.icon {
-  flex: none;
-  width: 1.4em;
-  height: 1.4em;
-  stroke-width: 1.7;
-}
-.label {
-  font-size: 1.07em;
-  transition: opacity 0.25s;
 }
 .grow {
   flex: 1;
@@ -133,14 +209,15 @@
 
 /* ---------- Plan card ---------- */
 .plan {
-  margin-bottom: 0.7em;
-  padding: 0.95em 0.95em 1em;
-  border-radius: 1.25em;
-  background: #eceff7;
+  margin-bottom: 1.1em;
+  padding: 1.15em 1.15em 1.2em;
+  border-radius: 1.6em;
+  background: linear-gradient(160deg, #f1f3f9 0%, #e6e9f2 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 0.1em 0.3em rgba(16, 24, 40, 0.04);
 }
 .planSkel {
-  height: 8.2em;
-  background: linear-gradient(90deg, #eceff7 25%, #f5f6fb 50%, #eceff7 75%);
+  height: 10em;
+  background: linear-gradient(90deg, #eceff7 25%, #f6f7fb 50%, #eceff7 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
 }
@@ -151,17 +228,18 @@
   gap: 0.5em;
 }
 .planName {
-  font-size: 1.05em;
+  font-size: 1.15em;
   font-weight: 700;
 }
 .planCount {
   color: var(--app-muted);
+  font-size: 1.05em;
   letter-spacing: 0.12em;
   font-variant-numeric: tabular-nums;
 }
 .bar {
-  height: 0.5em;
-  margin-top: 0.85em;
+  height: 0.65em;
+  margin-top: 0.8em;
   overflow: hidden;
   border-radius: 99px;
   background: #fff;
@@ -176,16 +254,17 @@
 .planNote {
   margin: 0.7em 0 0.85em;
   color: var(--app-muted);
-  font-size: 0.88em;
+  font-size: 0.92em;
 }
 .upgrade {
   display: inline-flex;
   align-items: center;
-  height: 2.2em;
-  padding: 0 1.05em;
-  border-radius: 0.8em;
+  height: 2.55em;
+  padding: 0 1.2em;
+  border-radius: 0.9em;
   background: var(--app-ink);
   color: #fff;
+  font-size: 1.1em;
   font-weight: 600;
   text-decoration: none;
   transition: transform 0.2s, box-shadow 0.25s;
@@ -198,10 +277,10 @@
 /* ---------- Settings / Help ---------- */
 .secondary {
   display: grid;
-  gap: 0.2em;
-  margin-bottom: 0.5em;
+  gap: 0.53em;
+  margin-bottom: 1.2em;
 }
-.link2On {
+.link2[aria-current='page'] {
   background: #f1f2f6;
   color: var(--app-ink);
   font-weight: 600;
@@ -214,11 +293,12 @@
 .user {
   display: flex;
   align-items: center;
-  gap: 0.8em;
+  gap: 0.85em;
   width: 100%;
-  padding: 0.6em 0.8em 0.6em 0.6em;
+  height: 4.95em;
+  padding: 0 1em 0 0.85em;
   border: 1px solid var(--app-line);
-  border-radius: 1.25em;
+  border-radius: 1.6em;
   background: #fff;
   color: inherit;
   font: inherit;
@@ -235,37 +315,38 @@
   display: grid;
   flex: none;
   place-items: center;
-  width: 2.2em;
-  height: 2.2em;
-  border-radius: 0.7em;
-  background: var(--app-ink);
-  color: #fff;
-  font-size: 0.95em;
+  width: 2.6em;
+  height: 2.6em;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f9c5e4, #c9b8ff);
+  color: #2a1d4a;
+  font-size: 1em;
   font-weight: 600;
 }
 .who {
   display: grid;
   flex: 1;
   min-width: 0;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 .name {
   overflow: hidden;
-  font-weight: 600;
+  font-size: 1.1em;
+  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .mail {
   overflow: hidden;
   color: var(--app-muted);
-  font-size: 0.85em;
+  font-size: 0.92em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .chev {
   flex: none;
-  width: 1.2em;
-  height: 1.2em;
+  width: 1.3em;
+  height: 1.3em;
   color: #4b5563;
   transition: transform 0.3s;
 }
@@ -279,10 +360,10 @@
   right: 0;
   bottom: calc(100% + 0.5em);
   z-index: 5;
-  min-width: 11em;
-  padding: 0.35em;
+  min-width: 12em;
+  padding: 0.4em;
   border: 1px solid var(--app-line);
-  border-radius: 1em;
+  border-radius: 1.1em;
   background: #fff;
   box-shadow: 0 1.4em 2.6em -1em rgba(16, 24, 40, 0.35);
   opacity: 0;
@@ -302,10 +383,10 @@
   align-items: center;
   gap: 0.7em;
   width: 100%;
-  height: 2.5em;
-  padding: 0 0.75em;
+  height: 2.6em;
+  padding: 0 0.8em;
   border: 0;
-  border-radius: 0.65em;
+  border-radius: 0.7em;
   background: transparent;
   color: #1f2430;
   font: inherit;
@@ -314,8 +395,8 @@
   cursor: pointer;
 }
 .menuItem svg {
-  width: 1.15em;
-  height: 1.15em;
+  width: 1.2em;
+  height: 1.2em;
   color: #6b7280;
 }
 .menuItem:hover {
@@ -345,29 +426,26 @@
 
 /* ---------- Desktop: collapsed icon rail ---------- */
 @media (min-width: 1024px) {
-  .sidebar[data-collapsed='true'] {
-    padding-inline: 0.6em;
-  }
   .sidebar[data-collapsed='true'] .head {
-    flex-direction: column;
-    height: auto;
-    gap: 0.9em;
+    justify-content: center;
     padding: 0;
   }
-  .sidebar[data-collapsed='true'] .logo {
-    width: 2.1em;
+  .sidebar[data-collapsed='true'] .logo,
+  .sidebar[data-collapsed='true'] .toggle {
+    display: none;
   }
-  .sidebar[data-collapsed='true'] .toggle svg {
-    transform: scaleX(-1);
+  .sidebar[data-collapsed='true'] .markBtn {
+    display: block;
   }
   .sidebar[data-collapsed='true'] .link {
-    justify-content: center;
+    width: 3.5em;
+    margin-inline: auto;
     gap: 0;
     padding: 0;
+    justify-content: center;
   }
   .sidebar[data-collapsed='true'] .label {
-    width: 0;
-    overflow: hidden;
+    max-width: 0;
     opacity: 0;
   }
   .sidebar[data-collapsed='true'] .plan,
@@ -377,11 +455,51 @@
   }
   .sidebar[data-collapsed='true'] .user {
     justify-content: center;
-    padding: 0.5em;
+    width: auto;
+    height: auto;
+    margin-inline: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+  }
+  .sidebar[data-collapsed='true'] .user:hover {
+    box-shadow: none;
   }
   .sidebar[data-collapsed='true'] .menu {
+    left: calc(100% + 0.8em);
     right: auto;
-    min-width: 11.5em;
+    bottom: 0;
+    transform-origin: bottom left;
+  }
+
+  /* Tooltips for the rail */
+  .sidebar[data-collapsed='true'] .link::after,
+  .sidebar[data-collapsed='true'] .markBtn::after {
+    content: attr(data-tip);
+    position: absolute;
+    left: calc(100% + 0.9em);
+    top: 50%;
+    z-index: 10;
+    padding: 0.35em 0.8em;
+    border-radius: 0.6em;
+    background: var(--app-ink);
+    color: #fff;
+    font-size: 0.9em;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-0.3em, -50%);
+    transition: opacity 0.15s, transform 0.2s;
+  }
+  .sidebar[data-collapsed='true'] .link:hover::after,
+  .sidebar[data-collapsed='true'] .link:focus-visible::after,
+  .sidebar[data-collapsed='true'] .markBtn:hover::after,
+  .sidebar[data-collapsed='true'] .markBtn:focus-visible::after {
+    opacity: 1;
+    transform: translate(0, -50%);
+    transition-delay: 0.2s;
   }
 }
 
@@ -393,7 +511,7 @@
     left: 0.9em;
     bottom: 0.9em;
     z-index: 60;
-    width: min(18.5em, calc(100vw - 1.8em));
+    width: min(19em, calc(100vw - 1.8em));
     height: auto;
     overflow-y: auto;
     visibility: hidden;
@@ -405,6 +523,7 @@
     transform: none;
     transition-delay: 0s;
   }
+  .markBtn,
   .toggle {
     display: none;
   }
@@ -417,8 +536,11 @@
   .sidebar,
   .menu,
   .link,
-  .chev,
-  .toggle svg {
+  .icon,
+  .label,
+  .mark,
+  .markArrow,
+  .chev {
     transition: none;
   }
   .planSkel {

@@ -117,14 +117,14 @@ export default function Topbar({ title, subtitle, onUpload, hasUnread = false })
       }
       if (searchOpen) {
         gsap.to(form, {
-          width: fs * 17,
+          width: fs * 18,
           duration: 0.5,
           ease: 'power3.inOut',
           onComplete: () => inputRef.current?.focus(),
         })
       } else {
         gsap.to(form, {
-          width: fs * 2.5,
+          width: fs * 3.14,
           duration: 0.4,
           ease: 'power3.inOut',
           onComplete: () => gsap.set(form, { clearProps: 'width' }),

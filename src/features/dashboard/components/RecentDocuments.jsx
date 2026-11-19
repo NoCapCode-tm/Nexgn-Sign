@@ -201,7 +201,7 @@ function RowMenu({ doc, rect, trigger, onAction, onClose }) {
 }
 
 /* ---------- Card ---------- */
-export default function RecentDocuments({ docs, loading, filter, onFilterChange, onAction }) {
+export default function RecentDocuments({ docs, loading, filter, onFilterChange, onAction, footer, skeletonRows = 5 }) {
   const root = useRef(null)
   const tabsRef = useRef(null)
   const thumbRef = useRef(null)
@@ -239,7 +239,8 @@ export default function RecentDocuments({ docs, loading, filter, onFilterChange,
     return () => ro.disconnect()
   }, [])
 
-  // Rows stagger in when data arrives or the filter changes
+  // Rows stagger in when data arrives, the filter changes or the page changes
+  const rowKey = docs.map((d) => d.id).join('|')
   useGSAP(
     () => {
       if (loading || prefersReducedMotion()) return
@@ -249,7 +250,7 @@ export default function RecentDocuments({ docs, loading, filter, onFilterChange,
         { y: 0, autoAlpha: 1, duration: 0.5, stagger: 0.045, delay: 0.1, ease: 'power3.out', clearProps: 'transform,opacity,visibility' },
       )
     },
-    { scope: root, dependencies: [loading, filter] },
+    { scope: root, dependencies: [loading, filter, rowKey] },
   )
 
   const act = async (action, doc) => {
@@ -308,7 +309,7 @@ export default function RecentDocuments({ docs, loading, filter, onFilterChange,
 
         <div role="rowgroup">
           {loading &&
-            Array.from({ length: 6 }, (_, i) => (
+            Array.from({ length: skeletonRows }, (_, i) => (
               <div key={i} className={styles.skel} aria-hidden="true">
                 <span className={clsx(styles.bar, styles.cDoc)} />
                 <span className={clsx(styles.bar, styles.cNote)} />
@@ -337,7 +338,7 @@ export default function RecentDocuments({ docs, loading, filter, onFilterChange,
                   </span>
                   <span className={styles.docName}>{doc.name}</span>
                 </div>
-                <div className={clsx(styles.cell, styles.cNote)} role="cell">{doc.note}</div>
+                <div className={clsx(styles.cell, styles.cNote)} role="cell">{doc.note || '—'}</div>
                 <div className={clsx(styles.cell, styles.cSigner)} role="cell">{doc.signer}</div>
                 <div className={clsx(styles.cell, styles.cDate)} role="cell">{formatDate(doc.signedAt)}</div>
                 <div className={clsx(styles.cell, styles.cOwner)} role="cell">
@@ -369,6 +370,8 @@ export default function RecentDocuments({ docs, loading, filter, onFilterChange,
             ))}
         </div>
       </div>
+
+      {footer}
 
       {menu && <RowMenu key={menu.doc.id} doc={menu.doc} rect={menu.rect} trigger={menu.trigger} onAction={act} onClose={closeMenu} />}
     </section>

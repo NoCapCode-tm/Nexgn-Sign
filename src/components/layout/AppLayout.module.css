@@ -7,47 +7,90 @@
   --app-line: #eaecf0;
   --app-brand: #f20f1b;
   --app-brand-hover: #d70914;
+  --nav-w: 18em;
 
   display: grid;
-  grid-template-columns: 16.5em minmax(0, 1fr);
-  gap: 1.4em;
+  grid-template-columns: var(--nav-w) minmax(0, 1fr);
+  column-gap: 2.25em;
   min-height: 100vh;
   min-height: 100dvh;
-  padding: 0.9em 1.4em 1.6em 0.9em;
+  padding: 1.15em 2.35em 1.15em 1.15em;
   background: var(--app-bg);
   color: var(--app-text);
   font-family: 'DM Sans Variable', 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  transition: grid-template-columns 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  /* 1440 wide = the design (14px). Scales linearly to 4K (about 37px). Never below 13px. */
+  font-size: clamp(13px, calc(100vw / 102.86), 56px);
+  transition: grid-template-columns 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
-
+.shell,
+.shell *,
+.shell *::before,
+.shell *::after {
+  box-sizing: border-box;
+}
 .shell[data-collapsed='true'] {
-  grid-template-columns: 4.6em minmax(0, 1fr);
+  --nav-w: 6.4em;
 }
 
 .main {
-  display: flex;
-  flex-direction: column;
   min-width: 0;
-  padding-top: 0.35em;
+  padding: 1.15em 0 1.4em;
+}
+
+.skip {
+  position: absolute;
+  left: 1em;
+  top: -4em;
+  z-index: 100;
+  padding: 0.6em 1em;
+  border-radius: 0.6em;
+  background: var(--app-ink);
+  color: #fff;
+  text-decoration: none;
+}
+.skip:focus {
+  top: 1em;
 }
 
 .backdrop {
   display: none;
 }
 
+/* ---------- Tablet + phone: the sidebar becomes a drawer ---------- */
 @media (max-width: 1023px) {
   .shell,
   .shell[data-collapsed='true'] {
     grid-template-columns: minmax(0, 1fr);
-    padding: 0.9em 1em 1.5em;
+    column-gap: 0;
+    padding: 0.9em;
+    font-size: 15px;
   }
-
+  .main {
+    padding-top: 0.2em;
+  }
   .backdrop {
     position: fixed;
     inset: 0;
     z-index: 50;
     display: block;
     background: rgba(16, 24, 40, 0.45);
+    -webkit-backdrop-filter: blur(3px);
     backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+  }
+  .backdrop[data-open='true'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell,
+  .backdrop {
+    transition: none;
   }
 }

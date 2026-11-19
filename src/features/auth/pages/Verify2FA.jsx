@@ -7,7 +7,9 @@ import { ArrowLeft, ArrowRight, CircleAlert } from 'lucide-react'
 import clsx from 'clsx'
 
 import { authService } from '@/services/auth.service'
+import { useAuth } from '@/hooks/useAuth'
 import { getPostLoginPath } from '@/utils/postLoginPath'
+import { clear2FAVerified, mark2FAVerified } from '@/utils/twoFactor'
 import { motion, prefersReducedMotion } from '@/utils/motion'
 import LoadingOverlay from '@/components/common/LoadingOverlay'
 import styles from './Verify2FA.module.css'
@@ -24,8 +26,8 @@ export default function Verify2FA() {
   const navigate = useNavigate()
   const location = useLocation()
   const { id: paramId } = useParams()
+  const { refreshUser } = useAuth()
 
-  // Resolves user ID from URL param (/verify-2fa/:id), router state, or localStorage
   const userId = paramId || location.state?.id || localStorage.getItem('nexgn_user_id')
 
   const [code, setCode] = useState(() => Array(OTP_LENGTH).fill(''))
@@ -37,7 +39,6 @@ export default function Verify2FA() {
     inputRefs.current[0]?.focus()
   }, [])
 
-  // GSAP entrance: staggered reveal + individual OTP box pop-in
   const { contextSafe } = useGSAP(
     () => {
       if (prefersReducedMotion()) return
@@ -46,15 +47,7 @@ export default function Verify2FA() {
       gsap.fromTo(
         '[data-reveal]',
         { y: 24, autoAlpha: 0 },
-        {
-          y: 0,
-          autoAlpha: 1,
-          duration: 0.85,
-          ease: 'power3.out',
-          stagger: 0.08,
-          delay,
-          clearProps: 'transform',
-        },
+        { y: 0, autoAlpha: 1, duration: 0.85, ease: 'power3.out', stagger: 0.08, delay, clearProps: 'transform' },
       )
 
       gsap.fromTo(
@@ -75,15 +68,11 @@ export default function Verify2FA() {
     { scope: root },
   )
 
-  // Server error banner animation
+  // Server error banner
   useGSAP(
     () => {
       if (!serverError || prefersReducedMotion()) return
-      gsap.fromTo(
-        '[data-alert]',
-        { y: -8, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out' },
-      )
+      gsap.fromTo('[data-alert]', { y: -8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out' })
     },
     { scope: root, dependencies: [serverError] },
   )
@@ -111,7 +100,6 @@ export default function Verify2FA() {
 
     const next = [...code]
 
-    // Handle multi-character autofill from mobile keyboards
     if (raw.length > 1) {
       raw
         .slice(0, OTP_LENGTH - index)
@@ -181,24 +169,46 @@ export default function Verify2FA() {
       return
     }
 
+    if (!userId) {
+      setServerError('Your login session expired. Please log in again.')
+      shake()
+      return
+    }
+
     setError('')
     setServerError('')
     setSubmitting(true)
 
     try {
-      // Calls POST /admin/twofaverifylogin with { token: finalCode, id: userId }
+      // Throws when the backend rejects the code (also when it answers 200 with an error in the body)
       const data = await authService.verify2FA({ token: finalCode, id: userId })
-      const user = data?.message ?? data?.user ?? data
+      const payload = data?.message ?? data?.user ?? data
+      const resolvedId = payload?._id || payload?.id || data?.id || data?.userId || userId
 
-      setCode(Array(OTP_LENGTH).fill(''))
-      navigate(getPostLoginPath(user, { twoFactorVerified: true }), { replace: true })
+      // Only now is this browser allowed into the app
+      mark2FAVerified(resolvedId)
+      const me = await refreshUser()
+      mark2FAVerified(me?._id || me?.id || resolvedId)
+
+      const from = location.state?.from
+      const target = getPostLoginPath(me, { twoFactorVerified: true })
+      const back =
+        target === '/dashboard' && from?.pathname && !['/login', '/signup'].includes(from.pathname)
+          ? `${from.pathname}${from.search ?? ''}${from.hash ?? ''}`
+          : target
+
+      navigate(back, { replace: true })
     } catch (err) {
-      setServerError(err.userMessage || 'Invalid authentication code')
+      clear2FAVerified()
+      setCode(Array(OTP_LENGTH).fill(''))
+      inputRefs.current[0]?.focus()
+      setServerError(err.userMessage || 'Incorrect authentication code. Please try again.')
       shake()
-    } finally {
       setSubmitting(false)
     }
   }
+
+  const hasError = !!(error || serverError)
 
   return (
     <div className={styles.page} ref={root}>
@@ -219,12 +229,7 @@ export default function Verify2FA() {
           </div>
         )}
 
-        <div
-          className={styles.otpGroup}
-          role="group"
-          aria-label="6-digit authentication code"
-          onPaste={handlePaste}
-        >
+        <div className={styles.otpGroup} role="group" aria-label="6-digit authentication code" onPaste={handlePaste}>
           {code.map((digit, index) => (
             <input
               key={index}
@@ -237,16 +242,12 @@ export default function Verify2FA() {
               maxLength={1}
               autoComplete={index === 0 ? 'one-time-code' : 'off'}
               aria-label={`Digit ${index + 1}`}
-              aria-invalid={!!(error || serverError)}
+              aria-invalid={hasError}
               value={digit}
               onChange={(e) => handleChange(e, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               onFocus={(e) => e.target.select()}
-              className={clsx(
-                styles.otpInput,
-                digit && styles.filled,
-                (error || serverError) && styles.invalid,
-              )}
+              className={clsx(styles.otpInput, digit && styles.filled, hasError && styles.invalid)}
               data-otp
             />
           ))}
@@ -280,10 +281,7 @@ export default function Verify2FA() {
         </div>
       </form>
 
-      {submitting && (
-        <LoadingOverlay message="Verifying multi-factor security token..." />
-      )}
-      
+      {submitting && <LoadingOverlay message="Verifying multi-factor security token..." />}
     </div>
   )
 }

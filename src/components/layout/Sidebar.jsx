@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { ChevronUp, LogOut, PanelLeft, UserRound, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronUp, LogOut, UserRound, X } from 'lucide-react'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import clsx from 'clsx'
@@ -13,19 +13,19 @@ import styles from './Sidebar.module.css'
 
 gsap.registerPlugin(useGSAP)
 
-function SecondaryItem({ item, collapsed, onClose }) {
-  const { to, href, label, Icon } = item
-  const tip = collapsed ? label : undefined
+function Item({ to, href, label, Icon, end, secondary, onClose }) {
   const inner = (
     <>
       <Icon className={styles.icon} aria-hidden="true" />
-      <span className={styles.label}>{label}</span>
+      <span className={styles.label} data-label>
+        {label}
+      </span>
     </>
   )
 
   if (href) {
     return (
-      <a className={clsx(styles.link, styles.link2)} href={href} target="_blank" rel="noreferrer noopener" title={tip} data-item>
+      <a className={clsx(styles.link, styles.link2)} href={href} target="_blank" rel="noreferrer noopener" data-tip={label} data-item>
         {inner}
       </a>
     )
@@ -33,10 +33,11 @@ function SecondaryItem({ item, collapsed, onClose }) {
   return (
     <NavLink
       to={to}
+      end={end}
       onClick={onClose}
-      title={tip}
+      data-tip={label}
       data-item
-      className={({ isActive }) => clsx(styles.link, styles.link2, isActive && styles.link2On)}
+      className={clsx(styles.link, secondary && styles.link2)}
     >
       {inner}
     </NavLink>
@@ -48,15 +49,47 @@ export default function Sidebar({ plan, collapsed, onToggleCollapse, open, onClo
   const { pathname } = useLocation()
   const root = useRef(null)
   const navRef = useRef(null)
-  const indicatorRef = useRef(null)
-  const placed = useRef(false)
+  const pillRef = useRef(null)
   const userRef = useRef(null)
+  const placed = useRef(false)
+  const mounted = useRef(false)
   const [userOpen, setUserOpen] = useState(false)
 
   const name = getDisplayName(user)
   const pct = plan?.limit ? Math.min(100, Math.round((plan.used / plan.limit) * 100)) : 0
 
-  // Entrance (desktop): the card slides in, then the items stagger
+  // ---- The dark pill glides to the active item (and follows layout changes frame by frame) ----
+  const placePill = useCallback((animate) => {
+    const nav = navRef.current
+    const pill = pillRef.current
+    if (!nav || !pill) return
+    const active = nav.querySelector('[aria-current="page"]')
+    if (!active) {
+      gsap.to(pill, { autoAlpha: 0, duration: 0.2 })
+      return
+    }
+    const to = { x: active.offsetLeft, y: active.offsetTop, width: active.offsetWidth, height: active.offsetHeight, autoAlpha: 1 }
+    if (!animate || prefersReducedMotion()) gsap.set(pill, to)
+    else gsap.to(pill, { ...to, duration: 0.55, ease: 'power3.inOut', overwrite: 'auto' })
+  }, [])
+
+  useGSAP(
+    () => {
+      placePill(placed.current)
+      placed.current = true
+    },
+    { scope: navRef, dependencies: [pathname, open] },
+  )
+
+  useEffect(() => {
+    const nav = navRef.current
+    if (!nav || typeof ResizeObserver === 'undefined') return undefined
+    const ro = new ResizeObserver(() => placePill(false))
+    ro.observe(nav)
+    return () => ro.disconnect()
+  }, [placePill])
+
+  // ---- Entrance on desktop: card slides in, then items stagger ----
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
@@ -69,15 +102,7 @@ export default function Sidebar({ plan, collapsed, onToggleCollapse, open, onClo
         gsap.fromTo(
           '[data-item]',
           { x: -14, autoAlpha: 0 },
-          {
-            x: 0,
-            autoAlpha: 1,
-            duration: 0.6,
-            stagger: 0.05,
-            delay: 0.25,
-            ease: 'power3.out',
-            clearProps: 'transform,opacity,visibility',
-          },
+          { x: 0, autoAlpha: 1, duration: 0.6, stagger: 0.05, delay: 0.25, ease: 'power3.out', clearProps: 'transform,opacity,visibility' },
         )
       })
       return () => mm.revert()
@@ -85,50 +110,49 @@ export default function Sidebar({ plan, collapsed, onToggleCollapse, open, onClo
     { scope: root },
   )
 
-  // Drawer: items stagger in each time it opens
+  // ---- Drawer: items stagger in each time it opens ----
   useGSAP(
     () => {
       if (!open || prefersReducedMotion()) return
       gsap.fromTo(
         '[data-item]',
         { x: -18, autoAlpha: 0 },
-        {
-          x: 0,
-          autoAlpha: 1,
-          duration: 0.5,
-          stagger: 0.045,
-          delay: 0.12,
-          ease: 'power3.out',
-          clearProps: 'transform,opacity,visibility',
-        },
+        { x: 0, autoAlpha: 1, duration: 0.5, stagger: 0.045, delay: 0.12, ease: 'power3.out', clearProps: 'transform,opacity,visibility' },
       )
     },
     { scope: root, dependencies: [open] },
   )
 
-  // The dark pill glides to the active item
+  // ---- Collapse / expand choreography (the width itself is a CSS transition) ----
   useGSAP(
     () => {
-      const nav = navRef.current
-      const pill = indicatorRef.current
-      if (!nav || !pill) return
-      const active = nav.querySelector('[aria-current="page"]')
-      if (!active) {
-        gsap.to(pill, { autoAlpha: 0, duration: 0.2 })
-        return
+      if (!mounted.current) {
+        mounted.current = true
+        return undefined
       }
-      const to = { y: active.offsetTop, height: active.offsetHeight, autoAlpha: 1 }
-      if (!placed.current || prefersReducedMotion()) {
-        gsap.set(pill, to)
-        placed.current = true
-      } else {
-        gsap.to(pill, { ...to, duration: 0.55, ease: 'power3.inOut' })
-      }
+      if (prefersReducedMotion()) return undefined
+      const mm = gsap.matchMedia()
+      mm.add('(min-width: 1024px)', () => {
+        if (collapsed) {
+          gsap.fromTo(
+            '[data-mark], [data-item] svg',
+            { scale: 0.7, autoAlpha: 0 },
+            { scale: 1, autoAlpha: 1, duration: 0.5, stagger: 0.035, delay: 0.12, ease: 'back.out(2.2)', clearProps: 'transform,opacity,visibility' },
+          )
+        } else {
+          gsap.fromTo(
+            '[data-label], [data-plan], [data-who]',
+            { x: -12, autoAlpha: 0 },
+            { x: 0, autoAlpha: 1, duration: 0.5, stagger: 0.035, delay: 0.2, ease: 'power3.out', clearProps: 'transform,opacity,visibility' },
+          )
+        }
+      })
+      return () => mm.revert()
     },
-    { scope: navRef, dependencies: [pathname, collapsed, open] },
+    { scope: root, dependencies: [collapsed] },
   )
 
-  // Plan usage bar fills in
+  // ---- Plan usage bar fills in ----
   useGSAP(
     () => {
       if (!pct || prefersReducedMotion()) return
@@ -156,46 +180,45 @@ export default function Sidebar({ plan, collapsed, onToggleCollapse, open, onClo
   return (
     <aside className={styles.sidebar} ref={root} data-collapsed={collapsed} data-open={open} aria-label="Main navigation">
       <div className={styles.head}>
+        {/* Expanded: logo + round toggle */}
         <Link to="/dashboard" className={styles.logo} aria-label="Nexgn dashboard" onClick={onClose}>
           <img src="/brand/logo.svg" alt="Nexgn" />
         </Link>
-
         <button
           type="button"
           className={styles.toggle}
           onClick={onToggleCollapse}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          aria-pressed={collapsed}
+          aria-label="Collapse sidebar"
+          aria-expanded={!collapsed}
         >
-          <PanelLeft aria-hidden="true" />
+          <ChevronLeft aria-hidden="true" />
         </button>
+
+        {/* Collapsed rail: logo mark, turns into an expand arrow on hover */}
+        <button type="button" className={styles.markBtn} onClick={onToggleCollapse} aria-label="Expand sidebar" data-tip="Expand">
+          <span className={styles.mark} data-mark aria-hidden="true">
+            <img src="/brand/logo.svg" alt="" />
+          </span>
+          <ChevronRight className={styles.markArrow} aria-hidden="true" />
+        </button>
+
+        {/* Drawer (tablet and phone) */}
         <button type="button" className={styles.close} onClick={onClose} aria-label="Close menu">
           <X aria-hidden="true" />
         </button>
       </div>
 
       <nav className={styles.nav} ref={navRef}>
-        <span className={styles.indicator} ref={indicatorRef} aria-hidden="true" />
+        <span className={styles.indicator} ref={pillRef} aria-hidden="true" />
         {PRIMARY_NAV.map(({ to, label, Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={to === '/dashboard'}
-            className={styles.link}
-            onClick={onClose}
-            title={collapsed ? label : undefined}
-            data-item
-          >
-            <Icon className={styles.icon} aria-hidden="true" />
-            <span className={styles.label}>{label}</span>
-          </NavLink>
+          <Item key={to} to={to} end={to === '/dashboard'} label={label} Icon={Icon} onClose={onClose} />
         ))}
       </nav>
 
       <div className={styles.grow} />
 
       {plan ? (
-        <div className={styles.plan}>
+        <div className={styles.plan} data-plan>
           <div className={styles.planTop}>
             <strong className={styles.planName}>{plan.name} plan</strong>
             <span className={styles.planCount}>
@@ -217,26 +240,20 @@ export default function Sidebar({ plan, collapsed, onToggleCollapse, open, onClo
             Upgrade plan
           </Link>
         </div>
-      ) : (
+      ) : plan === undefined ? (
         <div className={clsx(styles.plan, styles.planSkel)} aria-hidden="true" />
-      )}
+      ) : null}
 
       <div className={styles.secondary}>
         {SECONDARY_NAV.map((item) => (
-          <SecondaryItem key={item.label} item={item} collapsed={collapsed} onClose={onClose} />
+          <Item key={item.label} {...item} secondary onClose={onClose} />
         ))}
       </div>
 
       <div className={styles.userWrap} ref={userRef} data-open={userOpen}>
-        <button
-          type="button"
-          className={styles.user}
-          aria-haspopup="menu"
-          aria-expanded={userOpen}
-          onClick={() => setUserOpen((o) => !o)}
-        >
+        <button type="button" className={styles.user} aria-haspopup="menu" aria-expanded={userOpen} onClick={() => setUserOpen((o) => !o)}>
           <span className={styles.avatar}>{getInitials(name)}</span>
-          <span className={styles.who}>
+          <span className={styles.who} data-who>
             <span className={styles.name}>{name}</span>
             <span className={styles.mail}>{user?.email}</span>
           </span>
@@ -244,7 +261,15 @@ export default function Sidebar({ plan, collapsed, onToggleCollapse, open, onClo
         </button>
 
         <div className={styles.menu} role="menu">
-          <Link to="/settings/profile" role="menuitem" className={styles.menuItem} onClick={() => { setUserOpen(false); onClose() }}>
+          <Link
+            to="/settings/profile"
+            role="menuitem"
+            className={styles.menuItem}
+            onClick={() => {
+              setUserOpen(false)
+              onClose()
+            }}
+          >
             <UserRound aria-hidden="true" /> Profile
           </Link>
           <span className={styles.menuSep} aria-hidden="true" />

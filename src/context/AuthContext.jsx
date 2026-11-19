@@ -1,6 +1,7 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { authService } from '@/services/auth.service'
 import { AUTH_EVENT } from '@/services/apiClient'
+import { clear2FAVerified, has2FA } from '@/utils/twoFactor'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext(null)
@@ -9,7 +10,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Restore session on first load
+  // Restore the session on first load
   useEffect(() => {
     let active = true
     authService
@@ -24,18 +25,35 @@ export function AuthProvider({ children }) {
 
   // Session expired somewhere in the app
   useEffect(() => {
-    const onUnauthorized = () => setUser(null)
+    const onUnauthorized = () => {
+      clear2FAVerified()
+      setUser(null)
+    }
     window.addEventListener(AUTH_EVENT, onUnauthorized)
     return () => window.removeEventListener(AUTH_EVENT, onUnauthorized)
   }, [])
 
-  // Returns the API response. If it says 2FA is required, the Login page
-  // navigates to /verify-2fa and later calls completeLogin(user).
-  const login = useCallback(async (credentials) => {
-    const data = await authService.login(credentials)
-    if (!data?.requires2FA) setUser(data.user ?? data)
-    return data
+  // Re-read the current user from /admin/me and store it
+  const refreshUser = useCallback(async () => {
+    const u = await authService.me()
+    setUser(u)
+    return u
   }, [])
+
+  // Optional helper (the Login page calls authService + refreshUser itself).
+  // Every password login starts unverified. Without 2FA the user is stored straight away.
+  const login = useCallback(
+    async (credentials) => {
+      clear2FAVerified()
+      const data = await authService.login(credentials)
+      const payload =
+        (typeof data?.message === 'object' && data.message !== null ? data.message : null) || data?.user || data
+      const needs2FA = data?.requires2FA === true || has2FA(data) || has2FA(payload)
+      if (!needs2FA) await refreshUser()
+      return data
+    },
+    [refreshUser],
+  )
 
   const completeLogin = useCallback((u) => setUser(u), [])
 
@@ -43,14 +61,9 @@ export function AuthProvider({ children }) {
     try {
       await authService.logout()
     } finally {
+      clear2FAVerified()
       setUser(null)
     }
-  }, [])
-
-  const refreshUser = useCallback(async () => {
-    const u = await authService.me()
-    setUser(u)
-    return u
   }, [])
 
   const value = useMemo(
