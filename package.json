@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.2.0",
   "type": "module",
+  "homepage": "https://sign.nexgn.cloud",
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/postbuild.mjs",
@@ -17,10 +18,15 @@
     "clsx": "^2.1.1",
     "gsap": "^3.15.1",
     "lucide-react": "^1.70.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.5.438",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-helmet-async": "^3.0.0",
-    "react-router-dom": "^7.18.5"
+    "react-quill-new": "^3.8.3",
+    "react-rnd": "^10.5.3",
+    "react-router-dom": "^7.18.5",
+    "react-signature-canvas": "^1.1.0-alpha.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
