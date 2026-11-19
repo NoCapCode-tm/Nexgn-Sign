@@ -7,7 +7,7 @@ export default function PublicRoute() {
   const { user, loading } = useAuth()
   const { pathname } = useLocation()
 
-  if (loading) return <LoadingOverlay message="Checking authentication..." />
+  // if (loading) return <LoadingOverlay message="Checking authentication..." /> //optional loading overlay for public routes
 
   if (user) {
     const target = getPostLoginPath(user)
