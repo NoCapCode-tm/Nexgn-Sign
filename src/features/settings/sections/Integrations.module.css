@@ -1,0 +1,541 @@
+.wrap {
+  container: integ / inline-size;
+  min-width: 0;
+  padding: 0 0.85em 1.85em;
+}
+
+/* ---------- Card Shell ---------- */
+.card {
+  min-width: 0;
+  border: 1px solid #e2e5eb;
+  border-radius: 1.15em;
+  background: #fff;
+  box-shadow: 0 0.1em 0.35em rgba(16, 24, 40, 0.03), 0 0.9em 1.8em -1.4em rgba(16, 24, 40, 0.14);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25em;
+  padding: 1.45em 1.65em 1.35em;
+  border-bottom: 1px solid var(--app-line, #eaecf0);
+}
+
+.headText {
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  color: var(--app-ink, #101828);
+  font-size: 1.16em;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.sub {
+  margin: 0.3em 0 0;
+  color: #667085;
+  font-size: 0.92em;
+  line-height: 1.4;
+}
+
+.connectMoreBtn {
+  flex: none;
+  height: 2.8em;
+  padding: 0 1.5em;
+  font-size: 0.98em;
+  white-space: nowrap;
+}
+
+/* ---------- Integration Items ---------- */
+.list {
+  display: grid;
+}
+
+.item {
+  padding: 1.8em 1.65em 1.9em;
+  border-bottom: 1px solid var(--app-line, #eaecf0);
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+.itemTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2em;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1.25em;
+  min-width: 0;
+}
+
+.logo {
+  flex: none;
+  width: 3.35em;
+  height: 3em;
+}
+
+.brandMeta {
+  display: grid;
+  gap: 0.25em;
+  min-width: 0;
+}
+
+.name {
+  margin: 0;
+  color: var(--app-ink, #101828);
+  font-size: 1.05em;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.status {
+  color: #667085;
+  font-size: 0.85em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.status[data-connected='false'] {
+  color: #98a2b3;
+}
+
+.itemActions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.85em;
+}
+
+.removeBtn,
+.outlineBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 6.6em;
+  height: 2.7em;
+  padding: 0 1.45em;
+  border-radius: 0.62em;
+  font: inherit;
+  font-size: 0.96em;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.18s, border-color 0.18s, transform 0.15s, opacity 0.18s;
+}
+
+.removeBtn {
+  border: 1px solid transparent;
+  background: #e4e7ec;
+  color: var(--app-ink, #101828);
+}
+
+.removeBtn:hover {
+  background: #d8dce4;
+}
+
+.outlineBtn {
+  border: 1px solid #d0d5dd;
+  background: #fff;
+  color: var(--app-ink, #101828);
+}
+
+.outlineBtn:hover {
+  border-color: #b8c0cc;
+  background: #f6f7f9;
+}
+
+.removeBtn:active,
+.outlineBtn:active {
+  transform: scale(0.985);
+}
+
+.removeBtn:focus-visible,
+.outlineBtn:focus-visible,
+.modalCancel:focus-visible {
+  outline: 2px solid var(--app-ink, #101828);
+  outline-offset: 2px;
+}
+
+.connectBtn {
+  min-width: 7.5em;
+  height: 2.7em;
+  padding: 0 1.6em;
+  font-size: 0.96em;
+}
+
+.desc {
+  max-width: 62em;
+  margin: 1.55em 0 0;
+  color: #5f6676;
+  font-size: 0.95em;
+  line-height: 1.55;
+}
+
+/* ---------- Disconnect Confirmation Modal ---------- */
+.modalBody {
+  display: grid;
+  gap: 1.15em;
+  padding: 1.55em 1.7em 1.75em;
+}
+
+.modalLead {
+  margin: 0;
+  color: #475467;
+  font-size: 0.97em;
+  line-height: 1.55;
+}
+
+.modalList {
+  display: grid;
+  gap: 0.55em;
+  margin: 0;
+  padding-left: 1.25em;
+  color: #475467;
+  font-size: 0.95em;
+  line-height: 1.45;
+}
+
+.modalCancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 6.2em;
+  height: 2.75em;
+  padding: 0 1.45em;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.65em;
+  background: #fff;
+  color: var(--app-ink, #101828);
+  font: inherit;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.18s, border-color 0.18s, transform 0.15s, opacity 0.18s;
+}
+
+.modalCancel:hover:not(:disabled) {
+  border-color: #b8c0cc;
+  background: #f6f7f9;
+}
+
+.modalCancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modalConfirm {
+  min-width: 7.4em;
+  height: 2.75em;
+  padding: 0 1.55em;
+  font-size: 1em;
+}
+
+/* ---------- Connect More Tools Modal ---------- */
+.catalog {
+  display: grid;
+  gap: 0.85em;
+  padding: 1.4em 1.6em 1.6em;
+}
+
+.catalogRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  padding: 0.95em 1.05em;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.8em;
+  background: #fff;
+}
+
+.catalogDisabled {
+  background: #f9fafb;
+  opacity: 0.78;
+}
+
+.catalogInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.85em;
+  min-width: 0;
+}
+
+.catalogInfo > div {
+  display: grid;
+  gap: 0.18em;
+  min-width: 0;
+}
+
+.catalogInfo strong {
+  color: var(--app-ink, #101828);
+  font-size: 0.97em;
+  font-weight: 600;
+}
+
+.catalogInfo span {
+  color: #667085;
+  font-size: 0.86em;
+  line-height: 1.35;
+}
+
+.catalogLogo {
+  flex: none;
+  width: 2.15em;
+  height: 1.95em;
+}
+
+.catalogIconBox {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.25em;
+  height: 2.25em;
+  border-radius: 0.55em;
+  background: #eef0f4;
+  color: #667085;
+}
+
+.catalogIconBox svg {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+.catalogBtn {
+  flex: none;
+  min-width: 5.8em;
+  height: 2.35em;
+  padding: 0 1.1em;
+  font-size: 0.9em;
+}
+
+.connectedTag {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.3em 0.7em;
+  border-radius: 0.45em;
+  background: #ecfdf3;
+  color: #15803d;
+  font-size: 0.84em;
+  font-weight: 600;
+}
+
+.connectedTag svg {
+  width: 0.95em;
+  height: 0.95em;
+  stroke-width: 2.5;
+}
+
+.soonBadge {
+  flex: none;
+  padding: 0.28em 0.65em;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.45em;
+  background: #fff;
+  color: #667085;
+  font-size: 0.8em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ---------- Retry + Skeleton ---------- */
+.retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  height: 2.1em;
+  margin-left: auto;
+  padding: 0 0.9em;
+  border: 1px solid currentColor;
+  border-radius: 0.6em;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retry svg {
+  width: 1em;
+  height: 1em;
+}
+
+.skGroup {
+  display: grid;
+  gap: 0.45em;
+}
+
+.skTitle,
+.skSub,
+.skBtn,
+.skLogo,
+.skName,
+.skStatus,
+.skAction,
+.skLine,
+.skLineShort {
+  display: block;
+  border-radius: 0.35em;
+  background: linear-gradient(90deg, #eef0f4 25%, #f7f8fa 50%, #eef0f4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.skTitle {
+  width: 11em;
+  height: 1.15em;
+}
+
+.skSub {
+  width: 21em;
+  max-width: 100%;
+  height: 0.85em;
+}
+
+.skBtn {
+  width: 10em;
+  height: 2.6em;
+  border-radius: 0.65em;
+}
+
+.skLogo {
+  width: 3.35em;
+  height: 3em;
+  border-radius: 0.7em;
+}
+
+.skName {
+  width: 7.5em;
+  height: 1em;
+}
+
+.skStatus {
+  width: 5.5em;
+  height: 0.78em;
+}
+
+.skAction {
+  width: 6.5em;
+  height: 2.55em;
+  border-radius: 0.6em;
+}
+
+.skLine {
+  width: 88%;
+  height: 0.9em;
+  margin-top: 1.55em;
+}
+
+.skLineShort {
+  width: 56%;
+  height: 0.9em;
+  margin-top: 0.55em;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- Tablet (<= 48em) ---------- */
+@container integ (max-width: 48em) {
+  .wrap {
+    padding: 0 0.25em 1.5em;
+  }
+
+  .head {
+    flex-wrap: wrap;
+    padding: 1.3em 1.35em 1.2em;
+  }
+
+  .item {
+    padding: 1.5em 1.35em 1.6em;
+  }
+}
+
+/* ---------- Mobile (<= 36em) ---------- */
+@container integ (max-width: 36em) {
+  .card {
+    border-radius: 1em;
+  }
+
+  .head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1em;
+    padding: 1.2em 1.15em;
+  }
+
+  .connectMoreBtn {
+    width: 100%;
+  }
+
+  .item {
+    padding: 1.35em 1.15em 1.45em;
+  }
+
+  .itemTop {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.1em;
+  }
+
+  .itemActions {
+    width: 100%;
+  }
+
+  .removeBtn,
+  .outlineBtn,
+  .connectBtn {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .desc {
+    margin-top: 1.2em;
+  }
+
+  .catalogRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .catalogBtn,
+  .connectedTag,
+  .soonBadge {
+    align-self: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .removeBtn,
+  .outlineBtn,
+  .modalCancel {
+    transition: none;
+  }
+
+  .skTitle,
+  .skSub,
+  .skBtn,
+  .skLogo,
+  .skName,
+  .skStatus,
+  .skAction,
+  .skLine,
+  .skLineShort {
+    animation: none;
+  }
+}

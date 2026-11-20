@@ -8,12 +8,17 @@ export default function ProtectedRoute() {
   const location = useLocation()
 
   if (loading) return <LoadingOverlay message="Verifying your session..." />
-  
+
   if (!user) return <Navigate to="/login" replace state={{ from: location }} />
 
   // 2FA users must verify their code in this browser before entering the app
   const next = getPostLoginPath(user)
   if (next.startsWith('/verify-2fa')) return <Navigate to={next} replace />
+
+  // First-time users who have not completed the billing/plan step go to /pricing
+  if (user?.hasSeenBilling === false && location.pathname !== '/pricing') {
+    return <Navigate to="/pricing" replace />
+  }
 
   return <Outlet />
 }

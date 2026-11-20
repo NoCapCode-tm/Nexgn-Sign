@@ -1,0 +1,752 @@
+.wrap {
+  container: billing / inline-size;
+  display: grid;
+  gap: 1.75em;
+  min-width: 0;
+  padding: 0 0.85em 1.85em;
+}
+
+/* ---------- Top 2-Card Grid ---------- */
+.topGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.35em;
+  align-items: stretch;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.45em 1.65em 1.5em;
+  border: 1px solid #e2e5eb;
+  border-radius: 1.15em;
+  background: #fff;
+  box-shadow: 0 0.1em 0.35em rgba(16, 24, 40, 0.03), 0 0.9em 1.8em -1.4em rgba(16, 24, 40, 0.14);
+}
+
+.cardTitle {
+  margin: 0;
+  color: var(--app-ink, #101828);
+  font-size: 1.18em;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.cardSub {
+  margin: 0.25em 0 0;
+  color: #667085;
+  font-size: 0.92em;
+  line-height: 1.35;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  margin: 1.05em 0 1.15em;
+  border: 0;
+  background: var(--app-line, #eaecf0);
+}
+
+/* ---------- Plan Card ---------- */
+.planHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.planMeta {
+  display: grid;
+  justify-items: start;
+  gap: 0.55em;
+  min-width: 0;
+}
+
+.periodBadge {
+  display: inline-flex;
+  align-items: center;
+  height: 1.9em;
+  padding: 0 0.8em;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.45em;
+  background: #f8fafc;
+  color: #5b7599;
+  font-size: 0.84em;
+  font-weight: 500;
+}
+
+.priceWrap {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.12em;
+  white-space: nowrap;
+}
+
+.price {
+  color: var(--app-ink, #101828);
+  font-size: 2.15em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.period {
+  color: #667085;
+  font-size: 0.96em;
+  font-weight: 400;
+}
+
+.features {
+  display: grid;
+  gap: 0.45em;
+  margin: 0 0 1.25em;
+  padding: 0;
+  list-style: none;
+  color: #344054;
+  font-size: 0.96em;
+  line-height: 1.4;
+}
+
+.usageBlock {
+  display: grid;
+  gap: 0.55em;
+  margin-top: auto;
+}
+
+.progressTrack {
+  position: relative;
+  width: 100%;
+  height: 0.58em;
+  overflow: hidden;
+  border: 1px solid #d0d5dd;
+  border-radius: 99px;
+  background: #f2f4f7;
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--app-ink, #101828);
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.usageMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  color: #667085;
+  font-size: 0.88em;
+}
+
+.usageCount {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.planFoot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.15em;
+}
+
+.upgradeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.65em;
+  padding: 0 1.35em;
+  border: 0;
+  border-radius: 0.6em;
+  background: var(--app-ink, #101828);
+  color: #fff;
+  font: inherit;
+  font-size: 0.96em;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.25s;
+}
+
+.upgradeBtn:hover {
+  background: #1d2939;
+  transform: translateY(-1px);
+  box-shadow: 0 0.6em 1.2em -0.6em rgba(16, 24, 40, 0.45);
+}
+
+.upgradeBtn:active {
+  transform: scale(0.985);
+}
+
+.upgradeBtn:focus-visible {
+  outline: 2px solid var(--app-ink, #101828);
+  outline-offset: 2px;
+}
+
+/* ---------- Payment Method Card ---------- */
+.paymentHead {
+  min-width: 0;
+}
+
+.methodRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.methodLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.95em;
+  min-width: 0;
+}
+
+.brandBox {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em;
+  min-width: 4.1em;
+  height: 2.75em;
+  padding: 0 0.7em;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.55em;
+  background: #fff;
+}
+
+.visa {
+  color: #1a1f71;
+  font-size: 1.05em;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -0.02em;
+}
+
+.brandIcon {
+  width: 1.1em;
+  height: 1.1em;
+  color: #475467;
+}
+
+.brandText {
+  color: #344054;
+  font-size: 0.86em;
+  font-weight: 600;
+}
+
+.cardInfo {
+  display: grid;
+  gap: 0.18em;
+  min-width: 0;
+}
+
+.cardNumber {
+  color: #344054;
+  font-size: 0.96em;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardExpiry {
+  color: #667085;
+  font-size: 0.86em;
+}
+
+.outlineBtn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  height: 2.65em;
+  padding: 0 1.4em;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.6em;
+  background: #fff;
+  color: var(--app-text, #101828);
+  font: inherit;
+  font-size: 0.94em;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.outlineBtn:hover:not(:disabled) {
+  border-color: #b8c0cc;
+  background: #f6f7f9;
+}
+
+.outlineBtn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.outlineBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.outlineBtn:focus-visible {
+  outline: 2px solid var(--app-ink, #101828);
+  outline-offset: 2px;
+}
+
+.billingFacts {
+  display: grid;
+  gap: 0.45em;
+  margin: 1.45em 0 0;
+  font-size: 0.95em;
+  line-height: 1.45;
+}
+
+.billingFacts > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35em;
+}
+
+.billingFacts dt {
+  color: #475467;
+  font-weight: 400;
+}
+
+.billingFacts dd {
+  margin: 0;
+  color: var(--app-text, #101828);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Billing and Invoice Table ---------- */
+.invoiceSection {
+  display: grid;
+  gap: 1em;
+  min-width: 0;
+}
+
+.invoiceHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--app-ink, #101828);
+  font-size: 1.15em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.downloadAllBtn {
+  height: 2.55em;
+  padding: 0 1.05em;
+  font-size: 0.92em;
+}
+
+.downloadAllBtn svg {
+  width: 1.15em;
+  height: 1.15em;
+  color: #475467;
+}
+
+.table {
+  --cols: minmax(0, 72fr) minmax(0, 260fr) minmax(0, 160fr) minmax(0, 128fr) minmax(0, 130fr) minmax(0, 145fr) minmax(0, 110fr);
+  min-width: 0;
+  padding: 0 1.15em;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.95em;
+  background: #fff;
+}
+
+.thead,
+.row,
+.skelRow {
+  display: grid;
+  grid-template-columns: var(--cols);
+  align-items: center;
+  column-gap: 0.6em;
+}
+
+.thead {
+  height: 3.4em;
+  border-bottom: 1px solid #e2e5eb;
+  color: #667085;
+}
+
+.thead > span {
+  font-size: 0.84em;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.row,
+.skelRow {
+  min-height: 4.35em;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.row:last-child,
+.skelRow:last-child {
+  border-bottom: 0;
+}
+
+.row {
+  transition: background 0.18s;
+}
+
+.row:hover {
+  background: #fafbfc;
+}
+
+.cSl {
+  color: #344054;
+  font-size: 1em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cInvoice {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--app-ink, #101828);
+  font-size: 1.02em;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cDate,
+.cAmount,
+.cPlan {
+  color: #667085;
+  font-size: 0.96em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cStatus {
+  display: flex;
+  align-items: center;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.25em 0.7em;
+  border-radius: 0.45em;
+  font-size: 0.88em;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.statusPill svg {
+  width: 0.95em;
+  height: 0.95em;
+  stroke-width: 2.5;
+}
+
+.statusPill[data-s='paid'] {
+  background: #ecfdf3;
+  color: #15803d;
+}
+
+.statusPill[data-s='pending'] {
+  background: #fff7ed;
+  color: #c2570c;
+}
+
+.statusPill[data-s='failed'] {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.cAction {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.downloadLink {
+  padding: 0.25em 0.15em;
+  border: 0;
+  background: transparent;
+  color: #15803d;
+  font: inherit;
+  font-size: 0.96em;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.18s, opacity 0.18s;
+}
+
+.downloadLink:hover {
+  color: #166534;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+
+.downloadLink:focus-visible {
+  outline: 2px solid var(--app-ink, #101828);
+  outline-offset: 3px;
+  border-radius: 0.2em;
+}
+
+.mobileMeta {
+  display: none;
+  margin: 0;
+  color: #667085;
+  font-size: 0.9em;
+}
+
+.mobileMeta b {
+  color: var(--app-text, #101828);
+  font-weight: 600;
+}
+
+/* ---------- Modal + Empty + Retry ---------- */
+.modalBody {
+  display: grid;
+  gap: 1.1em;
+  padding: 1.6em 1.7em;
+}
+
+.modalBody p {
+  margin: 0;
+  color: #5f6676;
+  line-height: 1.5;
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.4em;
+  padding: 3.2em 1em;
+  color: #667085;
+  text-align: center;
+}
+
+.empty svg {
+  width: 2.3em;
+  height: 2.3em;
+  opacity: 0.5;
+}
+
+.empty strong {
+  color: var(--app-text, #101828);
+}
+
+.retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  height: 2.1em;
+  margin-left: auto;
+  padding: 0 0.9em;
+  border: 1px solid currentColor;
+  border-radius: 0.6em;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retry svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* ---------- Skeleton ---------- */
+.skCard {
+  gap: 0.85em;
+  min-height: 16em;
+}
+
+.skRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.skTitle,
+.skPrice,
+.skLine,
+.skLineShort,
+.skBar,
+.skBtn,
+.skelRow b {
+  display: block;
+  border-radius: 0.35em;
+  background: linear-gradient(90deg, #eef0f4 25%, #f7f8fa 50%, #eef0f4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.skTitle {
+  width: 9em;
+  height: 1.2em;
+}
+
+.skPrice {
+  width: 5.5em;
+  height: 1.8em;
+}
+
+.skLine {
+  width: 85%;
+  height: 0.9em;
+}
+
+.skLineShort {
+  width: 55%;
+  height: 0.9em;
+}
+
+.skBar {
+  width: 100%;
+  height: 0.6em;
+  margin-top: auto;
+  border-radius: 99px;
+}
+
+.skBtn {
+  width: 8em;
+  height: 2.3em;
+  border-radius: 0.6em;
+}
+
+.skelRow b {
+  width: 72%;
+  height: 0.9em;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- Tablet / Medium Container (<= 58em) ---------- */
+@container billing (max-width: 58em) {
+  .wrap {
+    padding: 0 0.25em 1.5em;
+  }
+
+  .topGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .table {
+    --cols: minmax(0, 56fr) minmax(0, 240fr) minmax(0, 145fr) minmax(0, 118fr) minmax(0, 120fr) minmax(0, 100fr);
+  }
+
+  .cPlan,
+  .thead > .cPlan {
+    display: none;
+  }
+}
+
+/* ---------- Mobile Container (<= 42em) ---------- */
+@container billing (max-width: 42em) {
+  .card {
+    padding: 1.25em 1.2em;
+    border-radius: 1em;
+  }
+
+  .price {
+    font-size: 1.85em;
+  }
+
+  .planFoot {
+    justify-content: stretch;
+  }
+
+  .upgradeBtn {
+    width: 100%;
+  }
+
+  .methodRow {
+    flex-wrap: wrap;
+  }
+
+  .invoiceHead {
+    flex-wrap: wrap;
+  }
+
+  .table {
+    padding: 0 0.95em;
+  }
+
+  .thead {
+    display: none;
+  }
+
+  .row,
+  .skelRow {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'sl invoice status'
+      'meta meta action';
+    row-gap: 0.45em;
+    column-gap: 0.55em;
+    padding: 0.95em 0;
+  }
+
+  .cSl {
+    grid-area: sl;
+  }
+
+  .cInvoice {
+    grid-area: invoice;
+  }
+
+  .cStatus {
+    grid-area: status;
+    justify-content: flex-end;
+  }
+
+  .cDate,
+  .cAmount,
+  .cPlan {
+    display: none;
+  }
+
+  .mobileMeta {
+    display: block;
+    grid-area: meta;
+  }
+
+  .cAction {
+    grid-area: action;
+    align-items: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressFill,
+  .upgradeBtn,
+  .outlineBtn,
+  .row,
+  .downloadLink {
+    transition: none;
+  }
+
+  .skTitle,
+  .skPrice,
+  .skLine,
+  .skLineShort,
+  .skBar,
+  .skBtn,
+  .skelRow b {
+    animation: none;
+  }
+}

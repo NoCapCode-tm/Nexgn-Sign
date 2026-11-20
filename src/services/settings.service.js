@@ -183,6 +183,99 @@ function normalizeNotifications(data) {
   })
 }
 
+/* ---------------- Billing ---------------- */
+function normalizeInvoiceStatus(raw) {
+  const s = text(raw).toLowerCase()
+  if (['paid', 'captured', 'succeeded', 'completed', 'active'].includes(s)) return 'paid'
+  if (['failed', 'declined', 'cancelled', 'canceled', 'void', 'halted'].includes(s)) return 'failed'
+  if (['pending', 'open', 'issued', 'processing', 'created'].includes(s)) return 'pending'
+  return 'paid'
+}
+
+const fromSubunits = (value) => {
+  const n = Number(value)
+  return Number.isFinite(n) && n > 0 ? n / 100 : 0
+}
+
+function normalizeBilling(data) {
+  const sub = unwrapObject(data)
+  const plan = sub.planId && typeof sub.planId === 'object' ? sub.planId : sub.plan ?? {}
+  const currency = text(plan.currency ?? sub.currency).toUpperCase() || 'INR'
+  const price = fromSubunits(plan.amount ?? sub.amount)
+
+  const used = Number(sub.used ?? sub.envelopesUsed ?? sub.documentsUsed ?? 0)
+  const limit = Number(plan.envelopeLimit ?? plan.documentLimit ?? plan.envelopes ?? plan.limit ?? sub.limit ?? 0)
+
+  const card = sub.paymentMethod ?? sub.card ?? {}
+  const rawInvoices = unwrapList(data, 'invoices').length
+    ? unwrapList(data, 'invoices')
+    : Array.isArray(sub.invoices)
+      ? sub.invoices
+      : []
+
+  let invoices = rawInvoices.map((inv, idx) => {
+    const invoiceId = text(inv.invoiceId ?? inv.razorpayInvoiceId ?? inv.number ?? inv._id ?? inv.id)
+    const directUrl = text(inv.downloadUrl ?? inv.invoiceUrl ?? inv.shortUrl ?? inv.pdfUrl ?? inv.url)
+    return {
+      id: String(inv._id ?? inv.id ?? inv.invoiceId ?? idx),
+      number:
+        text(inv.invoiceNumber ?? inv.number ?? inv.label) ||
+        (invoiceId ? `Invoice #${invoiceId.slice(-6)}` : `Invoice #${idx + 1}`),
+      date: inv.date ?? inv.billingDate ?? inv.createdAt ?? sub.startDate ?? '',
+      status: normalizeInvoiceStatus(inv.status),
+      amount: fromSubunits(inv.amount ?? inv.total ?? plan.amount ?? sub.amount),
+      currency: text(inv.currency).toUpperCase() || currency,
+      plan: text(inv.planName ?? inv.plan ?? plan.name) || 'Free plan',
+      url: directUrl || (invoiceId ? `https://invoices.razorpay.com/v1/t/${invoiceId}` : ''),
+    }
+  })
+
+  // Legacy /subscription/mysubscription returns a single lastInvoiceId + startDate
+  const lastInvoiceId = text(sub.lastInvoiceId)
+  if (invoices.length === 0 && lastInvoiceId) {
+    const d = sub.startDate ? new Date(sub.startDate) : null
+    const monthTag =
+      d && !Number.isNaN(d.getTime())
+        ? d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+        : ''
+    const planLabel = text(plan.name)
+    invoices = [
+      {
+        id: lastInvoiceId,
+        number: `Invoice #${lastInvoiceId.slice(-4)}${monthTag ? `-${monthTag}` : ''}`,
+        date: sub.startDate ?? '',
+        status: normalizeInvoiceStatus(sub.status),
+        amount: price,
+        currency,
+        plan: planLabel ? (/plan$/i.test(planLabel) ? planLabel : `${planLabel} plan`) : 'Current plan',
+        url: `https://invoices.razorpay.com/v1/t/${lastInvoiceId}`,
+      },
+    ]
+  }
+
+  return {
+    plan: {
+      name: text(plan.name) || 'Free',
+      billingPeriod: text(plan.billingPeriod ?? sub.billingPeriod) || 'Monthly',
+      price,
+      currency,
+      features: Array.isArray(plan.features) ? plan.features.map(text).filter(Boolean) : [],
+      used,
+      limit,
+    },
+    paymentMethod: {
+      brand: text(card.brand ?? card.network ?? sub.cardBrand) || 'Visa',
+      last4: text(card.last4 ?? sub.cardLast4),
+      expiry:
+        text(card.expiry) ||
+        (card.expMonth && card.expYear ? `${String(card.expMonth).padStart(2, '0')}/${card.expYear}` : ''),
+    },
+    nextBillingDate: sub.currentPeriodEnd ?? sub.nextBillingDate ?? '',
+    billingEmail: text(sub.billingEmail ?? sub.billingAddress ?? sub.email),
+    invoices,
+  }
+}
+
 /* ---------------- Team ---------------- */
 function readMemberStatus(raw) {
   const s = text(raw.status || raw.invitestatus).toLowerCase()
@@ -233,9 +326,14 @@ export const settingsService = {
     return {
       name: text(plan?.name) || 'Free',
       used: Number(sub.used ?? sub.envelopesUsed ?? 0),
-      limit: Number(plan?.envelopeLimit ?? plan?.limit ?? sub.limit ?? 0),
+      limit: Number(plan?.envelopeLimit ?? plan?.documentLimit ?? plan?.limit ?? sub.limit ?? 0),
       subscription: sub,
     }
+  },
+
+  getBilling: async () => {
+    const { data } = await apiClient.get(ENDPOINTS.subscription)
+    return normalizeBilling(data)
   },
 
   /* Profile + Account */
@@ -362,7 +460,8 @@ export const settingsService = {
 
   getGoogleAuthUrl: async () => {
     const { data } = await apiClient.get(ENDPOINTS.googleAuthUrl)
-    return text(data?.message ?? data?.url)
+    if (typeof data?.message === 'string') return text(data.message)
+    return text(unwrapObject(data).url ?? data?.url)
   },
 
   disconnectGoogle: async () => {
