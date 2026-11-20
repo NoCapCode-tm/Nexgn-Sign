@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import { ChevronDown, CircleAlert } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { Check, ChevronDown, CircleAlert } from 'lucide-react'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import clsx from 'clsx'
@@ -36,6 +37,113 @@ function Field({ id, label, error, children }) {
           {error}
         </p>
       )}
+    </div>
+  )
+}
+
+function GenderSelect({ id, value, onChange }) {
+  const [open, setOpen] = useState(false)
+  const [pos, setPos] = useState(null)
+  const triggerRef = useRef(null)
+  const menuRef = useRef(null)
+  const listId = `${id}-listbox`
+
+  const options = [
+    { value: '', label: 'Select' },
+    ...GENDERS.map((g) => ({ value: g, label: g })),
+  ]
+
+  const toggle = () => {
+    if (!open && triggerRef.current) {
+      const r = triggerRef.current.getBoundingClientRect()
+      setPos({ top: r.bottom + 6, left: r.left, width: r.width })
+    }
+    setOpen((o) => !o)
+  }
+
+  useEffect(() => {
+    if (!open) return undefined
+
+    const onDown = (e) => {
+      if (triggerRef.current?.contains(e.target) || menuRef.current?.contains(e.target)) return
+      setOpen(false)
+    }
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        e.stopPropagation()
+        setOpen(false)
+        triggerRef.current?.focus()
+      }
+    }
+    const onScrollOrResize = () => setOpen(false)
+
+    document.addEventListener('pointerdown', onDown)
+    window.addEventListener('keydown', onKey, true)
+    window.addEventListener('resize', onScrollOrResize)
+    window.addEventListener('scroll', onScrollOrResize, true)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('keydown', onKey, true)
+      window.removeEventListener('resize', onScrollOrResize)
+      window.removeEventListener('scroll', onScrollOrResize, true)
+    }
+  }, [open])
+
+  const choose = (next) => {
+    onChange({ target: { name: 'gender', value: next } })
+    setOpen(false)
+    triggerRef.current?.focus()
+  }
+
+  return (
+    <div className={styles.selectWrap} data-open={open}>
+      <button
+        ref={triggerRef}
+        id={id}
+        name="gender"
+        type="button"
+        className={clsx(styles.input, styles.select, open && styles.selectOpen)}
+        data-empty={!value}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        onClick={toggle}
+      >
+        <span className={styles.selectValue}>{value || 'Select'}</span>
+      </button>
+      <ChevronDown className={clsx(styles.chev, open && styles.chevOpen)} aria-hidden="true" />
+
+      {open &&
+        pos &&
+        createPortal(
+          <ul
+            ref={menuRef}
+            id={listId}
+            role="listbox"
+            aria-labelledby={id}
+            className={styles.selectMenu}
+            style={{ top: pos.top, left: pos.left, width: pos.width }}
+          >
+            {options.map((opt) => {
+              const selected = value === opt.value
+              return (
+                <li key={opt.label} role="option" aria-selected={selected}>
+                  <button
+                    type="button"
+                    className={clsx(styles.selectOption, !opt.value && styles.selectPlaceholder)}
+                    data-selected={selected}
+                    onClick={() => choose(opt.value)}
+                  >
+                    <span>{opt.label}</span>
+                    {selected && opt.value && <Check className={styles.selectCheck} aria-hidden="true" />}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>,
+          document.getElementById('app-portal') ?? document.body,
+        )}
     </div>
   )
 }
@@ -199,24 +307,7 @@ export default function AddContactForm({ open, mode = 'add', contact, onClose, o
           </Field>
 
           <Field id={fid('gender')} label="Gender" error={errors.gender}>
-            <div className={styles.selectWrap}>
-              <select
-                id={fid('gender')}
-                name="gender"
-                value={values.gender}
-                onChange={onChange}
-                className={clsx(styles.input, styles.select)}
-                data-empty={!values.gender}
-              >
-                <option value="">Select</option>
-                {GENDERS.map((g) => (
-                  <option key={g} value={g}>
-                    {g}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className={styles.chev} aria-hidden="true" />
-            </div>
+            <GenderSelect id={fid('gender')} value={values.gender} onChange={onChange} />
           </Field>
 
           <Field id={fid('phone')} label="Contact" error={errors.phone}>

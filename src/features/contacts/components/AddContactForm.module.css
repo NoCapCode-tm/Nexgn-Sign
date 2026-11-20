@@ -73,20 +73,28 @@
   font-size: 0.86em;
 }
 
+/* ---------- Custom Gender Dropdown ---------- */
 .selectWrap {
   position: relative;
 }
 .select {
-  appearance: none;
-  -webkit-appearance: none;
+  display: flex;
+  align-items: center;
   padding-right: 2.8em;
+  text-align: left;
   cursor: pointer;
+}
+.selectValue {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .select[data-empty='true'] {
   color: #8d93a0;
 }
-.select option {
-  color: var(--app-text);
+.selectOpen {
+  border-color: var(--app-ink, #101828);
+  box-shadow: 0 0 0 0.22em rgba(16, 24, 40, 0.08);
 }
 .chev {
   position: absolute;
@@ -97,10 +105,75 @@
   color: #6b7280;
   transform: translateY(-50%);
   pointer-events: none;
-  transition: color 0.2s;
+  transition: color 0.2s, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.select:focus + .chev {
-  color: var(--app-ink);
+.select:focus + .chev,
+.chevOpen {
+  color: var(--app-ink, #101828);
+}
+.chevOpen {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.selectMenu {
+  position: fixed;
+  z-index: 90;
+  margin: 0;
+  padding: 0.4em;
+  list-style: none;
+  border: 1px solid var(--app-line, #eaecf0);
+  border-radius: 0.9em;
+  background: #fff;
+  box-shadow:
+    0 1.2em 2.4em -0.8em rgba(16, 24, 40, 0.2),
+    0 0.2em 0.6em rgba(16, 24, 40, 0.06);
+  animation: selectIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes selectIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.35em) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.selectOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75em;
+  width: 100%;
+  height: 2.65em;
+  padding: 0 0.85em;
+  border: 0;
+  border-radius: 0.55em;
+  background: transparent;
+  color: var(--app-text, #101828);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.selectPlaceholder {
+  color: #8d93a0;
+}
+.selectOption:hover,
+.selectOption:focus-visible {
+  outline: none;
+  background: #f6f7f9;
+}
+.selectOption[data-selected='true'] {
+  background: #f1f2f5;
+  color: var(--app-ink, #101828);
+  font-weight: 500;
+}
+.selectCheck {
+  flex: none;
+  width: 1.05em;
+  height: 1.05em;
+  color: var(--app-ink, #101828);
 }
 
 /* ---------- Errors ---------- */
@@ -254,10 +327,14 @@
 @media (prefers-reduced-motion: reduce) {
   .input,
   .chev,
+  .selectOption,
   .cancel,
   .save,
   .danger {
     transition: none;
+  }
+  .selectMenu {
+    animation: none;
   }
   .save::after {
     display: none;
