@@ -1,0 +1,659 @@
+.field {
+  display: grid;
+  gap: 0.5em;
+  align-content: start;
+  min-width: 0;
+}
+.label {
+  font-size: 1.04em;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* Input text is 15px (1.07em), so heights are written against that: 2.8em = 42px */
+.input {
+  width: 100%;
+  height: 2.8em;
+  padding: 0 1.07em;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.53em;
+  background: #fff;
+  color: var(--app-text);
+  font: inherit;
+  font-size: 1.07em;
+  color-scheme: light;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.input::placeholder {
+  color: #9aa0ab;
+}
+.input:hover:not(:disabled):not([readonly]) {
+  border-color: #cdd2db;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--app-ink);
+  box-shadow: 0 0 0 0.2em rgba(16, 24, 40, 0.08);
+}
+.input[readonly] {
+  background: #f7f8fa;
+  color: #667085;
+  cursor: not-allowed;
+}
+.input:disabled {
+  opacity: 0.6;
+}
+.invalid,
+.invalid:hover {
+  border-color: #d92d20 !important;
+}
+.invalid:focus {
+  box-shadow: 0 0 0 0.2em rgba(217, 45, 32, 0.12);
+}
+.error {
+  margin: 0;
+  color: #d92d20;
+  font-size: 0.93em;
+}
+
+.selectWrap {
+  position: relative;
+}
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.6em;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.select[data-empty='true'] {
+  color: #9aa0ab;
+}
+.select option {
+  color: var(--app-text);
+}
+.chev {
+  position: absolute;
+  top: 50%;
+  right: 1em;
+  width: 1.15em;
+  height: 1.15em;
+  color: #6b7280;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: color 0.2s, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Custom Dropdown (Time Zone / Languages) ---------- */
+.dropdownBtn {
+  display: flex;
+  align-items: center;
+  padding-right: 2.6em;
+  text-align: left;
+  cursor: pointer;
+}
+.dropdownBtn:disabled {
+  cursor: not-allowed;
+}
+.dropdownValue {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dropdownBtn[data-empty='true'] {
+  color: #9aa0ab;
+}
+.dropdownOpen {
+  border-color: var(--app-ink, #101828);
+  box-shadow: 0 0 0 0.2em rgba(16, 24, 40, 0.08);
+}
+.dropdownBtn:focus + .chev,
+.chevOpen {
+  color: var(--app-ink, #101828);
+}
+.chevOpen {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.dropdownMenu {
+  position: fixed;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--app-line, #eaecf0);
+  border-radius: 0.85em;
+  background: #fff;
+  color: var(--app-text, #101828);
+  box-shadow:
+    0 1.2em 2.4em -0.8em rgba(16, 24, 40, 0.2),
+    0 0.2em 0.6em rgba(16, 24, 40, 0.06);
+  animation: dropdownIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dropdownUp {
+  animation-name: dropdownInUp;
+}
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.35em) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dropdownInUp {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.dropdownSearchWrap {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  padding: 0.45em 0.5em;
+  border-bottom: 1px solid var(--app-line, #eaecf0);
+}
+.dropdownSearchIcon {
+  position: absolute;
+  left: 1.05em;
+  width: 1em;
+  height: 1em;
+  color: #8d93a0;
+  pointer-events: none;
+}
+.dropdownSearch {
+  width: 100%;
+  height: 2.45em;
+  padding: 0 0.8em 0 2.35em;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.55em;
+  background: #f9fafb;
+  color: var(--app-text, #101828);
+  font: inherit;
+  font-size: 0.94em;
+  transition: border-color 0.2s, background 0.2s;
+}
+.dropdownSearch::placeholder {
+  color: #9aa0ab;
+}
+.dropdownSearch:focus {
+  outline: none;
+  border-color: var(--app-ink, #101828);
+  background: #fff;
+}
+
+.dropdownList {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0.38em;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #d5d9e0 transparent;
+}
+.dropdownOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75em;
+  width: 100%;
+  min-height: 2.55em;
+  padding: 0.35em 0.85em;
+  border: 0;
+  border-radius: 0.55em;
+  background: transparent;
+  color: var(--app-text, #101828);
+  font: inherit;
+  font-size: 0.96em;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.dropdownOption span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dropdownOption:hover,
+.dropdownOption:focus-visible {
+  outline: none;
+  background: #f6f7f9;
+}
+.dropdownOption[data-selected='true'] {
+  background: #f1f2f5;
+  color: var(--app-ink, #101828);
+  font-weight: 500;
+}
+.dropdownPlaceholder {
+  color: #9aa0ab;
+}
+.dropdownCheck {
+  flex: none;
+  width: 1.05em;
+  height: 1.05em;
+  color: var(--app-ink, #101828);
+}
+.dropdownEmpty {
+  padding: 1.1em 0.85em;
+  color: #8d93a0;
+  font-size: 0.92em;
+  text-align: center;
+}
+
+/* ---------- Custom Calendar Popover (Birthday) ---------- */
+.calIcon {
+  position: absolute;
+  top: 50%;
+  right: 1em;
+  width: 1.15em;
+  height: 1.15em;
+  color: #6b7280;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: color 0.2s;
+}
+.dropdownBtn:focus + .calIcon,
+.calIconOpen {
+  color: var(--app-ink, #101828);
+}
+
+.calMenu {
+  position: fixed;
+  z-index: 90;
+  width: min(21em, calc(100vw - 1.5em));
+  padding: 0.9em;
+  border: 1px solid var(--app-line, #eaecf0);
+  border-radius: 1em;
+  background: #fff;
+  color: var(--app-text, #101828);
+  box-shadow:
+    0 1.4em 2.8em -0.9em rgba(16, 24, 40, 0.22),
+    0 0.2em 0.6em rgba(16, 24, 40, 0.06);
+  animation: dropdownIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+}
+.calMenu.dropdownUp {
+  animation-name: dropdownInUp;
+}
+
+.calHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  margin-bottom: 0.75em;
+}
+.calTitleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  height: 2.2em;
+  padding: 0 0.65em;
+  border: 0;
+  border-radius: 0.55em;
+  background: transparent;
+  color: var(--app-ink, #101828);
+  font: inherit;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.calTitleBtn:hover {
+  background: #f3f4f7;
+}
+.calTitleBtn svg {
+  width: 1em;
+  height: 1em;
+  color: #667085;
+  transition: transform 0.2s;
+}
+.calTitleBtn[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+.calNav {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+}
+.calNavBtn {
+  display: grid;
+  place-items: center;
+  width: 2.15em;
+  height: 2.15em;
+  padding: 0;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.55em;
+  background: #fff;
+  color: var(--app-ink, #101828);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.calNavBtn svg {
+  width: 1.05em;
+  height: 1.05em;
+}
+.calNavBtn:hover:not(:disabled) {
+  border-color: #cdd2db;
+  background: #f6f7f9;
+}
+.calNavBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.calWeekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-bottom: 0.3em;
+  text-align: center;
+}
+.calWeekdays span {
+  padding: 0.3em 0;
+  color: #6b7280;
+  font-size: 0.82em;
+  font-weight: 600;
+}
+
+.calDays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.18em;
+}
+.calDay {
+  display: grid;
+  place-items: center;
+  height: 2.35em;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 0.55em;
+  background: transparent;
+  color: var(--app-text, #101828);
+  font: inherit;
+  font-size: 0.92em;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.calDay:hover:not(:disabled) {
+  background: #f3f4f7;
+}
+.calDayOut {
+  color: #9aa0ab;
+}
+.calDayToday:not([data-selected='true']) {
+  border-color: #cdd2db;
+  font-weight: 600;
+}
+.calDay[data-selected='true'] {
+  background: var(--app-ink, #101828);
+  color: #fff;
+  font-weight: 600;
+}
+.calDay:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.calPickGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35em;
+  padding: 0.25em 0;
+}
+.calPickCell {
+  height: 2.65em;
+  padding: 0 0.4em;
+  border: 1px solid transparent;
+  border-radius: 0.55em;
+  background: transparent;
+  color: var(--app-text, #101828);
+  font: inherit;
+  font-size: 0.93em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.calPickCell:hover:not(:disabled) {
+  background: #f3f4f7;
+}
+.calPickCell[data-selected='true'] {
+  background: var(--app-ink, #101828);
+  color: #fff;
+  font-weight: 600;
+}
+.calPickCell:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.calFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  margin-top: 0.7em;
+  padding-top: 0.65em;
+  border-top: 1px solid var(--app-line, #eaecf0);
+}
+.calFootBtn {
+  height: 2.15em;
+  padding: 0 0.75em;
+  border: 0;
+  border-radius: 0.5em;
+  background: transparent;
+  color: #667085;
+  font: inherit;
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.calFootBtn:hover:not(:disabled) {
+  background: #f3f4f7;
+  color: var(--app-ink, #101828);
+}
+.calFootBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.calTodayBtn {
+  color: var(--app-brand, #f20f1b);
+  font-weight: 600;
+}
+.calTodayBtn:hover:not(:disabled) {
+  background: rgba(242, 15, 27, 0.08);
+  color: var(--app-brand, #f20f1b);
+}
+.calTitleBtn:focus-visible,
+.calNavBtn:focus-visible,
+.calDay:focus-visible,
+.calPickCell:focus-visible,
+.calFootBtn:focus-visible {
+  outline: 2px solid var(--app-ink, #101828);
+  outline-offset: 2px;
+}
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6em;
+  padding: 0.75em 0.9em;
+  border: 1px solid color-mix(in srgb, #d92d20 35%, transparent);
+  border-radius: 0.7em;
+  background: rgba(217, 45, 32, 0.07);
+  color: #b42318;
+}
+.alert svg {
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+  margin-top: 0.05em;
+}
+
+/* Cancel / Save row. Design: 24px from the card's right and bottom edges, 36px under the content */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.71em;
+  padding: 2.57em 0.86em 1.7em;
+}
+.cancel,
+.save {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.86em;
+  border-radius: 0.65em;
+  font: inherit;
+  font-size: 1.1em;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.25s, transform 0.15s, opacity 0.2s;
+}
+.cancel {
+  padding: 0 1.85em;
+  border: 1px solid var(--app-ink);
+  background: #fff;
+  color: var(--app-ink);
+  font-weight: 500;
+}
+.cancel:hover:not(:disabled) {
+  background: #f4f5f8;
+}
+.save {
+  min-width: 5.4em;
+  padding: 0 1.75em;
+  overflow: hidden;
+  border: 0;
+  background: var(--app-brand);
+  color: #fff;
+  font-weight: 600;
+}
+.save::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.save:hover:not(:disabled) {
+  background: var(--app-brand-hover);
+  box-shadow: 0 0.7em 1.5em -0.6em rgba(242, 15, 27, 0.75);
+  transform: translateY(-1px);
+}
+.save:hover:not(:disabled)::after {
+  transform: translateX(120%);
+  transition: transform 0.8s ease;
+}
+.save:active:not(:disabled),
+.cancel:active:not(:disabled) {
+  transform: scale(0.985);
+}
+.cancel:disabled,
+.save:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.save[aria-busy='true'] {
+  cursor: progress;
+  opacity: 0.85;
+}
+.cancel:focus-visible,
+.save:focus-visible,
+.input:focus-visible {
+  outline: 2px solid var(--app-ink);
+  outline-offset: 2px;
+}
+.input:focus-visible {
+  outline: none;
+}
+
+.spinner {
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Phone: 16px text stops iOS from zooming into fields */
+@media (max-width: 560px) {
+  .input {
+    font-size: 16px;
+    height: 3em;
+  }
+  .dropdownSearch {
+    font-size: 16px;
+  }
+  .actions {
+    padding-inline: 0.3em;
+  }
+  .cancel,
+  .save {
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .chev,
+  .calIcon,
+  .calTitleBtn,
+  .calTitleBtn svg,
+  .calNavBtn,
+  .calDay,
+  .calPickCell,
+  .calFootBtn,
+  .dropdownSearch,
+  .dropdownOption,
+  .cancel,
+  .save {
+    transition: none;
+  }
+  .dropdownMenu,
+  .calMenu {
+    animation: none;
+  }
+  .save::after {
+    display: none;
+  }
+  .spinner {
+    animation-duration: 1.5s;
+  }
+}

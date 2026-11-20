@@ -6,6 +6,14 @@ export function formatDate(value) {
   return Number.isNaN(d.getTime()) ? '—' : dateFmt.format(d)
 }
 
+const longFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+
+export function formatLongDate(value) {
+  if (!value) return ''
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T00:00:00`) : new Date(value)
+  return Number.isNaN(d.getTime()) ? '' : longFmt.format(d)
+}
+
 export function getDisplayName(user) {
   const full =
     user?.name ||

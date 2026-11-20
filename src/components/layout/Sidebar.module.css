@@ -280,9 +280,10 @@
   margin-bottom: 1.2em;
 }
 .link2[aria-current='page'] {
-  background: #f1f2f6;
-  color: var(--app-ink);
-  font-weight: 600;
+  background: var(--app-ink);
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 0.8em 1.4em -0.9em rgba(16, 24, 40, 0.6);
 }
 
 /* ---------- User ---------- */

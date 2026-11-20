@@ -1,0 +1,282 @@
+.wrap {
+  container: team / inline-size;
+  min-width: 0;
+}
+
+/* Design: bordered table 1082 x 309, rows 65px (4.64em) */
+.table {
+  --cols: minmax(0, 88fr) minmax(0, 316fr) minmax(0, 166fr) minmax(0, 216fr) minmax(0, 278fr);
+  min-width: 0;
+  padding: 0 0.64em;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.86em;
+  background: #fff;
+}
+.thead,
+.row,
+.skel {
+  display: grid;
+  grid-template-columns: var(--cols);
+  align-items: center;
+}
+.thead {
+  height: 3.4em;
+  border-bottom: 1px solid #e2e5eb;
+  color: #667085;
+}
+.thead > span {
+  font-size: 0.86em;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.row,
+.skel {
+  min-height: 4.64em;
+  border-bottom: 1px solid #e2e5eb;
+}
+.row:last-child,
+.skel:last-child {
+  border-bottom: 0;
+}
+.row {
+  transition: background 0.2s;
+}
+.row:hover {
+  background: #fafbfc;
+}
+
+.cSl {
+  font-size: 1.1em;
+}
+.cName {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 1.2em;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 0.8em;
+}
+.cRole {
+  color: #667085;
+  font-size: 1.04em;
+}
+.cStatus {
+  font-size: 1.04em;
+  font-weight: 500;
+}
+.cStatus[data-s='active'] {
+  color: #15803d;
+}
+.cStatus[data-s='pending'] {
+  color: #c2570c;
+}
+.cStatus[data-s='inactive'] {
+  color: #b91c1c;
+}
+.cActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em 3.6em;
+}
+.sub {
+  display: none;
+  margin: 0;
+  color: #667085;
+}
+
+.link {
+  padding: 0.2em 0;
+  border: 0;
+  background: transparent;
+  color: var(--app-text);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.link:hover:not(:disabled) {
+  color: var(--app-brand);
+}
+.link:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+.link:focus-visible {
+  outline: 2px solid var(--app-ink);
+  outline-offset: 3px;
+  border-radius: 0.2em;
+}
+.confirm {
+  color: #c62828;
+  font-weight: 600;
+}
+
+/* "Add Member" reuses the red Save button, a little wider (design: 145 x 44) */
+.add {
+  gap: 0.5em;
+  padding: 0 2.1em;
+}
+.add svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+/* ---------- Skeleton + empty ---------- */
+.skel b {
+  display: block;
+  width: 70%;
+  height: 0.9em;
+  border-radius: 0.3em;
+  background: linear-gradient(90deg, #eef0f4 25%, #f7f8fa 50%, #eef0f4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.4em;
+  padding: 3.2em 1em;
+  color: #667085;
+  text-align: center;
+}
+.empty svg {
+  width: 2.4em;
+  height: 2.4em;
+  opacity: 0.5;
+}
+.empty strong {
+  color: var(--app-text);
+}
+
+.retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  height: 2.1em;
+  margin-left: auto;
+  padding: 0 0.9em;
+  border: 1px solid currentColor;
+  border-radius: 0.6em;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.retry svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* ---------- Modals ---------- */
+.modalForm {
+  display: grid;
+  gap: 1.1em;
+  padding: 1.7em;
+}
+.group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.group legend {
+  margin-bottom: 0.7em;
+  padding: 0;
+  color: #667085;
+  font-size: 0.86em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7em 1.4em;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.65em;
+  cursor: pointer;
+}
+.check input {
+  width: 1.15em;
+  height: 1.15em;
+  margin: 0;
+  accent-color: var(--app-ink);
+  cursor: pointer;
+}
+
+/* ---------- Narrow: the Role column goes first, then the table becomes stacked rows ---------- */
+@container team (max-width: 52em) {
+  .table {
+    --cols: minmax(0, 70fr) minmax(0, 260fr) minmax(0, 150fr) minmax(0, 280fr);
+  }
+  .cStatus {
+    display: none;
+  }
+  .thead > .cStatus {
+    display: none;
+  }
+}
+
+@container team (max-width: 38em) {
+  .table {
+    padding: 0 0.9em;
+  }
+  .thead {
+    display: none;
+  }
+  .row,
+  .skel {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'sl name'
+      'sub sub'
+      'actions actions';
+    column-gap: 0.6em;
+    row-gap: 0.35em;
+    padding: 0.9em 0;
+  }
+  .cSl {
+    grid-area: sl;
+  }
+  .cName {
+    grid-area: name;
+  }
+  .cRole,
+  .cStatus {
+    display: none;
+  }
+  .sub {
+    display: block;
+    grid-area: sub;
+  }
+  .cActions {
+    grid-area: actions;
+    gap: 0.4em 1.8em;
+  }
+  .checks {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .link {
+    transition: none;
+  }
+  .skel b {
+    animation: none;
+  }
+}

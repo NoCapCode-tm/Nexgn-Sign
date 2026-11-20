@@ -1,0 +1,324 @@
+.wrap {
+  container: acct / inline-size;
+  min-width: 0;
+}
+
+/* Design: two form columns of 320px (22.86em), a 32px gap, and a 362px profile card */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 25.86em;
+  column-gap: 1.7em;
+  align-items: start;
+}
+.span {
+  grid-column: 1 / -1;
+}
+.cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 2.29em;
+  align-items: start;
+  padding-left: 1.7em;
+}
+.col {
+  display: grid;
+  gap: 0.86em;
+  align-content: start;
+  min-width: 0;
+}
+
+/* ---------- Languages ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.71em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  height: 2.14em;
+  padding: 0 0.7em 0 0.9em;
+  border: 1px solid #dfe3ea;
+  border-radius: 0.43em;
+  background: #f3f4f7;
+  font-size: 0.93em;
+}
+.chips button {
+  display: grid;
+  place-items: center;
+  width: 1.3em;
+  height: 1.3em;
+  padding: 0;
+  border: 0;
+  border-radius: 0.3em;
+  background: transparent;
+  color: #4b5160;
+  cursor: pointer;
+}
+.chips button:hover {
+  background: #e4e6eb;
+  color: var(--app-ink);
+}
+.chips button:focus-visible {
+  outline: 2px solid var(--app-ink);
+}
+.chips svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* ---------- Profile summary card (design: 362 x 437, radius 20px) ---------- */
+.profile {
+  display: grid;
+  padding: 4.3em 1.07em 2.4em;
+  border-radius: 1.43em;
+  background: #f5f6f8;
+}
+.identity {
+  display: grid;
+  justify-items: center;
+}
+.avatarWrap {
+  position: relative;
+  width: 8.14em;
+  aspect-ratio: 1;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 1.14em;
+  background: linear-gradient(135deg, #f9c5e4, #c9b8ff);
+}
+.avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.initials {
+  color: #2a1d4a;
+  font-size: 2.6em;
+  font-weight: 600;
+}
+.avatarWrap[data-busy='true'] .avatar {
+  opacity: 0.55;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.8;
+  }
+}
+.badge {
+  position: absolute;
+  right: 0.4em;
+  bottom: 0.4em;
+  display: grid;
+  place-items: center;
+  width: 1.9em;
+  height: 1.9em;
+  padding: 0;
+  border: 0;
+  border-radius: 0.5em;
+  background: #fff;
+  color: var(--app-ink);
+  box-shadow: 0 0.2em 0.6em rgba(16, 24, 40, 0.25);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.badge svg {
+  width: 1.1em;
+  height: 1.1em;
+}
+.badge:hover:not(:disabled) {
+  transform: scale(1.12);
+}
+.badge:focus-visible {
+  outline: 2px solid var(--app-ink);
+  outline-offset: 2px;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin-top: 1.5em;
+  max-width: 100%;
+}
+.nameRow strong {
+  overflow: hidden;
+  font-size: 1.07em;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nameRow i {
+  flex: none;
+  width: 1px;
+  height: 1em;
+  background: #b9bec8;
+}
+.status {
+  flex: none;
+  padding: 0.15em 0.6em;
+  border-radius: 0.4em;
+  font-size: 0.86em;
+  font-weight: 500;
+}
+.status[data-s='active'] {
+  background: #e7f7ec;
+  color: #15803d;
+}
+.status[data-s='inactive'] {
+  background: #fde8e8;
+  color: #b91c1c;
+}
+.org {
+  margin: 0.55em 0 0;
+  color: #667085;
+}
+.org b {
+  color: var(--app-text);
+  font-weight: 500;
+}
+
+.info {
+  margin-top: 3.3em;
+}
+.info h3 {
+  margin: 0 0 1.05em;
+  font-size: 1.04em;
+  font-weight: 500;
+}
+.facts {
+  display: grid;
+  grid-template-columns: 14.2em minmax(0, 1fr);
+  gap: 1.2em 0;
+  margin: 0;
+}
+.fact {
+  min-width: 0;
+}
+.fact dt {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  color: #667085;
+  font-size: 1.04em;
+}
+.fact dt svg {
+  width: 1.15em;
+  height: 1.15em;
+}
+.fact dd {
+  margin: 0.3em 0 0;
+  overflow-wrap: anywhere;
+  font-size: 1.07em;
+}
+
+/* ---------- Skeleton ---------- */
+.skField {
+  display: grid;
+  gap: 0.5em;
+}
+.skField b,
+.skProfile {
+  display: block;
+  background: linear-gradient(90deg, #eef0f4 25%, #f7f8fa 50%, #eef0f4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+.skField b:first-child {
+  width: 7em;
+  height: 1em;
+  border-radius: 0.3em;
+}
+.skField b:last-child {
+  height: 3em;
+  border-radius: 0.57em;
+}
+.skProfile {
+  min-height: 31.2em;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  height: 2.1em;
+  margin-left: auto;
+  padding: 0 0.9em;
+  border: 1px solid currentColor;
+  border-radius: 0.6em;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.retry svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* ---------- Tablet: the profile card moves on top, laid out sideways ---------- */
+@container acct (max-width: 62em) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 1.7em;
+  }
+  .profile {
+    order: -1;
+    grid-template-columns: 15em minmax(0, 1fr);
+    align-items: center;
+    column-gap: 2em;
+    padding: 1.7em;
+  }
+  .info {
+    margin-top: 0;
+  }
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cols {
+    padding-left: 0;
+  }
+}
+
+/* ---------- Phone: everything in one column ---------- */
+@container acct (max-width: 40em) {
+  .cols {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.86em;
+  }
+  .profile {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.7em 1.07em 1.9em;
+  }
+  .info {
+    margin-top: 2em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge {
+    transition: none;
+  }
+  .skField b,
+  .skProfile,
+  .avatarWrap[data-busy='true'] .avatar {
+    animation: none;
+  }
+}

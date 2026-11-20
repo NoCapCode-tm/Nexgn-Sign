@@ -1,0 +1,49 @@
+/* Design: 48 x 24 */
+.switch {
+  position: relative;
+  flex: none;
+  width: 3.43em;
+  height: 1.71em;
+  padding: 0;
+  border: 0.11em solid var(--app-ink, #101828);
+  border-radius: 99px;
+  background: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.3s, box-shadow 0.25s;
+}
+.knob {
+  position: absolute;
+  top: 50%;
+  left: 0.22em;
+  width: 1.07em;
+  height: 1.07em;
+  border-radius: 50%;
+  background: var(--app-ink, #101828);
+  transform: translateY(-50%);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s;
+}
+.switch[aria-checked='true'] {
+  background: var(--app-ink, #101828);
+}
+.switch[aria-checked='true'] .knob {
+  background: #fff;
+  transform: translate(1.7em, -50%);
+}
+.switch:hover:not(:disabled) {
+  box-shadow: 0 0 0 0.22em rgba(16, 24, 40, 0.08);
+}
+.switch:focus-visible {
+  outline: 2px solid var(--app-ink, #101828);
+  outline-offset: 3px;
+}
+.switch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+@media (prefers-reduced-motion: reduce) {
+  .switch,
+  .knob {
+    transition: none;
+  }
+}

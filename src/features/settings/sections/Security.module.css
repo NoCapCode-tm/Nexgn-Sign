@@ -1,0 +1,65 @@
+.wrap {
+  min-width: 0;
+  padding-top: 0.86em; /* the design sits this form 12px lower than Account */
+}
+
+/* Design: one 350px column (25em), same 80px row rhythm */
+.fields {
+  display: grid;
+  gap: 0.86em;
+  width: min(25em, 100%);
+  margin-left: 1.7em;
+}
+
+.twofa {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 3.5em;
+}
+.twofa p {
+  margin: 0;
+  color: #5f6676;
+  font-size: 0.97em;
+  line-height: 1.35;
+}
+
+.setup {
+  display: grid;
+  gap: 1.1em;
+  padding: 1.7em;
+}
+.setup p {
+  margin: 0;
+  color: #5f6676;
+  line-height: 1.45;
+}
+.setup code {
+  display: inline-block;
+  padding: 0.15em 0.5em;
+  border-radius: 0.4em;
+  background: #f3f4f7;
+  color: var(--app-text);
+  font-size: 0.95em;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+.qr {
+  justify-self: center;
+  width: 12em;
+  height: 12em;
+  border: 1px solid var(--app-line);
+  border-radius: 0.8em;
+  padding: 0.5em;
+  background: #fff;
+}
+
+@media (max-width: 760px) {
+  .fields {
+    margin-left: 0;
+    width: 100%;
+  }
+  .twofa {
+    gap: 1.4em;
+  }
+}

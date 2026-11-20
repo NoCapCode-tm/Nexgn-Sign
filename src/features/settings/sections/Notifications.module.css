@@ -1,0 +1,148 @@
+.wrap {
+  min-width: 0;
+}
+
+.groups {
+  display: grid;
+  gap: 1.5em;
+}
+.section {
+  display: grid;
+  gap: 0.65em;
+}
+.groupTitle {
+  margin: 0;
+  padding-left: 0.2em;
+  color: #667085;
+  font-size: 0.9em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.list {
+  margin: 0;
+  padding: 0 0.64em;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.86em;
+  background: #fff;
+  list-style: none;
+}
+.list:empty {
+  display: none;
+}
+.row,
+.skel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.7em;
+  min-height: 4.64em;
+  padding: 0.8em 0.4em;
+  border-bottom: 1px solid #e2e5eb;
+}
+.row:last-child,
+.skel:last-child {
+  border-bottom: 0;
+}
+.row {
+  transition: background 0.2s;
+}
+.row:hover {
+  background: #fafbfc;
+}
+
+.text {
+  display: grid;
+  gap: 0.2em;
+  min-width: 0;
+}
+.title {
+  font-size: 1.2em;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.desc {
+  color: #667085;
+  font-size: 1.04em;
+  line-height: 1.4;
+}
+
+.skel b,
+.skel i {
+  display: block;
+  background: linear-gradient(90deg, #eef0f4 25%, #f7f8fa 50%, #eef0f4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+.skel b {
+  width: 12em;
+  max-width: 60%;
+  height: 1em;
+  border-radius: 0.3em;
+}
+.skel i {
+  width: 3.43em;
+  height: 1.71em;
+  border-radius: 99px;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.4em;
+  padding: 3.2em 1em;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.86em;
+  color: #667085;
+  text-align: center;
+}
+.empty svg {
+  width: 2.4em;
+  height: 2.4em;
+  opacity: 0.5;
+}
+.empty strong {
+  color: var(--app-text);
+}
+
+.retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  height: 2.1em;
+  margin-left: auto;
+  padding: 0 0.9em;
+  border: 1px solid currentColor;
+  border-radius: 0.6em;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.retry svg {
+  width: 1em;
+  height: 1em;
+}
+
+@media (max-width: 560px) {
+  .row {
+    gap: 1.1em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+  .skel b,
+  .skel i {
+    animation: none;
+  }
+}
