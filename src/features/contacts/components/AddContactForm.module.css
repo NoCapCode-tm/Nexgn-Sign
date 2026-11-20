@@ -1,0 +1,268 @@
+/* Design: body padding 24px sides, 32px top and bottom */
+.form {
+  display: grid;
+  gap: 1.15em;
+  padding: 2.3em 1.7em;
+}
+
+/* "PERSONAL INFORMATION ———" */
+.section {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  color: #6b7280;
+  font-size: 0.86em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.section i {
+  flex: 1;
+  height: 1px;
+  background: var(--app-line);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.07em 1.5em;
+}
+.field {
+  display: grid;
+  gap: 0.5em;
+  align-content: start;
+  min-width: 0;
+}
+.field label {
+  font-weight: 500;
+}
+
+/* ---------- Inputs (44px = 3.14em, radius 10px) ---------- */
+.input {
+  width: 100%;
+  height: 3.14em;
+  padding: 0 1.1em;
+  border: 1px solid #e2e5eb;
+  border-radius: 0.72em;
+  background: #fff;
+  color: var(--app-text);
+  font: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input::placeholder {
+  color: #8d93a0;
+}
+.input:hover {
+  border-color: #cdd2db;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--app-ink);
+  box-shadow: 0 0 0 0.22em rgba(16, 24, 40, 0.08);
+}
+.invalid,
+.invalid:hover {
+  border-color: #d92d20;
+}
+.invalid:focus {
+  box-shadow: 0 0 0 0.22em rgba(217, 45, 32, 0.12);
+}
+.error {
+  margin: 0;
+  color: #d92d20;
+  font-size: 0.86em;
+}
+
+.selectWrap {
+  position: relative;
+}
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.8em;
+  cursor: pointer;
+}
+.select[data-empty='true'] {
+  color: #8d93a0;
+}
+.select option {
+  color: var(--app-text);
+}
+.chev {
+  position: absolute;
+  top: 50%;
+  right: 1em;
+  width: 1.2em;
+  height: 1.2em;
+  color: #6b7280;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: color 0.2s;
+}
+.select:focus + .chev {
+  color: var(--app-ink);
+}
+
+/* ---------- Errors ---------- */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6em;
+  padding: 0.75em 0.9em;
+  border: 1px solid color-mix(in srgb, #d92d20 35%, transparent);
+  border-radius: 0.7em;
+  background: rgba(217, 45, 32, 0.07);
+  color: #b42318;
+}
+.alert svg {
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+  margin-top: 0.05em;
+}
+
+/* ---------- Footer buttons ---------- */
+.cancel,
+.save,
+.danger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.14em;
+  border-radius: 0.72em;
+  font: inherit;
+  font-size: 1.1em;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.25s, transform 0.15s, color 0.2s;
+}
+.cancel {
+  padding: 0 1.8em;
+  border: 1px solid #dfe3ea;
+  background: #fff;
+  color: var(--app-text);
+  font-weight: 500;
+}
+.cancel:hover:not(:disabled) {
+  border-color: #cbd1da;
+  background: #f6f7f9;
+}
+.save {
+  min-width: 7.4em;
+  padding: 0 1.7em;
+  overflow: hidden;
+  border: 0;
+  background: var(--app-brand);
+  color: #fff;
+  font-weight: 600;
+}
+.save::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.save:hover:not(:disabled) {
+  background: var(--app-brand-hover);
+  box-shadow: 0 0.7em 1.5em -0.6em rgba(242, 15, 27, 0.75);
+  transform: translateY(-1px);
+}
+.save:hover:not(:disabled)::after {
+  transform: translateX(120%);
+  transition: transform 0.8s ease;
+}
+.save:active:not(:disabled),
+.cancel:active:not(:disabled) {
+  transform: scale(0.985);
+}
+.danger {
+  margin-right: auto;
+  padding: 0 0.4em;
+  border: 0;
+  background: transparent;
+  color: #c62828;
+  font-weight: 600;
+}
+.danger:hover:not(:disabled) {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.cancel:disabled,
+.save:disabled,
+.danger:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+.cancel:focus-visible,
+.save:focus-visible,
+.danger:focus-visible {
+  outline: 2px solid var(--app-ink);
+  outline-offset: 2px;
+}
+
+.spinner {
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Phone ---------- */
+@media (max-width: 560px) {
+  .form {
+    padding: 1.5em 1.3em;
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* 16px text stops iOS from zooming into the field */
+  .input {
+    font-size: 16px;
+  }
+  .cancel,
+  .save {
+    flex: 1;
+  }
+  .danger {
+    order: 3;
+    flex: 1 1 100%;
+    margin-right: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .chev,
+  .cancel,
+  .save,
+  .danger {
+    transition: none;
+  }
+  .save::after {
+    display: none;
+  }
+  .spinner {
+    animation-duration: 1.5s;
+  }
+}

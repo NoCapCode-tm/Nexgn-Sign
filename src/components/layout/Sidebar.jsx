@@ -6,7 +6,7 @@ import { useGSAP } from '@gsap/react'
 import clsx from 'clsx'
 
 import logoFull from '@/assets/Sidebar/logo.svg'
-import compactLogo from '@/assets/Sidebar/Compact-logo.svg'
+import logoCompact from '@/assets/Sidebar/Compact-logo.svg'
 import { PRIMARY_NAV, SECONDARY_NAV } from '@/config/navigation.config'
 import { useAuth } from '@/hooks/useAuth'
 import { getDisplayName, getInitials } from '@/utils/formatters'

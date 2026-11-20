@@ -1,0 +1,167 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+}
+
+/* The design dims the whole screen by about 21% */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 15, 25, 0.22);
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.5em;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.panel {
+  --modal-w: 46.9em;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(var(--modal-w), 100%);
+  max-height: calc(100dvh - 3em);
+  overflow: hidden;
+  border-radius: 1.7em;
+  background: #fff;
+  color: var(--app-text, #101828);
+  box-shadow:
+    0 0 0 1px rgba(16, 24, 40, 0.04),
+    0 0.4em 1em rgba(16, 24, 40, 0.06),
+    0 3em 6em -2em rgba(16, 24, 40, 0.35);
+  outline: none;
+}
+.md {
+  --modal-w: 46.9em; /* Add contact: 657px */
+}
+.sm {
+  --modal-w: 40.3em; /* Contact details: 564px */
+}
+
+/* ---------- Header (71px = 5.07em) ---------- */
+.header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  min-height: 5.07em;
+  padding: 0 1.7em;
+  border-bottom: 1px solid var(--app-line, #eaecf0);
+}
+.title {
+  margin: 0;
+  min-width: 0;
+  font-size: 1.45em;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+.side {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.7em;
+}
+.close {
+  display: grid;
+  place-items: center;
+  width: 2.86em;
+  height: 2.86em;
+  padding: 0;
+  border: 1px solid #dfe3ea;
+  border-radius: 0.72em;
+  background: #fff;
+  color: var(--app-ink, #101828);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, border-color 0.2s;
+}
+.close svg {
+  width: 1.4em;
+  height: 1.4em;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.close:hover:not(:disabled) {
+  border-color: #cfd4dc;
+  background: #f4f5f8;
+}
+.close:hover:not(:disabled) svg {
+  transform: rotate(90deg);
+}
+.close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.close:focus-visible {
+  outline: 2px solid var(--app-ink, #101828);
+  outline-offset: 2px;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.14em;
+  padding: 1.8em 1.7em 1.7em;
+  border-top: 1px solid var(--app-line, #eaecf0);
+}
+
+.grab {
+  display: none;
+}
+
+/* ---------- Phone: bottom sheet ---------- */
+@media (max-width: 560px) {
+  .frame {
+    align-items: end;
+    padding: 0;
+  }
+  .panel {
+    width: 100%;
+    max-height: 92dvh;
+    border-radius: 1.7em 1.7em 0 0;
+  }
+  .grab {
+    display: block;
+    flex: none;
+    width: 3em;
+    height: 0.34em;
+    margin: 0.75em auto 0;
+    border-radius: 99px;
+    background: #d5d9e0;
+  }
+  .header {
+    min-height: 4.4em;
+    padding: 0 1.3em;
+  }
+  .title {
+    font-size: 1.3em;
+  }
+  .footer {
+    padding: 1.1em 1.3em calc(1.1em + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .close,
+  .close svg {
+    transition: none;
+  }
+}
