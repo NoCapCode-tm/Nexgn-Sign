@@ -1,9 +1,10 @@
-import { useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { ArrowLeft, ChevronDown, CircleAlert, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, Check, ChevronDown, CircleAlert, Eye, EyeOff } from 'lucide-react'
 import clsx from 'clsx'
 
 import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter'
@@ -19,6 +20,7 @@ gsap.registerPlugin(useGSAP)
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const INDUSTRIES = ['Technology', 'Finance', 'Healthcare', 'Education', 'Real Estate', 'Other']
+const INDUSTRY_OPTIONS = INDUSTRIES.map((i) => ({ value: i, label: i }))
 const TEAM_SIZES = [
   { value: '1-10', label: '1-10 employees' },
   { value: '11-50', label: '11-50 employees' },
@@ -74,6 +76,138 @@ function PasswordInput({ id, name, value, onChange, placeholder, autoComplete, e
       >
         {show ? <Eye /> : <EyeOff />}
       </button>
+    </div>
+  )
+}
+
+function AuthSelect({ id, name, value, options, placeholder, onChange }) {
+  const [open, setOpen] = useState(false)
+  const [pos, setPos] = useState(null)
+  const triggerRef = useRef(null)
+  const menuRef = useRef(null)
+  const listId = `${id}-listbox`
+
+  const selectedOpt = options.find((o) => o.value === value)
+
+  const toggle = () => {
+    if (!open && triggerRef.current) {
+      const r = triggerRef.current.getBoundingClientRect()
+      const cs = getComputedStyle(triggerRef.current)
+      const spaceBelow = window.innerHeight - r.bottom - 12
+      const spaceAbove = r.top - 12
+      const openUp = spaceBelow < 210 && spaceAbove > spaceBelow
+      const maxHeight = Math.max(140, Math.min(260, openUp ? spaceAbove : spaceBelow))
+      setPos({
+        left: r.left,
+        width: r.width,
+        top: openUp ? undefined : r.bottom + 6,
+        bottom: openUp ? window.innerHeight - r.top + 6 : undefined,
+        maxHeight,
+        openUp,
+        fontSize: cs.fontSize,
+        fontFamily: cs.fontFamily,
+      })
+      setOpen(true)
+    } else {
+      setOpen(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!open) return undefined
+
+    const onDown = (e) => {
+      if (triggerRef.current?.contains(e.target) || menuRef.current?.contains(e.target)) return
+      setOpen(false)
+    }
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        e.stopPropagation()
+        setOpen(false)
+        triggerRef.current?.focus()
+      }
+    }
+    const onScroll = (e) => {
+      if (menuRef.current?.contains(e.target)) return
+      setOpen(false)
+    }
+    const onResize = () => setOpen(false)
+
+    document.addEventListener('pointerdown', onDown)
+    window.addEventListener('keydown', onKey, true)
+    window.addEventListener('resize', onResize)
+    window.addEventListener('scroll', onScroll, true)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('keydown', onKey, true)
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('scroll', onScroll, true)
+    }
+  }, [open])
+
+  const choose = (next) => {
+    onChange({ target: { name, value: next } })
+    setOpen(false)
+    triggerRef.current?.focus()
+  }
+
+  return (
+    <div className={styles.selectWrap} data-open={open}>
+      <button
+        ref={triggerRef}
+        id={id}
+        name={name}
+        type="button"
+        className={clsx(base.input, styles.select, open && styles.selectOpen)}
+        data-empty={!value}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        onClick={toggle}
+      >
+        <span className={styles.selectValue}>{selectedOpt ? selectedOpt.label : placeholder}</span>
+      </button>
+      <ChevronDown className={clsx(styles.chev, open && styles.chevOpen)} aria-hidden="true" />
+
+      {open &&
+        pos &&
+        createPortal(
+          <ul
+            ref={menuRef}
+            id={listId}
+            role="listbox"
+            aria-labelledby={id}
+            className={clsx(styles.selectMenu, pos.openUp && styles.selectMenuUp)}
+            style={{
+              top: pos.top,
+              bottom: pos.bottom,
+              left: pos.left,
+              width: pos.width,
+              maxHeight: pos.maxHeight,
+              fontSize: pos.fontSize,
+              fontFamily: pos.fontFamily,
+            }}
+          >
+            {options.map((opt) => {
+              const selected = value === opt.value
+              return (
+                <li key={opt.value} role="option" aria-selected={selected}>
+                  <button
+                    type="button"
+                    className={styles.selectOption}
+                    data-selected={selected}
+                    onClick={() => choose(opt.value)}
+                  >
+                    <span>{opt.label}</span>
+                    {selected && <Check className={styles.selectCheck} aria-hidden="true" />}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>,
+          document.getElementById('app-portal') ?? document.body,
+        )}
     </div>
   )
 }
@@ -385,49 +519,25 @@ export default function SignUp() {
             </Field>
 
             <Field id={id('industry')} label="Industry (Optional)">
-              <div className={styles.selectWrap}>
-                <select
-                  id={id('industry')}
-                  name="industry"
-                  value={values.industry}
-                  onChange={onChange}
-                  className={clsx(base.input, styles.select)}
-                  data-empty={!values.industry}
-                >
-                  <option value="" disabled hidden>
-                    Select industry
-                  </option>
-                  {INDUSTRIES.map((i) => (
-                    <option key={i} value={i}>
-                      {i}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className={styles.chev} aria-hidden="true" />
-              </div>
+              <AuthSelect
+                id={id('industry')}
+                name="industry"
+                value={values.industry}
+                options={INDUSTRY_OPTIONS}
+                placeholder="Select industry"
+                onChange={onChange}
+              />
             </Field>
 
             <Field id={id('teamSize')} label="Team size (Optional)">
-              <div className={styles.selectWrap}>
-                <select
-                  id={id('teamSize')}
-                  name="teamSize"
-                  value={values.teamSize}
-                  onChange={onChange}
-                  className={clsx(base.input, styles.select)}
-                  data-empty={!values.teamSize}
-                >
-                  <option value="" disabled hidden>
-                    Select team size
-                  </option>
-                  {TEAM_SIZES.map((t) => (
-                    <option key={t.value} value={t.value}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className={styles.chev} aria-hidden="true" />
-              </div>
+              <AuthSelect
+                id={id('teamSize')}
+                name="teamSize"
+                value={values.teamSize}
+                options={TEAM_SIZES}
+                placeholder="Select team size"
+                onChange={onChange}
+              />
             </Field>
 
             <button type="submit" className={base.submit} disabled={submitting} data-reveal>
