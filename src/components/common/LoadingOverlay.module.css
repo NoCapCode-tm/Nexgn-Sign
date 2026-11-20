@@ -1,18 +1,22 @@
 .overlay {
+  /* Same scaling rule as the app shell: 14px up to 1920 wide, 28px at 4K, capped at 56px */
+  font-size: min(56px, max(14px, calc(100vw / 137.14)));
   position: fixed;
   inset: 0;
   z-index: 9999;
   display: grid;
   place-items: center;
   isolation: isolate;
+  font-family: 'DM Sans Variable', 'DM Sans', system-ui, -apple-system, sans-serif;
+  line-height: 1.4;
 }
 
 .backdrop {
   position: absolute;
   inset: 0;
   background: rgba(8, 15, 26, 0.65);
-  backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
 .content {
@@ -22,69 +26,93 @@
   flex-direction: column;
   align-items: center;
   gap: 1.5em;
+  max-width: min(92vw, 28em);
   padding: 2em;
 }
 
-/* CSS Loader from css-loaders.com */
+/* CSS loader (css-loaders.com). Sized in em, with percentage insets, so it scales with the screen. */
 .loader {
-  width: 65px;
-  aspect-ratio: 1;
   position: relative;
+  width: 4.65em;
+  aspect-ratio: 1;
 }
-.loader:before,
-.loader:after {
-  content: "";
+.loader::before,
+.loader::after {
+  content: '';
   position: absolute;
   border-radius: 50px;
   box-shadow: 0 0 0 3px inset #fff;
   animation: l4 2.5s infinite;
 }
-.loader:after {
+.loader::after {
   animation-delay: -1.25s;
 }
 @keyframes l4 {
   0% {
-    inset: 0 35px 35px 0;
+    inset: 0 54% 54% 0;
   }
   12.5% {
-    inset: 0 35px 0 0;
+    inset: 0 54% 0 0;
   }
   25% {
-    inset: 35px 35px 0 0;
+    inset: 54% 54% 0 0;
   }
   37.5% {
-    inset: 35px 0 0 0;
+    inset: 54% 0 0 0;
   }
   50% {
-    inset: 35px 0 0 35px;
+    inset: 54% 0 0 54%;
   }
   62.5% {
-    inset: 0 0 0 35px;
+    inset: 0 0 0 54%;
   }
   75% {
-    inset: 0 0 35px 35px;
+    inset: 0 0 54% 54%;
   }
   87.5% {
-    inset: 0 0 35px 0;
+    inset: 0 0 54% 0;
   }
   100% {
-    inset: 0 35px 35px 0;
+    inset: 0 54% 54% 0;
   }
 }
 
 .message {
   margin: 0;
-  color: #ffffff;
-  font-family: 'DM Sans Variable', 'DM Sans', system-ui, -apple-system, sans-serif;
-  font-size: 0.95em;
+  color: #fff;
+  font-size: 1.05em;
   font-weight: 500;
   letter-spacing: 0.02em;
   text-align: center;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Reduce motion: a slow pulse instead of the spinning rings */
 @media (prefers-reduced-motion: reduce) {
-  .overlay {
-    transition: none;
+  .loader::before,
+  .loader::after {
+    inset: 0;
+    animation: none;
+  }
+  .loader::after {
+    inset: 18%;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    50% {
+      opacity: 0.35;
+    }
   }
 }
