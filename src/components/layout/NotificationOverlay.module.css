@@ -1,0 +1,357 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 75;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 15, 25, 0.22);
+}
+
+/* Anchored top-right below the topbar on desktop & 4K */
+.frame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 5.5em 2.2em 2em;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(29em, calc(100vw - 3em));
+  max-height: min(44em, calc(100dvh - 7.5em));
+  overflow: hidden;
+  border-radius: 1.7em;
+  background: var(--app-surface, #ffffff);
+  color: var(--app-text, #101828);
+  box-shadow:
+    0 0 0 1px rgba(16, 24, 40, 0.04),
+    0 0.4em 1em rgba(16, 24, 40, 0.06),
+    0 2.4em 5em -1.6em rgba(16, 24, 40, 0.32);
+  outline: none;
+  transform-origin: top right;
+}
+
+/* ---------- Header ---------- */
+.header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  min-height: 4.85em;
+  padding: 0 1.65em;
+  border-bottom: 1px solid var(--app-line, #eaecf0);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.35em;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 2.75em;
+  height: 2.75em;
+  padding: 0;
+  border: 1px solid #dfe3ea;
+  border-radius: 0.72em;
+  background: #ffffff;
+  color: var(--app-ink, #101828);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.close svg {
+  width: 1.3em;
+  height: 1.3em;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.close:hover {
+  border-color: #cfd4dc;
+  background: #f4f5f8;
+}
+
+.close:hover svg {
+  transform: rotate(90deg);
+}
+
+.close:focus-visible {
+  outline: 2px solid var(--app-ink, #101828);
+  outline-offset: 2px;
+}
+
+/* ---------- Scrollable Body ---------- */
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #d5d9e0 transparent;
+}
+
+.list {
+  margin: 0;
+  padding: 0.4em 1.65em 1.2em;
+  list-style: none;
+}
+
+.item {
+  padding: 1.25em 0 1.15em;
+  border-bottom: 1px solid var(--app-line, #eaecf0);
+  transition: opacity 0.2s;
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+.read .message {
+  color: var(--app-muted, #636b79);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.45em;
+}
+
+.time {
+  font-size: 0.8em;
+  font-weight: 500;
+  color: var(--app-muted, #8a94a6);
+}
+
+.dot {
+  width: 0.42em;
+  height: 0.42em;
+  border-radius: 50%;
+  background: var(--app-brand, #f20f1b);
+}
+
+.message {
+  margin: 0 0 1.05em;
+  font-size: 0.94em;
+  line-height: 1.48;
+  color: var(--app-text, #101828);
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.actionBtn {
+  padding: 0.15em 0;
+  border: 0;
+  background: transparent;
+  color: var(--app-text, #101828);
+  font: inherit;
+  font-size: 0.88em;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  text-decoration-color: rgba(16, 24, 40, 0.45);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.18s, text-decoration-color 0.18s, opacity 0.18s;
+}
+
+.actionBtn:hover:not(:disabled) {
+  color: var(--app-ink, #000000);
+  text-decoration-color: currentColor;
+}
+
+.actionBtn:disabled {
+  color: var(--app-muted, #8a94a6);
+  text-decoration: none;
+  cursor: default;
+}
+
+.deleteBtn:hover:not(:disabled) {
+  color: var(--app-brand, #d92d20);
+  text-decoration-color: var(--app-brand, #d92d20);
+}
+
+.actionBtn:focus-visible {
+  outline: 2px solid var(--app-ink, #101828);
+  outline-offset: 3px;
+  border-radius: 0.2em;
+}
+
+/* ---------- Empty State ---------- */
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.45em;
+  padding: 3.6em 1.8em;
+  color: var(--app-muted, #636b79);
+  text-align: center;
+}
+
+.empty svg {
+  width: 2.3em;
+  height: 2.3em;
+  opacity: 0.5;
+}
+
+.empty strong {
+  color: var(--app-text, #101828);
+  font-size: 1.05em;
+}
+
+.empty span {
+  max-width: 20em;
+  font-size: 0.9em;
+  line-height: 1.45;
+}
+
+/* ---------- Loading Skeleton ---------- */
+.skelItem {
+  display: grid;
+  gap: 0.55em;
+  padding: 1.25em 0 1.15em;
+  border-bottom: 1px solid var(--app-line, #eaecf0);
+}
+
+.skelItem:last-child {
+  border-bottom: 0;
+}
+
+.skTime,
+.skLine,
+.skLineShort,
+.skActions span {
+  display: block;
+  border-radius: 0.35em;
+  background: linear-gradient(90deg, #eef0f4 25%, #f7f8fa 50%, #eef0f4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.skTime {
+  width: 3.5em;
+  height: 0.7em;
+}
+
+.skLine {
+  width: 100%;
+  height: 0.9em;
+}
+
+.skLineShort {
+  width: 72%;
+  height: 0.9em;
+}
+
+.skActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.45em;
+}
+
+.skActions span:first-child {
+  width: 5.5em;
+  height: 0.8em;
+}
+
+.skActions span:last-child {
+  width: 3.2em;
+  height: 0.8em;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.grab {
+  display: none;
+}
+
+/* ---------- Tablet (<= 900px) ---------- */
+@media (max-width: 900px) {
+  .frame {
+    padding: 4.8em 1.25em 1.5em;
+  }
+
+  .panel {
+    width: min(26.5em, calc(100vw - 2.5em));
+    max-height: calc(100dvh - 6.3em);
+  }
+}
+
+/* ---------- Mobile (<= 560px): bottom sheet ---------- */
+@media (max-width: 560px) {
+  .frame {
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .panel {
+    width: 100%;
+    max-height: 85dvh;
+    border-radius: 1.7em 1.7em 0 0;
+    transform-origin: bottom center;
+  }
+
+  .grab {
+    display: block;
+    flex: none;
+    width: 3em;
+    height: 0.34em;
+    margin: 0.75em auto 0;
+    border-radius: 99px;
+    background: #d5d9e0;
+  }
+
+  .header {
+    min-height: 4.3em;
+    padding: 0 1.3em;
+  }
+
+  .title {
+    font-size: 1.25em;
+  }
+
+  .list {
+    padding: 0.3em 1.3em calc(1.2em + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .close,
+  .close svg,
+  .item,
+  .actionBtn {
+    transition: none;
+  }
+
+  .skTime,
+  .skLine,
+  .skLineShort,
+  .skActions span {
+    animation: none;
+  }
+}

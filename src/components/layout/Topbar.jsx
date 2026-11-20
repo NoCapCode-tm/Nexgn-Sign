@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { Bell, ChevronDown, Menu, Moon, Search, Sun, Upload, X } from 'lucide-react'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import clsx from 'clsx'
 
+import NotificationOverlay from './NotificationOverlay'
+import Toast from '@/components/ui/Toast'
+import { useNotifications } from '@/hooks/useNotifications'
 import { useTheme } from '@/hooks/useTheme'
 import { prefersReducedMotion } from '@/utils/motion'
 import styles from './Topbar.module.css'
@@ -15,6 +18,7 @@ const LANG_KEY = 'nexgn-lang'
 const LANGS = [
   { code: 'EN', label: 'English' },
   { code: 'HI', label: 'हिन्दी' },
+  { code: 'ES', label: 'Español' },
 ]
 
 const readLang = () => {
@@ -88,7 +92,7 @@ function LangMenu() {
   )
 }
 
-export default function Topbar({ title, subtitle, onUpload, hasUnread = false }) {
+export default function Topbar({ title, subtitle, onUpload, hasUnread = false, showUpload = true }) {
   const navigate = useNavigate()
   const { openNav } = useOutletContext() ?? {}
   const { theme, setTheme } = useTheme()
@@ -97,6 +101,20 @@ export default function Topbar({ title, subtitle, onUpload, hasUnread = false })
   const inputRef = useRef(null)
   const firstRun = useRef(true)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
+  const [toast, setToast] = useState(null)
+
+  const handleIncoming = useCallback((item) => {
+    setToast({ id: Date.now(), text: item.title || item.message || 'New notification', tone: 'ok' })
+  }, [])
+
+  const clearToast = useCallback(() => setToast(null), [])
+
+  const { notifications, loading, unreadCount, markAsRead, deleteNotification } = useNotifications({
+    onIncoming: handleIncoming,
+  })
+
+  const showDot = hasUnread || unreadCount > 0
 
   // Search expands in place (desktop). On phones it overlays the top row via CSS.
   useGSAP(
@@ -147,109 +165,126 @@ export default function Topbar({ title, subtitle, onUpload, hasUnread = false })
   }
 
   return (
-    <div className={styles.bar}>
-      <button
-        type="button"
-        className={clsx(styles.iconBtn, styles.burger)}
-        onClick={openNav}
-        aria-label="Open menu"
-      >
-        <Menu aria-hidden="true" />
-      </button>
-
-      <div className={styles.head} data-enter>
-        <h1 className={styles.title}>{title}</h1>
-        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
-      </div>
-
-      <div className={styles.actions} data-enter>
-        <form
-          ref={formRef}
-          className={styles.search}
-          data-open={searchOpen}
-          role="search"
-          onSubmit={submitSearch}
+    <>
+      <div className={styles.bar}>
+        <button
+          type="button"
+          className={clsx(styles.iconBtn, styles.burger)}
+          onClick={openNav}
+          aria-label="Open menu"
         >
-          <button
-            type="button"
-            className={styles.searchBtn}
-            onClick={() => (searchOpen ? closeSearch() : setSearchOpen(true))}
-            aria-label={searchOpen ? 'Close search' : 'Search'}
-            aria-expanded={searchOpen}
-          >
-            <Search aria-hidden="true" />
-          </button>
-          <input
-            ref={inputRef}
-            className={styles.searchInput}
-            type="search"
-            name="q"
-            placeholder="Search documents, signers…"
-            autoComplete="off"
-            aria-label="Search documents"
-            tabIndex={searchOpen ? 0 : -1}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') closeSearch()
-            }}
-          />
-          {searchOpen && (
-            <button
-              type="button"
-              className={styles.searchClose}
-              onClick={closeSearch}
-              aria-label="Close search"
-            >
-              <X aria-hidden="true" />
-            </button>
-          )}
-        </form>
+          <Menu aria-hidden="true" />
+        </button>
 
-        <LangMenu />
-
-        <div className={styles.theme} role="group" aria-label="Colour theme" data-mode={theme}>
-          <span className={styles.themeThumb} aria-hidden="true" />
-          <button
-            type="button"
-            className={styles.themeBtn}
-            aria-pressed={theme === 'light'}
-            aria-label="Light theme"
-            onClick={() => setTheme('light')}
-          >
-            <Sun aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className={styles.themeBtn}
-            aria-pressed={theme === 'dark'}
-            aria-label="Dark theme"
-            onClick={() => setTheme('dark')}
-          >
-            <Moon aria-hidden="true" />
-          </button>
+        <div className={styles.head} data-enter>
+          <h1 className={styles.title}>{title}</h1>
+          {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
         </div>
 
-        <button
-          type="button"
-          className={styles.bell}
-          aria-label="Notifications"
-          onClick={() => navigate('/settings/notifications')}
-        >
-          <Bell aria-hidden="true" />
-          {hasUnread && <span className={styles.dot} aria-hidden="true" />}
-        </button>
+        <div className={styles.actions} data-enter>
+          <form
+            ref={formRef}
+            className={styles.search}
+            data-open={searchOpen}
+            role="search"
+            onSubmit={submitSearch}
+          >
+            <button
+              type="button"
+              className={styles.searchBtn}
+              onClick={() => (searchOpen ? closeSearch() : setSearchOpen(true))}
+              aria-label={searchOpen ? 'Close search' : 'Search'}
+              aria-expanded={searchOpen}
+            >
+              <Search aria-hidden="true" />
+            </button>
+            <input
+              ref={inputRef}
+              className={styles.searchInput}
+              type="search"
+              name="q"
+              placeholder="Search documents, signers…"
+              autoComplete="off"
+              aria-label="Search documents"
+              tabIndex={searchOpen ? 0 : -1}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') closeSearch()
+              }}
+            />
+            {searchOpen && (
+              <button
+                type="button"
+                className={styles.searchClose}
+                onClick={closeSearch}
+                aria-label="Close search"
+              >
+                <X aria-hidden="true" />
+              </button>
+            )}
+          </form>
 
-        <button
-          type="button"
-          className={styles.upload}
-          aria-label="Upload documents"
-          onClick={
-            onUpload ?? (() => navigate('/documents', { state: { openUpload: true } }))
-          }
-        >
-          <Upload aria-hidden="true" />
-          <span>Upload documents</span>
-        </button>
+          <LangMenu />
+
+          <div className={styles.theme} role="group" aria-label="Colour theme" data-mode={theme}>
+            <span className={styles.themeThumb} aria-hidden="true" />
+            <button
+              type="button"
+              className={styles.themeBtn}
+              aria-pressed={theme === 'light'}
+              aria-label="Light theme"
+              onClick={() => setTheme('light')}
+            >
+              <Sun aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className={styles.themeBtn}
+              aria-pressed={theme === 'dark'}
+              aria-label="Dark theme"
+              onClick={() => setTheme('dark')}
+            >
+              <Moon aria-hidden="true" />
+            </button>
+          </div>
+
+          <button
+            type="button"
+            className={styles.bell}
+            aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : 'Notifications'}
+            aria-haspopup="dialog"
+            aria-expanded={notifOpen}
+            onClick={() => setNotifOpen(true)}
+          >
+            <Bell aria-hidden="true" />
+            {showDot && <span className={styles.dot} aria-hidden="true" />}
+          </button>
+
+          {showUpload && (
+            <button
+              type="button"
+              className={styles.upload}
+              aria-label="Upload documents"
+              onClick={
+                onUpload ?? (() => navigate('/documents', { state: { openUpload: true } }))
+              }
+            >
+              <Upload aria-hidden="true" />
+              <span>Upload documents</span>
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+
+      <NotificationOverlay
+        open={notifOpen}
+        onClose={() => setNotifOpen(false)}
+        notifications={notifications}
+        loading={loading}
+        onMarkAsRead={markAsRead}
+        onDelete={deleteNotification}
+      />
+
+      <Toast toast={toast} onDone={clearToast} />
+    </>
   )
 }
