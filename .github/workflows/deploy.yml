@@ -59,7 +59,7 @@ jobs:
           done
 
           # Strip Windows CRLF before checking CNAME so line endings never break CI
-          test "$(tr -d '\r\n' < dist/CNAME)" = "sign.nexgn.cloud" || {
+          test "$(tr -d '\r\n' < dist/CNAME)" = "signp.nexgn.cloud" || {
             echo "::error::dist/CNAME must contain sign.nexgn.cloud"
             exit 1
           }
