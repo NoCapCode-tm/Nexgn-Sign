@@ -9,6 +9,12 @@ import NotificationOverlay from './NotificationOverlay'
 import Toast from '@/components/ui/Toast'
 import { useNotifications } from '@/hooks/useNotifications'
 import { useTheme } from '@/hooks/useTheme'
+import { settingsService } from '@/services/settings.service'
+import {
+  initNotificationSound,
+  isNotificationSnoozed,
+  playNotificationSound,
+} from '@/utils/notificationSound'
 import { prefersReducedMotion } from '@/utils/motion'
 import styles from './Topbar.module.css'
 
@@ -104,7 +110,15 @@ export default function Topbar({ title, subtitle, onUpload, hasUnread = false, s
   const [notifOpen, setNotifOpen] = useState(false)
   const [toast, setToast] = useState(null)
 
+  useEffect(() => {
+    initNotificationSound()
+    settingsService.getNotifications().catch(() => {})
+  }, [])
+
   const handleIncoming = useCallback((item) => {
+    if (isNotificationSnoozed()) return
+    playNotificationSound()
+    // To use a custom file instead: playNotificationSound({ audioSrc: '/sounds/notification.mp3' })
     setToast({ id: Date.now(), text: item.title || item.message || 'New notification', tone: 'ok' })
   }, [])
 

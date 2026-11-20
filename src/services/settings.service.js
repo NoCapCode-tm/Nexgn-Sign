@@ -1,5 +1,6 @@
 import { apiClient } from './apiClient'
 import { has2FA } from '@/utils/twoFactor'
+import { syncNotificationPrefs } from '@/utils/notificationSound'
 
 const ENDPOINTS = {
   me: '/admin/me',
@@ -21,7 +22,32 @@ const ENDPOINTS = {
   recycleBin: '/settings/recycle-bin',
 }
 
+export const SNOOZE_OPTIONS = [
+  { value: 15, label: '15 Minutes' },
+  { value: 30, label: '30 Minutes' },
+  { value: 60, label: '01 Hour' },
+  { value: 720, label: '12 Hour' },
+]
+
 const NOTIFICATION_CATALOG = [
+  // General (no heading, as in the design)
+  {
+    key: 'notification_sound',
+    group: '',
+    label: 'Notification Sound',
+    description: 'Switch off notification sound',
+    defaultEnabled: true,
+  },
+  {
+    key: 'snooze_notification',
+    group: '',
+    type: 'snooze',
+    durationKey: 'snooze_duration', // stored in minutes
+    label: 'Snooze Notification',
+    description: 'Switch off notification for certain period of time',
+  },
+
+  // Existing options (unchanged)
   {
     key: 'realtime_document_signed',
     group: 'Realtime Notification',
@@ -141,13 +167,20 @@ const toProfilePayload = (v) => {
 /* ---------------- Notifications ---------------- */
 function normalizeNotifications(data) {
   const candidates = [data?.message, data?.data, data?.preferences, data]
-  const src =
-    candidates.find((c) => c && typeof c === 'object' && !Array.isArray(c)) ?? {}
+  const src = candidates.find((c) => c && typeof c === 'object' && !Array.isArray(c)) ?? {}
 
-  return NOTIFICATION_CATALOG.map((item) => ({
-    ...item,
-    enabled: src[item.key] === true,
-  }))
+  return NOTIFICATION_CATALOG.map((item) => {
+    const stored = src[item.key]
+    const enabled = typeof stored === 'boolean' ? stored : Boolean(item.defaultEnabled)
+    if (item.type !== 'snooze') return { ...item, enabled }
+
+    const minutes = Number(src[item.durationKey])
+    return {
+      ...item,
+      enabled,
+      duration: Number.isFinite(minutes) && minutes > 0 ? minutes : SNOOZE_OPTIONS[0].value,
+    }
+  })
 }
 
 /* ---------------- Team ---------------- */
@@ -266,12 +299,37 @@ export const settingsService = {
   /* Notifications */
   getNotifications: async () => {
     const { data } = await apiClient.get(ENDPOINTS.notifications)
-    return normalizeNotifications(data)
+    const list = normalizeNotifications(data)
+    const sound = list.find((i) => i.key === 'notification_sound')
+    const snooze = list.find((i) => i.key === 'snooze_notification')
+    const raw = unwrapObject(data)
+    const serverUntil = raw.snooze_until ? new Date(raw.snooze_until).getTime() : undefined
+
+    syncNotificationPrefs({
+      sound: sound?.enabled,
+      snoozed: snooze?.enabled,
+      snoozeMinutes: snooze?.duration,
+      snoozeUntil: Number.isFinite(serverUntil) ? serverUntil : undefined,
+      preserveActiveSnooze: true,
+    })
+    return list
   },
 
   updateNotifications: async (items) => {
-    const payload = Object.fromEntries(items.map(({ key, enabled }) => [key, Boolean(enabled)]))
+    const payload = {}
+    for (const it of items) {
+      payload[it.key] = Boolean(it.enabled)
+      if (it.type === 'snooze') payload[it.durationKey] = it.duration
+    }
     const { data } = await apiClient.put(ENDPOINTS.notifications, payload)
+
+    const sound = items.find((i) => i.key === 'notification_sound')
+    const snooze = items.find((i) => i.key === 'snooze_notification')
+    syncNotificationPrefs({
+      sound: sound?.enabled,
+      snoozed: snooze?.enabled,
+      snoozeMinutes: snooze?.duration,
+    })
     return data
   },
 
